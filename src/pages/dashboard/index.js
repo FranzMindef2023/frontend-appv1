@@ -1,0 +1,10 @@
+export * from "@/pages/dashboard/home";
+export * from "@/pages/dashboard/profile";
+export * from "@/pages/dashboard/tablescopia";
+export * from "@/pages/dashboard/notifications";
+export *from "@/pages/dashboard/tables";
+export * from "@/pages/dashboard/roles";
+export * from "@/pages/dashboard/departamentos";
+export * from "@/pages/dashboard/divisiones";
+export * from "@/pages/dashboard/ueducativas";
+export * from "@/pages/dashboard/umilitares";
