@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Spinner } from '@nextui-org/react';
-import userService from '@/services/userService';
+import rolesService from '@/services/rolesService';
 import Swal from 'sweetalert2';
 
 
 
-const UserContext = createContext();
+const RolesContext = createContext();
 
-export const UsersProvider = ({ children }) => {
+export const RolesProvider = ({ children }) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState(null);
@@ -15,10 +15,10 @@ export const UsersProvider = ({ children }) => {
 
 
     // Obtener todos los roles
-    const fetchUsers = async () => {
+    const fetchRols = async () => {
         setLoading(true);
         try {
-            const response = await userService.getUsers();
+            const response = await rolesService.getRolss();
             if (response.data && Array.isArray(response.data.data)) {
                 setUsers(response.data.data); // Asegura que users sea un arreglo
             } else {
@@ -33,16 +33,15 @@ export const UsersProvider = ({ children }) => {
         }
     };
     // Crear un rol
-    const createUser = async (userData) => {
-      console.log(userData);
+    const createRols = async (userData) => {
         setLoading(true);
         try {
-            const response = await userService.createUser(userData);
+            const response = await rolesService.createRols(userData);
            console.log(response.data);
             if (response.status === 200) {
                 console.log();
                 Swal.fire("¡Éxito!", response.data.message, "success");
-                await fetchUsers();
+                await fetchRols();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -97,10 +96,10 @@ export const UsersProvider = ({ children }) => {
     };
 
     // Obtener un rol por ID
-    const getUserbyId = async (id) => {
+    const getRols = async (id) => {
         setLoading(true);
         try {
-            const response = await userService.getUserById(id);
+            const response = await rolesService.getRolsById(id);
             setUser(response.data);
             return response.data;
         } catch (error) {
@@ -112,11 +111,11 @@ export const UsersProvider = ({ children }) => {
     };
 
     // Actualizar un rol
-    const updateUser = async (id, userData) => {
+    const updateRols = async (id, userData) => {
         setLoading(true);
         try {
-            const response = await userService.updateUser(id, userData);
-            await fetchUsers();
+            const response = await rolesService.updateRols(id, userData);
+            await fetchRols();
             // showNotification('success', response.data.message || 'Role updated successfully');
             return response.data;
         } catch (error) {
@@ -127,11 +126,11 @@ export const UsersProvider = ({ children }) => {
     };
 
     // Eliminar un rol
-    const deleteUser = async (id) => {
+    const deleteRols = async (id) => {
         setLoading(true);
         try {
-            await userService.deleteUser(id);
-            await fetchUsers();
+            await rolesService.deleteRols(id);
+            await fetchRols();
             // showNotification('success', 'Role deleted successfully');
         } catch (error) {
             // showNotification('error', 'Error deleting role. Please try again.');
@@ -141,15 +140,15 @@ export const UsersProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser, fetchUsers, loading, isInitialized }}>
+        <RolesContext.Provider value={{ users, user, createRols, getRols, updateRols, deleteRols, fetchRols, loading, isInitialized }}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
                     <Spinner label="Loading..." color="warning" />
                 </div>
             )}
-        </UserContext.Provider>
+        </RolesContext.Provider>
     );
 };
 
-export const useUsers = () => useContext(UserContext);
+export const useRols = () => useContext(RolesContext);

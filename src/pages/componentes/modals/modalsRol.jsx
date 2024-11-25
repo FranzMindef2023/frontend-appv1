@@ -1,16 +1,29 @@
-import React,{useState} from "react";
+import React,{useStat} from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useRols } from "@/context/RolesContext";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input } from "@nextui-org/react";
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel }) => {
+  const { createRols } = useRols();
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
     initialValues:{
       rol: '',
+      status:true
     },
-    onSubmit:(values)=>{
-      console.log(values);
-      resetForm();
-      onClose()
+    onSubmit:async (values) =>{
+      // console.log(values);
+      try {
+        // Llamar a la función createRols del contexto
+        await createRols(values);
+        
+        console.log(values);
+        // alert('Usuario registrado exitosamente');
+        resetForm();
+        onClose();
+      } catch (error) {
+        console.error('Error al registrar usuario:', error);
+        alert('Error al registrar usuario');
+      }
     },
     validationSchema:Yup.object({
       rol: Yup.string().max(20,'Debe tener maximo de 20 caracteres').required('Campo es requerido'),

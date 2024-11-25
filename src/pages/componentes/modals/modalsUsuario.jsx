@@ -1,13 +1,14 @@
 import React,{useState } from "react";
 import * as Yup from "yup";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input,Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import {EyeFilledIcon} from "@/pages/componentes/modals/password/EyeFilledIcon";
 import {EyeSlashFilledIcon} from "@/pages/componentes/modals/password/EyeSlashFilledIcon";
 import { useFormik } from "formik";
-import { useUser } from "@/context/UserContext";
+import { useUsers } from "@/context/UserContext";
+import {animals} from "@/data/dataaut";
 
 const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabel, closeLabel }) => {
-  const { createUser,loading  } = useUser();
+  const { createUser,loading  } = useUsers();
   const [value, setValue] = React.useState("");
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
     initialValues:{
@@ -22,6 +23,7 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       status:true
     },
     onSubmit:async (values) =>{
+      console.log(values);
       try {
         // Llamar a la función createUser del contexto
         await createUser(values);
@@ -213,6 +215,26 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
                   }
                   type={isVisible ? "text" : "password"}
                 />
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete 
+                size="sm" 
+                allowsCustomValue
+                label="Search an animal" 
+                variant="bordered"
+                defaultItems={animals}
+              >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              </Autocomplete>
+              <Autocomplete 
+                size="sm" 
+                allowsCustomValue
+                label="Search an animal" 
+                variant="bordered"
+                defaultItems={animals}
+              >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              </Autocomplete>
               </div>
               </ModalBody>
               <ModalFooter>

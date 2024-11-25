@@ -1,4 +1,4 @@
-import React,{useState } from "react";
+import React,{useState ,useEffect} from "react";
 
 import {
   Table,
@@ -25,12 +25,12 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-
+import { useRols } from "@/context/RolesContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, users, statusOptions} from "@/data/data";
+import {columns, statusOptions} from "@/data/dataRols";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsRol';
 
@@ -39,14 +39,24 @@ import CustomModal from '@/pages/componentes/modals/modalsRol';
 
 
 const statusColorMap = {
-  active: "success",
-  paused: "danger",
+  Activo: "success",
+  Inactivo: "danger",
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["id","name", "role", "status", "actions"];
 
 export function Roles() {
+  const { users, isInitialized, fetchRols, loading } = useRols();
+
+    useEffect(() => {
+        if (!isInitialized) {
+            fetchRols();
+            console.log('desde el componete roles');
+            console.log(users);
+        }
+    }, [isInitialized]);
+
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
@@ -121,18 +131,18 @@ export function Roles() {
 
     switch (columnKey) {
       case "name":
-        return (
-          <User
-            avatarProps={{radius: "full", size: "sm", src: user.avatar}}
-            classNames={{
-              description: "text-default-500",
-            }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
+        // return (
+        //   <User
+        //     avatarProps={{radius: "full", size: "sm", src: user.avatar}}
+        //     classNames={{
+        //       description: "text-default-500",
+        //     }}
+        //     description={user.email}
+        //     name={cellValue}
+        //   >
+        //     {user.email}
+        //   </User>
+        // );
       case "role":
         return (
           <div className="flex flex-col">
@@ -336,6 +346,9 @@ export function Roles() {
     }),
     [],
   );
+  // if (!isInitialized) {
+  //     return <div>Cargando datos...</div>; // Muestra un indicador de carga mientras los datos se inicializan
+  // }
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
