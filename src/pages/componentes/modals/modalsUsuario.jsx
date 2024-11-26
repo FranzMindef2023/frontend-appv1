@@ -1,16 +1,33 @@
-import React,{useState } from "react";
+import React,{useState,useEffect } from "react";
 import * as Yup from "yup";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input,Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import {EyeFilledIcon} from "@/pages/componentes/modals/password/EyeFilledIcon";
 import {EyeSlashFilledIcon} from "@/pages/componentes/modals/password/EyeSlashFilledIcon";
 import { useFormik } from "formik";
 import { useUsers } from "@/context/UserContext";
+import { useOrganigrama } from "@/context/OrganigramaContext";
+import { useCargo } from "@/context/GargosContext";
 import {animals} from "@/data/dataaut";
 
 const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabel, closeLabel }) => {
   const { createUser,loading  } = useUsers();
+  const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
+  const { cargos,fetchCargos, isInitializedCar } = useCargo();
+  useEffect(() => {
+      if (!isInitializedOrg) {
+        fetchOrganigrama();
+          // console.log('desde el componete roles');
+          // console.log(organi);
+      }
+      if (!isInitializedCar) {
+        fetchCargos();
+        // console.log('desde el componete roles');
+        // console.log(cargos);
+    }
+  }, [isInitializedOrg,isInitializedCar]);
+
   const [value, setValue] = React.useState("");
-  const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
+  const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
       nombres: '',
       appaterno: '',
@@ -20,7 +37,9 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       password: '',
       ci:'',
       celular:'',
-      status:true
+      status:true,
+      idorg:0,
+      idpuesto:0
     },
     onSubmit:async (values) =>{
       console.log(values);
@@ -55,7 +74,9 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       .required('La cédula de identidad es requerida'),
       celular:Yup.string()
       .matches(/^[0-9]{8,15}$/, 'El número de celular debe tener entre 8 y 15 dígitos')
-      .nullable()
+      .nullable(),
+      idorg: Yup.number()
+      .required('Es necesario seleccionar una unidad organizacional.'), 
     })
   });
 
@@ -219,21 +240,42 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
               <Autocomplete 
                 size="sm" 
-                allowsCustomValue
-                label="Search an animal" 
+                name="idorg"
+                allowsCustomValue={false} // Solo valores de la lista
+                label="Buscar organigrama" 
+                onChange={(value) => {
+                  const selectedItem = organi.find((item) => item.nomorg === value);
+                  setFieldValue('idorg', selectedItem ? selectedItem.idorg : ''); // Asignar idorg o limpiar si no es válido
+                }}
+                onBlur={handleBlur}
+                isInvalid={!!errors.idorg && touched.idorg}
+                color={errors.idorg ? "danger" : "success"}
                 variant="bordered"
-                defaultItems={animals}
+                placeholder="Organigrama"
+                value={values.idorg}
+                errorMessage={errors.idorg} // Mensaje de error de Formik
+                className="block w-full"
+                defaultItems={organi}
               >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={item.idorg}>{item.nomorg}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete 
                 size="sm" 
+                name="idpuesto"
                 allowsCustomValue
-                label="Search an animal" 
+                label="Buscar organigrama" 
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.idpuesto && touched.idpuesto}
+                color={errors.idpuesto ? "danger" : "success"}
                 variant="bordered"
-                defaultItems={animals}
+                placeholder="Organigrama"
+                value={values.idpuesto}
+                errorMessage={errors.idpuesto}
+                className="block w-full"
+                defaultItems={cargos}
               >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={item.idpuesto}>{item.nompuesto}</AutocompleteItem>}
               </Autocomplete>
               </div>
               </ModalBody>
