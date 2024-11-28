@@ -7,10 +7,11 @@ import { useFormik } from "formik";
 import { useUsers } from "@/context/UserContext";
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useCargo } from "@/context/GargosContext";
-import {animals} from "@/data/dataaut";
 
 const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabel, closeLabel }) => {
   const { createUser,loading  } = useUsers();
+  const [selectedItem, setSelectedItem] = useState([]);
+  const [Item, setItem] = useState([]);
   const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
   const { cargos,fetchCargos, isInitializedCar } = useCargo();
   useEffect(() => {
@@ -25,7 +26,16 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
         // console.log(cargos);
     }
   }, [isInitializedOrg,isInitializedCar]);
-
+  const handleSelectionChange = (key) => {
+    console.log(key);
+    const selected = organi.find((item) => item.idorg === parseInt(key, 10)); // Buscar por el ID seleccionado
+    setSelectedItem(selected);
+  };
+  const handleSelectionpuetos = (key) => {
+    console.log(key);
+    const selected = cargos.find((item) => item.idpuesto === parseInt(key, 10)); // Buscar por el ID seleccionado
+    setItem(selected);
+  };
   const [value, setValue] = React.useState("");
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
@@ -38,15 +48,14 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       ci:'',
       celular:'',
       status:true,
-      idorg:0,
-      idpuesto:0
+      idorg:'',
+      idpuesto:'',
+      grado:''
     },
     onSubmit:async (values) =>{
-      console.log(values);
       try {
         // Llamar a la función createUser del contexto
-        await createUser(values);
-        alert('Usuario registrado exitosamente');
+        await createUser(values,selectedItem,Item);
         resetForm();
         onClose();
       } catch (error) {
@@ -75,8 +84,9 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       celular:Yup.string()
       .matches(/^[0-9]{8,15}$/, 'El número de celular debe tener entre 8 y 15 dígitos')
       .nullable(),
-      idorg: Yup.number()
-      .required('Es necesario seleccionar una unidad organizacional.'), 
+      // idorg: Yup.number()
+      // .required('Es necesario seleccionar una unidad organizacional.'), 
+      grado :Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
     })
   });
 
@@ -96,6 +106,24 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
             <ModalHeader>{title}</ModalHeader>
             <form noValidate onSubmit={handleSubmit}>
               <ModalBody>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+                <Input
+                  size="sm"
+                  isRequired={true}
+                  type="text"
+                  label="Abreviatura del grado"
+                  variant="bordered"
+                  isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                  value={values.grado}  // El valor actual del campo en el formulario
+                  placeholder="Ingrese el grado de forma Abreviada"
+                  color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
+                  className="block w-full"
+                />
+              </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
                 <Input
                   size="sm"
@@ -240,20 +268,25 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
               <Autocomplete 
                 size="sm" 
-                name="idorg"
-                allowsCustomValue={false} // Solo valores de la lista
                 label="Buscar organigrama" 
                 onChange={(value) => {
+                  console.log("Valor seleccionado:", value);
                   const selectedItem = organi.find((item) => item.nomorg === value);
-                  setFieldValue('idorg', selectedItem ? selectedItem.idorg : ''); // Asignar idorg o limpiar si no es válido
+                  if (selectedItem) {
+                    setFieldValue('idorg', selectedItem.idorg);
+                    console.log("ID org asignado:", selectedItem.idorg);
+                  } else {
+                    setFieldValue('idorg', '');
+                  }
                 }}
+                onSelectionChange={handleSelectionChange}
                 onBlur={handleBlur}
                 isInvalid={!!errors.idorg && touched.idorg}
                 color={errors.idorg ? "danger" : "success"}
                 variant="bordered"
                 placeholder="Organigrama"
                 value={values.idorg}
-                errorMessage={errors.idorg} // Mensaje de error de Formik
+                errorMessage={errors.idorg}
                 className="block w-full"
                 defaultItems={organi}
               >
@@ -261,11 +294,11 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
               </Autocomplete>
               <Autocomplete 
                 size="sm" 
-                name="idpuesto"
                 allowsCustomValue
                 label="Buscar organigrama" 
                 onChange={handleChange}
                 onBlur={handleBlur}
+                onSelectionChange={handleSelectionpuetos}
                 isInvalid={!!errors.idpuesto && touched.idpuesto}
                 color={errors.idpuesto ? "danger" : "success"}
                 variant="bordered"

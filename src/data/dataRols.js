@@ -3,6 +3,7 @@
     { name: "ID", uid: "id", sortable: true },
     { name: "ROL", uid: "name", sortable: true },
     { name: "ESTADO", uid: "status", sortable: true },
+    { name: "SITUACIÓN", uid: "situacion" },
     { name: "CREADO", uid: "fcreate", sortable: true },
     { name: "ACTUALIZADO", uid: "fupdate", sortable: true },
     { name: "ACCIONES", uid: "actions" },

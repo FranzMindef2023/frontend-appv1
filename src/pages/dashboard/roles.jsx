@@ -1,5 +1,5 @@
 import React,{useState ,useEffect} from "react";
-
+import Swal from 'sweetalert2'
 import {
   Table,
   TableHeader,
@@ -16,6 +16,8 @@ import {
   Chip,
   User,
   Pagination,
+  Switch,
+  Tooltip
 } from "@nextui-org/react";
 
 import {
@@ -33,7 +35,8 @@ import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataRols";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsRol';
-
+import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
+import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 
 
 
@@ -44,10 +47,10 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["id","name", "role", "situacion","actions"];
 
 export function Roles() {
-  const { users, isInitialized, fetchRols, loading } = useRols();
+  const { users, isInitialized, fetchRols, loading,updateRols } = useRols();
 
     useEffect(() => {
         if (!isInitialized) {
@@ -56,11 +59,51 @@ export function Roles() {
             console.log(users);
         }
     }, [isInitialized]);
+  //actualizar estado del rol Activo Inactivo
+  const handlestatus = async(e,user) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Estás a punto de cambiar el estado a Activo/Inactivo. Si no estás seguro, puedes cancelar esta acción.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
 
+          // Llamar a la función createUser del contexto
+           updateRols(!e.target.checked,user);
+          // resetForm();
+          // onClose();
+        } catch (error) {
+          console.error('Error al registrar usuario:', error);
+          // alert('Error al registrar usuario');
+        }
+        Swal.fire({
+          title: "¡Actualizado!",
+          text: "El estado se ha actualizado correctamente.",
+          icon: "success"
+        });
+      } else {
+        // // Opcional: Mensaje cuando el usuario cancela
+        // Swal.fire({
+        //   title: "Cancelado",
+        //   text: "La acción ha sido cancelada.",
+        //   icon: "info"
+        // });
+      }
+    });
+    
+    
+  };
   const [isModalOpen, setModalOpen] = useState(false);
-
-  const openModal = () => {
-    setModalOpen(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const openModal = (accion, user = null) => {
+    setSelectedUser(user); // Establecer los datos del usuario seleccionado
+    setModalOpen(true); // Abrir el modal
   };
   
   const closeModal = () => {
@@ -130,19 +173,6 @@ export function Roles() {
     const cellValue = user[columnKey];
 
     switch (columnKey) {
-      case "name":
-        // return (
-        //   <User
-        //     avatarProps={{radius: "full", size: "sm", src: user.avatar}}
-        //     classNames={{
-        //       description: "text-default-500",
-        //     }}
-        //     description={user.email}
-        //     name={cellValue}
-        //   >
-        //     {user.email}
-        //   </User>
-        // );
       case "role":
         return (
           <div className="flex flex-col">
@@ -161,22 +191,33 @@ export function Roles() {
             {cellValue}
           </Chip>
         );
+        case "situacion":
+        return (
+          <Switch
+            size="sm"
+            color="success"
+            isSelected={user.status === "Activo"} // Encender si el status es Activo
+            onChange={(e) => handlestatus(e, user)} // Pasar el evento y el usuario
+          ></Switch>
+        );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Button content="Editar" size="sm">
+              <span onClick={() => openModal("edit", user)} className="text-lg text-warning cursor-pointer active:opacity-50">
+                <EditIcon />
+              </span>
+            </Button>
+            {/* <Button  radius="full" size="lg" variant="light">
+              <EditIcon />
+            </Button> */}
+            <Tooltip color="danger" content="Eliminar" size="lg">
+              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                <DeleteIcon />
+              </span>
+            </Tooltip>
           </div>
+          
         );
       default:
         return cellValue;
@@ -271,7 +312,7 @@ export function Roles() {
               className="bg-foreground text-background"
               endContent={<PlusIcon />}
               size="sm"
-              onPress={openModal}
+              onPress={() => openModal("create")}
             >
               Usuario
             </Button>
@@ -399,18 +440,13 @@ export function Roles() {
             </TableBody>
           </Table>
           <CustomModal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              title="REGISTRO DE NUEVO USUARIO"
-              bodyContent={[
-                "This is the first paragraph.",
-                "This is the second paragraph.",
-                "This is the third paragraph."
-              ]}
-              onAction={handleAction}
-              actionLabel="REGISTRAR"
-              closeLabel="CANCELAR"
-            />
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            title={selectedUser ? "EDITAR USUARIO" : "REGISTRO DE NUEVO USUARIO"} // Cambiar el título dinámicamente
+            actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
+            closeLabel="CANCELAR"
+            initialData={selectedUser} // Pasar los datos iniciales
+          />
         </CardBody>
       </Card>
     </div>

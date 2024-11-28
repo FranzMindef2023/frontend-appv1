@@ -1,4 +1,4 @@
-import React,{useState } from "react";
+import React,{useState, useEffect } from "react";
 
 import {
   Table,
@@ -25,12 +25,12 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-
+import { useUsers } from "@/context/UserContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, users, statusOptions} from "@/data/data";
+import {columns, statusOptions} from "@/data/dataUsers";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsUsuario';
 
@@ -39,16 +39,24 @@ import CustomModal from '@/pages/componentes/modals/modalsUsuario';
 
 
 const statusColorMap = {
-  active: "success",
-  paused: "danger",
+  Activo: "success",
+  Inactivo: "danger",
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","puesto", "sigla","lastlogin","status", "actions"];
 
 export function Profile() {
-  const [isModalOpen, setModalOpen] = useState(false);
 
+  const { users, isInitialized, fetchUsers, loading } = useUsers();
+  const [isModalOpen, setModalOpen] = useState(false);
+  useEffect(() => {
+    if (!isInitialized) {
+      fetchUsers();
+        console.log('desde el componete roles');
+        console.log(users);
+    }
+}, [isInitialized]);
   const openModal = () => {
     setModalOpen(true);
   };

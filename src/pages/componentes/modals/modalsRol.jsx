@@ -1,23 +1,31 @@
-import React,{useStat} from "react";
+import React,{useStat,useEffect} from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRols } from "@/context/RolesContext";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input } from "@nextui-org/react";
-const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel }) => {
-  const { createRols } = useRols();
-  const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
+const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData  }) => {
+  const { createRols,updateRolsData } = useRols();
+  // Verificar que `initialData` se recibe correctamente
+  // useEffect(() => {
+  //   console.log("Initial data received:", initialData);
+  // }, [initialData]);
+  const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm, }= useFormik({
     initialValues:{
       rol: '',
-      status:true
+      status:true,
+      ...initialData,
     },
+    enableReinitialize: true,
     onSubmit:async (values) =>{
-      // console.log(values);
       try {
-        // Llamar a la función createRols del contexto
-        await createRols(values);
-        
-        console.log(values);
-        // alert('Usuario registrado exitosamente');
+        if (initialData?.id) {
+          // Si `initialData` tiene un `id`, es edición
+          await updateRolsData(true, values); // Asume que tienes esta función
+        } else {
+          // Si no hay `id`, es registro
+          console.log("Registrando nuevo usuario:", values);
+          await createRols(values);
+        }
         resetForm();
         onClose();
       } catch (error) {

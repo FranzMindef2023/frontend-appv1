@@ -33,14 +33,12 @@ export const UsersProvider = ({ children }) => {
         }
     };
     // Crear un rol
-    const createUser = async (userData) => {
-      console.log(userData);
+    const createUser = async (data,org,cargo) => {
+      const newData={...data,idorg:org.idorg,idpuesto:cargo.idpuesto};
         setLoading(true);
         try {
-            const response = await userService.createUser(userData);
-           console.log(response.data);
+            const response = await userService.createUser(newData);
             if (response.status === 200) {
-                console.log();
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchUsers();
                 // showNotification('success', response.data.message || 'Role created successfully');
