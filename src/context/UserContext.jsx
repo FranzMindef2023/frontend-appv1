@@ -33,11 +33,10 @@ export const UsersProvider = ({ children }) => {
         }
     };
     // Crear un rol
-    const createUser = async (data,org,cargo) => {
-      const newData={...data,idorg:org.idorg,idpuesto:cargo.idpuesto};
+    const createUser = async (data) => {
         setLoading(true);
         try {
-            const response = await userService.createUser(newData);
+            const response = await userService.createUser(data);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchUsers();
@@ -110,15 +109,61 @@ export const UsersProvider = ({ children }) => {
     };
 
     // Actualizar un rol
-    const updateUser = async (id, userData) => {
+    const updateUser = async (userData) => {
         setLoading(true);
         try {
-            const response = await userService.updateUser(id, userData);
-            await fetchUsers();
-            // showNotification('success', response.data.message || 'Role updated successfully');
-            return response.data;
+            const response = await userService.updateUser(userData.id, userData);
+            if (response.status === 200) {
+                Swal.fire("¡Éxito!", response.data.message, "success");
+                await fetchUsers();
+                // showNotification('success', response.data.message || 'Role created successfully');
+                return response.data;
+            }
         } catch (error) {
-            // showNotification('error', 'Error updating role. Please try again.');
+            if (error.response) {
+                const { status, data } = error.response;
+                switch (status) {
+                    case 422: {
+                        // Manejar errores de validación
+                        const errorMessages = Object.entries(data.errors || {})
+                            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+                            .join("\n");
+            
+                        Swal.fire({
+                            icon: "error",
+                            title: "Errores de Validación",
+                            text: errorMessages,
+                        });
+                        break;
+                    }
+                    case 500: {
+                        // Manejar errores internos del servidor
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error del Servidor",
+                            text: data.message || "Ocurrió un error interno. Inténtalo nuevamente.",
+                        });
+                        break;
+                    }
+                    default: {
+                        // Manejar otros errores no esperados
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error Desconocido",
+                            text: data.message || "Algo salió mal. Inténtalo más tarde.",
+                        });
+                        break;
+                    }
+                }
+            } else {
+                // Manejar errores donde no hay respuesta del servidor
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de Conexión",
+                    text: "No se recibió respuesta del servidor. Por favor, verifica tu conexión a internet.",
+                });
+            }
+            
         } finally {
             setLoading(false);
         }
@@ -137,9 +182,24 @@ export const UsersProvider = ({ children }) => {
             setLoading(false);
         }
     };
+    // Roles asignados
+    const asignaciones = async (userData) => {
+        setLoading(true);
+        // console.log(userData);
+        try {
+            const response = await userService.getrolesasig(userData.id);
+            setUser(response.data.data);
+            return response.data.data;
+        } catch (error) {
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser, fetchUsers, loading, isInitialized }}>
+        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser,asignaciones, fetchUsers, loading, isInitialized }}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

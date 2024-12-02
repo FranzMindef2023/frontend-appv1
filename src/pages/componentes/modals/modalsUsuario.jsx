@@ -8,8 +8,8 @@ import { useUsers } from "@/context/UserContext";
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useCargo } from "@/context/GargosContext";
 
-const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabel, closeLabel }) => {
-  const { createUser,loading  } = useUsers();
+const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
+  const { createUser,loading , updateUser } = useUsers();
   const [selectedItem, setSelectedItem] = useState([]);
   const [Item, setItem] = useState([]);
   const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
@@ -26,17 +26,8 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
         // console.log(cargos);
     }
   }, [isInitializedOrg,isInitializedCar]);
-  const handleSelectionChange = (key) => {
-    console.log(key);
-    const selected = organi.find((item) => item.idorg === parseInt(key, 10)); // Buscar por el ID seleccionado
-    setSelectedItem(selected);
-  };
-  const handleSelectionpuetos = (key) => {
-    console.log(key);
-    const selected = cargos.find((item) => item.idpuesto === parseInt(key, 10)); // Buscar por el ID seleccionado
-    setItem(selected);
-  };
-  const [value, setValue] = React.useState("");
+  // const [value, setValue] = React.useState("");
+
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
       nombres: '',
@@ -48,14 +39,20 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       ci:'',
       celular:'',
       status:true,
-      idorg:'',
-      idpuesto:'',
-      grado:''
+      idorg:[],
+      idpuesto:[],
+      grado:'',
+      ...initialData,
     },
+    enableReinitialize: true,
     onSubmit:async (values) =>{
       try {
-        // Llamar a la función createUser del contexto
-        await createUser(values,selectedItem,Item);
+        if (initialData?.id) {
+          // Si `initialData` tiene un `id`, es edición
+          await updateUser(values); // Asume que tienes esta función
+        } else {
+          await createUser(values);
+        }
         resetForm();
         onClose();
       } catch (error) {
@@ -69,14 +66,13 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       apmaterno: Yup.string().max(30,'Debe tenere maximo 30 caracteres'),
       email: Yup.string().email('El correo no tiene un formato corecto').required('El email es requerido'),
       usuario: Yup.string().min(3,'Debe tener minimo 3 caracteres').max(10,'Debe tener maximo 10 caracteres').required('Campo requerido'),
-      password: Yup.string()
+      password: Yup.string().nullable()
       .min(5, 'La contraseña debe tener al menos 5 caracteres')
       .max(15, 'La contraseña no debe exceder los 15 caracteres')
       .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
       .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
       .matches(/\d/, 'La contraseña debe contener al menos un número')
-      .matches(/[@$!%*?&#]/, 'La contraseña debe contener al menos un carácter especial (@$!%*?&#)')
-      .required('La contraseña es requerida'),
+      .matches(/[@$!%*?&#]/, 'La contraseña debe contener al menos un carácter especial (@$!%*?&#)'),
       ci:Yup.number().
       min(6000000,'La cédula debe tener minimo 6 caracteres').
       max(10000000000,'La cédula debe tener maximo 10 caracteres')
@@ -89,7 +85,19 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
       grado :Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
     })
   });
-
+  useEffect(() => {
+    if (initialData?.idorg) {
+      const selectedOrg = organi.find((item) => item.idorg === Number(initialData.idorg)); // Forzar a tipo número
+      setSelectedItem(selectedOrg);
+      setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+    }
+  
+    if (initialData?.idpuesto) {
+      const selectedPuesto = cargos.find((item) => item.idpuesto === Number(initialData.idpuesto)); // Forzar a tipo número
+      setItem(selectedPuesto);
+      setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
+    }
+  }, [initialData, organi, cargos, setFieldValue]);
  
 
 
@@ -266,34 +274,41 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
                 />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Autocomplete 
-                size="sm" 
-                label="Buscar organigrama" 
-                onChange={(value) => {
-                  console.log("Valor seleccionado:", value);
-                  const selectedItem = organi.find((item) => item.nomorg === value);
-                  if (selectedItem) {
-                    setFieldValue('idorg', selectedItem.idorg);
-                    console.log("ID org asignado:", selectedItem.idorg);
-                  } else {
-                    setFieldValue('idorg', '');
-                  }
-                }}
-                onSelectionChange={handleSelectionChange}
-                onBlur={handleBlur}
-                isInvalid={!!errors.idorg && touched.idorg}
-                color={errors.idorg ? "danger" : "success"}
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="Buscar unidad orgnaizacional"
                 variant="bordered"
-                placeholder="Organigrama"
-                value={values.idorg}
-                errorMessage={errors.idorg}
                 className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
                 defaultItems={organi}
               >
-                {(item) => <AutocompleteItem key={item.idorg}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
               </Autocomplete>
-              <Autocomplete 
+              <Autocomplete
+                isRequired
+                size="sm"
+                label="Buscar puesto"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idpuesto)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedPuesto = cargos.find((item) => item.idpuesto === Number(key)); // Convertir clave a número
+                  setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
+                  setItem(selectedPuesto); // Actualiza el estado local
+                }}
+                defaultItems={cargos}
+              >
+                {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
+              </Autocomplete>
+              {/* <Autocomplete 
                 size="sm" 
+                name="idpuesto"
                 allowsCustomValue
                 label="Buscar organigrama" 
                 onChange={handleChange}
@@ -309,7 +324,7 @@ const CustomModal = ({ isOpen, onClose, title, bodyContent, onAction, actionLabe
                 defaultItems={cargos}
               >
                 {(item) => <AutocompleteItem key={item.idpuesto}>{item.nompuesto}</AutocompleteItem>}
-              </Autocomplete>
+              </Autocomplete> */}
               </div>
               </ModalBody>
               <ModalFooter>

@@ -15,5 +15,7 @@ export const updateUser = (id, userData) => api.put(`/usuarios/${id}`, userData)
 
 // Eliminar un usuario por su ID
 export const deleteUser = (id) => api.delete(`/usuarios/${id}`);
+// Roles asignados
+const getrolesasig = (id) => api.get(`/showroluser/${id}`);
 
-export default { createUser, getUsers, getUserById, updateUser, deleteUser };
+export default { createUser, getUsers, getUserById, updateUser, deleteUser,getrolesasig };
