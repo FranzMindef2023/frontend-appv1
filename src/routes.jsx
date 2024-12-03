@@ -20,6 +20,7 @@ import {
 import { SignIn, SignUp } from "@/pages/auth";
 import ProtectedRoute from "@/component/ProtectedRoute";
 import AuthRoute from "@/component/AuthRoute";
+import Personal from "./pages/dashboard/personal";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -46,6 +47,12 @@ export const routes = [
         name: "profile",
         path: "/profile",
         element: <ProtectedRoute element={<Profile />} />,
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "personal",
+        path: "/personal",
+        element: <ProtectedRoute element={<Personal />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,

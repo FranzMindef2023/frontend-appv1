@@ -1,18 +1,18 @@
 import api from '@/api/axios';
 
 // Crear un nuevo rol
-const createCargo = (user) => api.post('/puestos', user);
+const createArmas = (user) => api.post('/armas', user);
 
-// Obtener todos los puestos
-const getCargos = () => api.get('/puestos');
+// Obtener todos los armas
+const getArmass = () => api.get('/armas');
 
 // Obtener un rol por ID
-const getCargoById = (id) => api.get(`/puestos/${id}`);
+const getArmasById = (id) => api.get(`/armas/${id}`);
 
 // Actualizar un rol
-const updateCargo = (id, userData) => api.put(`/puestos/${id}`, userData);
+const updateArmas = (id, userData) => api.put(`/armas/${id}`, userData);
 
 // Eliminar un rol
-const deleteCargo = (id) => api.delete(`/puestos/${id}`);
+const deleteArmas = (id) => api.delete(`/armas/${id}`);
 
-export default { createCargo, getCargos, getCargoById, updateCargo, deleteCargo };
+export default { createArmas, getArmass, getArmasById, updateArmas, deleteArmas };
