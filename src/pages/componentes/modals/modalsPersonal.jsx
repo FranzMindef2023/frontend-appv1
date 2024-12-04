@@ -7,6 +7,13 @@ import { useFormik } from "formik";
 import { useUsers } from "@/context/UserContext";
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useCargo } from "@/context/GargosContext";
+/*import de selects*/
+import { useArmas } from "@/context/ArmasContext";
+import { useEspecial } from "@/context/EspecialidadContext";
+import { useEstadocv } from "@/context/EstadocvContext";
+import { useFuerzas } from "@/context/FuerzasContext";
+import { useGeneros } from "@/context/GenerosContext";
+import { useGrados } from "@/context/GradosContext";
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const { createUser,loading , updateUser } = useUsers();
@@ -14,18 +21,47 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
   const [Item, setItem] = useState([]);
   const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
   const { cargos,fetchCargos, isInitializedCar } = useCargo();
+
+  const { armas,fetchArmas, isInitializedArm} = useArmas();
+  const { especial,fetchEspecialidades, isInitializedEsp} = useEspecial();
+  const { statuscv,fetchStatuscv, isInitializedCV} = useEstadocv();
+  const { fuerzas,fetchFuerzas, isInitializedF} = useFuerzas();
+  const { sexos,fetchSexos, isInitializedGen} = useGeneros();
+  const { grados,fetchGrados, isInitializedGra} = useGrados();
   useEffect(() => {
       if (!isInitializedOrg) {
         fetchOrganigrama();
-          // console.log('desde el componete roles');
-          // console.log(organi);
       }
       if (!isInitializedCar) {
         fetchCargos();
-        // console.log('desde el componete roles');
-        // console.log(cargos);
-    }
-  }, [isInitializedOrg,isInitializedCar]);
+      }
+      if (!isInitializedArm) {
+        fetchArmas();
+      }
+      if (!isInitializedEsp) {
+        fetchEspecialidades();
+      }
+      if (!isInitializedCV) {
+        fetchStatuscv();
+      }
+      if (!isInitializedF) {
+        fetchFuerzas();
+      }
+      if (!isInitializedGen) {
+        fetchSexos();
+      }
+      if (!isInitializedGra) {
+        fetchGrados();
+      }
+      
+  }, [isInitializedOrg,
+    isInitializedCar,
+    isInitializedArm,
+    isInitializedEsp,
+    isInitializedCV,
+    isInitializedF,
+    isInitializedGen,
+    isInitializedGra]);
   // const [value, setValue] = React.useState("");
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
@@ -34,14 +70,23 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       appaterno: '',
       apmaterno: '',
       email: '',
-      usuario: '',
-      password: '',
+      complemento: '',
+      codper: '',
       ci:'',
+      carnetmil:'',
+      carnetseg:'',
       celular:'',
+      fechnacimeinto:'',
+      gsanguineo:'',
+      tipoper:'',
+      estserv:'',
       status:true,
-      idorg:[],
-      idpuesto:[],
-      grado:'',
+      idfuerza:[],
+      idespecialidad:[],
+      idgrado:[],
+      idsexo:[],
+      idarma:[],
+      idcv:[],
       ...initialData,
     },
     enableReinitialize: true,
@@ -119,24 +164,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   size="sm"
                   isRequired={true}
                   type="text"
-                  label="Abreviatura del grado"
-                  variant="bordered"
-                  isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
-                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                  name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                  value={values.grado}  // El valor actual del campo en el formulario
-                  placeholder="Ingrese el grado de forma Abreviada"
-                  color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
-                  errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
-                  className="block w-full"
-                />
-              </div>
-              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-                <Input
-                  size="sm"
-                  isRequired={true}
-                  type="text"
                   label="Nombres"
                   variant="bordered"
                   isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
@@ -182,23 +209,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 className="block w-full"
                 />
                 <Input 
-                isRequired
-                size="sm" 
-                value={values.email}
-                name="email"
-                type="email" 
-                label="Email" 
-                placeholder="Enter your email" 
-                variant="bordered"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isInvalid={!!errors.email && touched.email}
-                color={errors.email ? "danger" : "success"}
-                errorMessage={errors.email}
-                className="block w-full "/>
-              </div>
-              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
                 size="sm" 
                 type="text" 
                 isRequired
@@ -218,9 +228,9 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 <Input 
                 size="sm" 
                 type="number" 
-                label="Celular" 
+                label="complemento" 
                 name="celular"
-                placeholder="Ingrese el n° de celular" 
+                placeholder="Ingrese el complemento" 
                 variant="bordered"
                 value={values.celular}
                 isInvalid={!!errors.celular && touched.celular}
@@ -232,49 +242,24 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                isRequired
-                type="text" 
-                name="usuario"
-                label="Usuario" 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isInvalid={!!errors.usuario && touched.usuario}
-                color={errors.usuario ? "danger" : "success"}
-                variant="bordered"
-                placeholder="Ingrese el nobre de usuario"
-                value={values.usuario}
-                errorMessage={errors.usuario}
-                className="block w-full"
-                />
+                
                 <Input
-                  label="Password"
-                  size="sm" 
-                  isRequired
-                  name="password"
-                  value={values.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  isInvalid={!!errors.password && touched.password}
-                  errorMessage={errors.password}
-                  color={errors.password ? "danger" : "success"}
+                  size="sm"
+                  isRequired={true}
+                  type="text"
+                  label="FECHA DE NACIMIENTO"
                   variant="bordered"
-                  placeholder="Ingrese la contraseña"
-                  endContent={
-                    <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">
-                      {isVisible ? (
-                        <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                      ) : (
-                        <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                      )}
-                    </button>
-                  }
-                  type={isVisible ? "text" : "password"}
+                  isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                  value={values.grado}  // El valor actual del campo en el formulario
+                  placeholder="Ingrese el grado de forma Abreviada"
+                  color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
+                  className="block w-full"
                 />
-              </div>
-              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Autocomplete
+                <Autocomplete
                 size="sm"
                 isRequired
                 label="Buscar unidad orgnaizacional"
@@ -290,10 +275,206 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
               </Autocomplete>
+                
+                <Input 
+                size="sm" 
+                type="number" 
+                label="Carnet Mil." 
+                name="celular"
+                placeholder="Ingrese el n° de Carnet Mil." 
+                variant="bordered"
+                value={values.celular}
+                isInvalid={!!errors.celular && touched.celular}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                color={errors.celular ? "danger" : "success"}
+                errorMessage={errors.celular}
+                className="block w-full"
+                />
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Input 
+                size="sm" 
+                type="number" 
+                label="Cod. Persona" 
+                name="celular"
+                placeholder="Ingrese el Cod. Persona" 
+                variant="bordered"
+                value={values.celular}
+                isInvalid={!!errors.celular && touched.celular}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                color={errors.celular ? "danger" : "success"}
+                errorMessage={errors.celular}
+                className="block w-full"
+                />
+                <Input 
+                isRequired
+                size="sm" 
+                value={values.email}
+                name="email"
+                type="email" 
+                label="Carnet de Seguro" 
+                placeholder="Enter your Carnet de Seguro" 
+                variant="bordered"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.email && touched.email}
+                color={errors.email ? "danger" : "success"}
+                errorMessage={errors.email}
+                className="block w-full "/>
+                <Input 
+                isRequired
+                size="sm" 
+                value={values.email}
+                name="email"
+                type="email" 
+                label="NUA/CUA" 
+                placeholder="Enter your Carnet de Seguro" 
+                variant="bordered"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.email && touched.email}
+                color={errors.email ? "danger" : "success"}
+                errorMessage={errors.email}
+                className="block w-full "/>
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Input 
+                size="sm" 
+                type="number" 
+                label="Celular" 
+                name="celular"
+                placeholder="Ingrese el n° de celular" 
+                variant="bordered"
+                value={values.celular}
+                isInvalid={!!errors.celular && touched.celular}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                color={errors.celular ? "danger" : "success"}
+                errorMessage={errors.celular}
+                className="block w-full"
+                />
+              <Input 
+                isRequired
+                size="sm" 
+                value={values.email}
+                name="email"
+                type="email" 
+                label="Email" 
+                placeholder="Enter your email" 
+                variant="bordered"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={!!errors.email && touched.email}
+                color={errors.email ? "danger" : "success"}
+                errorMessage={errors.email}
+                className="block w-full "/>
+                
+                <Input
+                  size="sm"
+                  isRequired={true}
+                  type="text"
+                  label="TIPO DE SANGRE"
+                  variant="bordered"
+                  isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                  value={values.grado}  // El valor actual del campo en el formulario
+                  placeholder="Ingrese el grado de forma Abreviada"
+                  color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
+                  className="block w-full"
+                />
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Input
+                size="sm"
+                isRequired={true}
+                type="text"
+                label="FECHA DE ALTA"
+                variant="bordered"
+                isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
+                onChange={handleChange}  // Manejar el cambio con Formik
+                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                value={values.grado}  // El valor actual del campo en el formulario
+                placeholder="Ingrese el grado de forma Abreviada"
+                color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
+                errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
+                className="block w-full"
+              />
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUCAR LA FUERZA"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUCAR EL GRADO"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUSCAR EL ARMA"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUSCAR LA ESPECIALIDAD"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
               <Autocomplete
                 isRequired
                 size="sm"
-                label="Buscar puesto"
+                label="BUSCAR EL ESTADO CIVIL"
                 variant="bordered"
                 className="block w-full"
                 selectedKey={String(values.idpuesto)} // Asegúrate de que es una cadena
@@ -306,25 +487,40 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
               </Autocomplete>
-              {/* <Autocomplete 
-                size="sm" 
-                name="idpuesto"
-                allowsCustomValue
-                label="Buscar organigrama" 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onSelectionChange={handleSelectionpuetos}
-                isInvalid={!!errors.idpuesto && touched.idpuesto}
-                color={errors.idpuesto ? "danger" : "success"}
+              </div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUSCAR EL GENERO"
                 variant="bordered"
-                placeholder="Organigrama"
-                value={values.idpuesto}
-                errorMessage={errors.idpuesto}
                 className="block w-full"
-                defaultItems={cargos}
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
               >
-                {(item) => <AutocompleteItem key={item.idpuesto}>{item.nompuesto}</AutocompleteItem>}
-              </Autocomplete> */}
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUSCAR SITUACION"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setItem(selectedOrg); // Actualiza el estado local
+                }}
+                defaultItems={organi}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
               </div>
               </ModalBody>
               <ModalFooter>
