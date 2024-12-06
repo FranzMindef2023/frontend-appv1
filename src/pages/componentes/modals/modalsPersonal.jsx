@@ -14,11 +14,21 @@ import { useEstadocv } from "@/context/EstadocvContext";
 import { useFuerzas } from "@/context/FuerzasContext";
 import { useGeneros } from "@/context/GenerosContext";
 import { useGrados } from "@/context/GradosContext";
+import { useSitua } from "@/context/SituacionesContext";
+import { useExpedido } from "@/context/ExpedicionesContext";
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const { createUser,loading , updateUser } = useUsers();
   const [selectedItem, setSelectedItem] = useState([]);
   const [Item, setItem] = useState([]);
+  const [ItemFuerzas, setfuerza] = useState([]);
+  const [ItemGrados, setGrados] = useState([]);
+  const [ItemArmas, setArmas] = useState([]);
+  const [ItemEsp, setEsp] = useState([]);
+  const [ItemSexo, setSexo] = useState([]);
+  const [ItemSituad, setSituad] = useState([]);
+  const [ItemExped, setExped] = useState([]);
+  const [ItemStatuscv, setStatuscv] = useState([]);
   const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
   const { cargos,fetchCargos, isInitializedCar } = useCargo();
 
@@ -28,40 +38,24 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
   const { fuerzas,fetchFuerzas, isInitializedF} = useFuerzas();
   const { sexos,fetchSexos, isInitializedGen} = useGeneros();
   const { grados,fetchGrados, isInitializedGra} = useGrados();
+  const { situaciones,fetchSituacion, isInitializedSitua} = useSitua();
+  const { expedidos,fetchExpedidos, isInitializedExp} = useExpedido();
+
+
+
+
   useEffect(() => {
-      if (!isInitializedOrg) {
-        fetchOrganigrama();
-      }
-      if (!isInitializedCar) {
-        fetchCargos();
-      }
-      if (!isInitializedArm) {
-        fetchArmas();
-      }
-      if (!isInitializedEsp) {
-        fetchEspecialidades();
-      }
-      if (!isInitializedCV) {
-        fetchStatuscv();
-      }
-      if (!isInitializedF) {
-        fetchFuerzas();
-      }
-      if (!isInitializedGen) {
-        fetchSexos();
-      }
-      if (!isInitializedGra) {
-        fetchGrados();
-      }
-      
-  }, [isInitializedOrg,
-    isInitializedCar,
-    isInitializedArm,
-    isInitializedEsp,
-    isInitializedCV,
-    isInitializedF,
-    isInitializedGen,
-    isInitializedGra]);
+    if (!isInitializedOrg) fetchOrganigrama();
+    if (!isInitializedCar) fetchCargos();
+    if (!isInitializedArm) fetchArmas();
+    if (!isInitializedEsp) fetchEspecialidades();
+    if (!isInitializedCV) fetchStatuscv();
+    if (!isInitializedF) fetchFuerzas();
+    if (!isInitializedGen) fetchSexos();
+    if (!isInitializedGra) fetchGrados();
+    if (!isInitializedSitua) fetchSituacion();
+    if (!isInitializedExp) fetchExpedidos();
+  });
   // const [value, setValue] = React.useState("");
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
@@ -142,7 +136,49 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       setItem(selectedPuesto);
       setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
     }
-  }, [initialData, organi, cargos, setFieldValue]);
+    if (initialData?.idfuerza) {
+      const selectedFuerzas = fuerzas.find((item) => item.idfuerza === Number(initialData.idfuerza)); // Forzar a tipo número
+      setfuerza(selectedFuerzas);
+      setFieldValue('idfuerza', selectedFuerzas?.idfuerza || ''); // Actualiza Formik
+    }
+    if (initialData?.idgrado) {
+      const selectedGrados = grados.find((item) => item.idgrado === Number(initialData.idgrado)); // Forzar a tipo número
+      setGrados(selectedGrados);
+      setFieldValue('idgrado', selectedGrados?.idgrado || ''); // Actualiza Formik
+    }
+    if (initialData?.idarma) {
+      const selectedArmas = armas.find((item) => item.idarma === Number(initialData.idarma)); // Forzar a tipo número
+      setArmas(selectedArmas);
+      setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
+    }
+
+    if (initialData?.idespecialidad) {
+      const selectedEspecial = especial.find((item) => item.idespecialidad === Number(initialData.idespecialidad)); // Forzar a tipo número
+      setEsp(selectedEspecial);
+      setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
+    }
+
+    if (initialData?.idcv) {
+      const selectedStatus = statuscv.find((item) => item.idcv === Number(initialData.idcv)); // Forzar a tipo número
+      setStatuscv(selectedStatus);
+      setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
+    }
+    if (initialData?.idsexo) {
+      const selectedsetSexo = sexos.find((item) => item.idsexo === Number(initialData.idsexo)); // Forzar a tipo número
+      setSexo(selectedsetSexo);
+      setFieldValue('idsexo', selectedsetSexo?.idsexo || ''); // Actualiza Formik
+    }
+    if (initialData?.idsituacion) {
+      const selectedSitua = situaciones.find((item) => item.idsituacion === Number(initialData.idsituacion)); // Forzar a tipo número
+      setSituad(selectedSitua);
+      setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
+    }
+    if (initialData?.idexpedicion) {
+      const selectedExped = expedidos.find((item) => item.idexpedicion === Number(initialData.idexpedicion)); // Forzar a tipo número
+      setExped(selectedExped);
+      setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
+    }
+  }, [initialData, organi, cargos,fuerzas, grados,especial,sexos,situaciones,expedidos, setFieldValue]);
  
 
 
@@ -262,18 +298,18 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 <Autocomplete
                 size="sm"
                 isRequired
-                label="Buscar unidad orgnaizacional"
+                label="Buscar unidad Expedicion"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idexpedicion ? String(values.idexpedicion) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  const selectedExped = expedidos.find((item) => item.idexpedicion === Number(key)); // Convertir clave a número
+                  setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
+                  setExped(selectedExped); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={expedidos}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idexpedicion)}>{item.Departamento}</AutocompleteItem>}
               </Autocomplete>
                 
                 <Input 
@@ -407,19 +443,25 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               />
               <Autocomplete
                 size="sm"
+                allowsCustomValue
                 isRequired
                 label="BUCAR LA FUERZA"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idfuerza ? String(values.idfuerza) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idfuerza', ''); // Limpia el valor en Formik
+                    setfuerza(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedFuerzas = fuerzas.find((item) => item.idfuerza === Number(key)); // Convertir clave a número
+                  setFieldValue('idfuerza', selectedFuerzas?.idfuerza || []); // Actualiza Formik
+                  setfuerza(selectedFuerzas); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={fuerzas}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idfuerza)}>{item.fuerza}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete
                 size="sm"
@@ -427,15 +469,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUCAR EL GRADO"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idgrado ? String(values.idgrado) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idgrado', ''); // Limpia el valor en Formik
+                    setGrados(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedGrado = grados.find((item) => item.idgrado === Number(key)); // Convertir clave a número
+                  setFieldValue('idgrado', selectedGrado?.idgrado || ''); // Actualiza Formik
+                  setGrados(selectedGrado); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={grados}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idgrado)}>{item.abregrado}</AutocompleteItem>}
               </Autocomplete>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
@@ -445,15 +492,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUSCAR EL ARMA"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idarma ? String(values.idarma) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idarma', ''); // Limpia el valor en Formik
+                    setArmas(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedArmas = armas.find((item) => item.idarma === Number(key)); // Convertir clave a número
+                  setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
+                  setArmas(selectedArmas); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={armas}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idarma)}>{item.abrearma}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete
                 size="sm"
@@ -461,15 +513,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUSCAR LA ESPECIALIDAD"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idespecialidad ? String(values.idespecialidad) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idespecialidad', ''); // Limpia el valor en Formik
+                    setEsp(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedEspecial = especial.find((item) => item.idespecialidad === Number(key)); // Convertir clave a número
+                  setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
+                  setEsp(selectedEspecial); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={especial}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idespecialidad)}>{item.especialidad}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete
                 isRequired
@@ -477,15 +534,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUSCAR EL ESTADO CIVIL"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idpuesto)} // Asegúrate de que es una cadena
+                selectedKey={values.idcv ? String(values.idcv) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedPuesto = cargos.find((item) => item.idpuesto === Number(key)); // Convertir clave a número
-                  setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
-                  setItem(selectedPuesto); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idcv', ''); // Limpia el valor en Formik
+                    setEsp(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedStatus = statuscv.find((item) => item.idcv === Number(key)); // Convertir clave a número
+                  setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
+                  setItem(selectedStatus); // Actualiza el estado local
                 }}
-                defaultItems={cargos}
+                defaultItems={statuscv}
               >
-                {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idcv)}>{item.name}</AutocompleteItem>}
               </Autocomplete>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
@@ -495,15 +557,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUSCAR EL GENERO"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idsexo ? String(values.idsexo) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idsexo', ''); // Limpia el valor en Formik
+                    setEsp(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedSexo = sexos.find((item) => item.idsexo === Number(key)); // Convertir clave a número
+                  setFieldValue('idsexo', selectedSexo?.idsexo || ''); // Actualiza Formik
+                  setItem(selectedSexo); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={sexos}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idsexo)}>{item.sexo}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete
                 size="sm"
@@ -511,15 +578,20 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="BUSCAR SITUACION"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idsituacion ? String(values.idsituacion) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
-                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                  setItem(selectedOrg); // Actualiza el estado local
+                  if (!key) {
+                    setFieldValue('idsituacion', ''); // Limpia el valor en Formik
+                    setEsp(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedSitua = situaciones.find((item) => item.idsituacion === Number(key)); // Convertir clave a número
+                  setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
+                  setItem(selectedSitua); // Actualiza el estado local
                 }}
-                defaultItems={organi}
+                defaultItems={situaciones}
               >
-                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+                {(item) => <AutocompleteItem key={String(item.idsituacion)}>{item.situacion}</AutocompleteItem>}
               </Autocomplete>
               </div>
               </ModalBody>

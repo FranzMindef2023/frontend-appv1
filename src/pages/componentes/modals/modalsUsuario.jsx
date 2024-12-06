@@ -46,6 +46,8 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     },
     enableReinitialize: true,
     onSubmit:async (values) =>{
+      console.log(values);
+      return true;
       try {
         if (initialData?.id) {
           // Si `initialData` tiene un `id`, es edición
@@ -280,9 +282,15 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="Buscar unidad orgnaizacional"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idorg)} // Asegúrate de que es una cadena
+                selectedKey={values.idorg ? String(values.idorg) : undefined} // Maneja valores vacíos correctamente
                 onSelectionChange={(key) => {
-                  const selectedOrg = organi.find((item) => item.idorg === Number(key)); // Convertir clave a número
+                  if (!key) {
+                    setFieldValue('idorg', ''); // Limpia el valor en Formik
+                    setItem(null); // Limpia el estado local
+                    return;
+                  }
+
+                  const selectedOrg = organi.find((item) => item.idorg === Number(key));
                   setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
                   setItem(selectedOrg); // Actualiza el estado local
                 }}
@@ -296,7 +304,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="Buscar puesto"
                 variant="bordered"
                 className="block w-full"
-                selectedKey={String(values.idpuesto)} // Asegúrate de que es una cadena
+                selectedKey={values.idpuesto ? String(values.idpuesto) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
                   const selectedPuesto = cargos.find((item) => item.idpuesto === Number(key)); // Convertir clave a número
                   setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
@@ -306,25 +314,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
               </Autocomplete>
-              {/* <Autocomplete 
-                size="sm" 
-                name="idpuesto"
-                allowsCustomValue
-                label="Buscar organigrama" 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onSelectionChange={handleSelectionpuetos}
-                isInvalid={!!errors.idpuesto && touched.idpuesto}
-                color={errors.idpuesto ? "danger" : "success"}
-                variant="bordered"
-                placeholder="Organigrama"
-                value={values.idpuesto}
-                errorMessage={errors.idpuesto}
-                className="block w-full"
-                defaultItems={cargos}
-              >
-                {(item) => <AutocompleteItem key={item.idpuesto}>{item.nompuesto}</AutocompleteItem>}
-              </Autocomplete> */}
               </div>
               </ModalBody>
               <ModalFooter>

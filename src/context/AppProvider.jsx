@@ -13,6 +13,8 @@ import { StatuscvProvider } from '@/context/EstadocvContext';
 import { FuerzasProvider } from '@/context/FuerzasContext';
 import { GenerosProvider } from '@/context/GenerosContext';
 import { GradosProvider } from '@/context/GradosContext';
+import { SituacionesProvider } from '@/context/SituacionesContext';
+import { ExpedidosProvider } from '@/context/ExpedicionesContext';
 
 const AppProvider = ({ children }) => (
   <AxiosProvider>
@@ -27,7 +29,11 @@ const AppProvider = ({ children }) => (
                     <FuerzasProvider>
                       <GenerosProvider>
                         <GradosProvider>
-                          {children}
+                          <SituacionesProvider>
+                            <ExpedidosProvider>
+                             {children}
+                            </ExpedidosProvider>
+                          </SituacionesProvider>
                         </GradosProvider>
                       </GenerosProvider>
                     </FuerzasProvider>

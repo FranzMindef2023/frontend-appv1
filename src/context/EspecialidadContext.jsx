@@ -16,6 +16,7 @@ export const EspecialidadProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchEspecialidades = async () => {
+        if(isInitializedEsp)return;
         setLoading(true);
         try {
             const response = await especialidadService.getEspecialidadess();

@@ -16,6 +16,7 @@ export const RolesProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchRols = async () => {
+        if(isInitialized)return;
         setLoading(true);
         try {
             const response = await rolesService.getRolss();

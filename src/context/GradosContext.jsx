@@ -16,6 +16,7 @@ export const GradosProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchGrados = async () => {
+        if(isInitializedGra)return;
         setLoading(true);
         try {
             const response = await gradosService.getGradoss();

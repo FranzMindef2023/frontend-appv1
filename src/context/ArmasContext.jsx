@@ -16,6 +16,7 @@ export const ArmasProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchArmas = async () => {
+        if(isInitializedArm)return;
         setLoading(true);
         try {
             const response = await armasService.getArmass();

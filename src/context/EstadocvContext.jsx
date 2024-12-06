@@ -16,6 +16,7 @@ export const StatuscvProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchStatuscv = async () => {
+        if(isInitializedCV) return;
         setLoading(true);
         try {
             const response = await estadocvService.getEstadocvs();

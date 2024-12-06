@@ -16,6 +16,7 @@ export const OrganigramaProvider = ({ children }) => {
 
     // Obtener todos los Organigrama
     const fetchOrganigrama = async () => {
+        if(isInitializedOrg)return;
         setLoading(true);
         try {
             const response = await organigramaService.getOrganigramas();

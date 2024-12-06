@@ -19,8 +19,8 @@ export function SignIn() {
   const [isVisible, setIsVisible] = useState(false);
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
     initialValues:{
-      email: '',
-      password: '',
+      email: 'juan.perez@example.com',
+      password: 'contraseñaSegura123',
     },
     onSubmit:async (values)=>{
       // e.preventDefault();

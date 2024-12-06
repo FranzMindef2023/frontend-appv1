@@ -16,6 +16,7 @@ export const FuerzasProvider = ({ children }) => {
 
     // Obtener todos los roles
     const fetchFuerzas = async () => {
+        if(isInitializedF)return;
         setLoading(true);
         try {
             const response = await fuerzasService.getFuerzass();

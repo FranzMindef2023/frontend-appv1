@@ -16,6 +16,7 @@ export const CargosProvider = ({ children }) => {
 
     // Obtener todos los Cargos
     const fetchCargos = async () => {
+        if(isInitializedCar)return;
         setLoading(true);
         try {
             const response = await cargosService.getCargos();
