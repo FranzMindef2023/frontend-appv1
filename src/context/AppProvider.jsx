@@ -15,6 +15,7 @@ import { GenerosProvider } from '@/context/GenerosContext';
 import { GradosProvider } from '@/context/GradosContext';
 import { SituacionesProvider } from '@/context/SituacionesContext';
 import { ExpedidosProvider } from '@/context/ExpedicionesContext';
+import { SelectsProvider } from '@/context/SelectsContext';
 
 const AppProvider = ({ children }) => (
   <AxiosProvider>
@@ -23,7 +24,10 @@ const AppProvider = ({ children }) => (
         <RolesProvider>
           <CargosProvider>
             <OrganigramaProvider>
-              <ArmasProvider>
+              <SelectsProvider>
+                {children}
+              </SelectsProvider>
+              {/* <ArmasProvider>
                 <EspecialidadProvider>
                   <StatuscvProvider>
                     <FuerzasProvider>
@@ -39,7 +43,7 @@ const AppProvider = ({ children }) => (
                     </FuerzasProvider>
                   </StatuscvProvider>
                 </EspecialidadProvider>
-              </ArmasProvider>
+              </ArmasProvider> */}
             </OrganigramaProvider>
           </CargosProvider>
         </RolesProvider>
