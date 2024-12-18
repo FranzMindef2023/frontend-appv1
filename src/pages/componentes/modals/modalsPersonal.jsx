@@ -91,6 +91,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       status:'',
       idsituacion:[],
       idexpedicion:[],
+      pruebas:[],
       ...initialData,
     },
     enableReinitialize: true,
