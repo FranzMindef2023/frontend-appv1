@@ -3,6 +3,8 @@ import api from '@/api/axios';
 
 // Crear un nuevo usuario
 export const createUser = (user) => api.post('/usuarios', user);
+// asignar roles
+export const createUserRols = (user) => api.post('/roldeusuario', user);
 
 // Obtener todos los usuarios
 export const getUsers = () => api.get('/usuarios');
@@ -18,4 +20,4 @@ export const deleteUser = (id) => api.delete(`/usuarios/${id}`);
 // Roles asignados
 const getrolesasig = (id) => api.get(`/showroluser/${id}`);
 
-export default { createUser, getUsers, getUserById, updateUser, deleteUser,getrolesasig };
+export default { createUser, getUsers, getUserById, updateUser, deleteUser,getrolesasig, createUserRols};

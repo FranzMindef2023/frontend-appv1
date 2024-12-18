@@ -6,9 +6,9 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData  }) => {
   const { createRols,updateRolsData } = useRols();
   // Verificar que `initialData` se recibe correctamente
-  // useEffect(() => {
-  //   console.log("Initial data received:", initialData);
-  // }, [initialData]);
+  useEffect(() => {
+    console.log("Initial data received:", initialData);
+  }, [initialData]);
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm, }= useFormik({
     initialValues:{
       rol: '',

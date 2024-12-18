@@ -76,8 +76,10 @@ export function Profile() {
 
   const openModalP = async (accion, datauser = null) => {
       try {
+        // console.log(datauser);
           const roles = await asignaciones(datauser); // Espera los datos de asignaciones
           setSelectedRols(roles);
+          setSelectedUser(datauser);
           // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
           setModalOpenP(true); // Abrir el modal después de obtener los datos
       } catch (error) {
@@ -460,6 +462,7 @@ export function Profile() {
               ]}
               onAction={handleActionP}
               initialData={selectedRols} // Pasar los datos iniciales
+              initialDataUser={selectedUser}
               actionLabel="REGISTRAR"
               closeLabel="CANCELAR"
             />

@@ -67,29 +67,30 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
-      nombres: '',
-      appaterno: '',
-      apmaterno: '',
-      email: '',
-      complemento: '',
-      codper: '',
+      nombres:'',
+      appaterno:'',
+      apmaterno:'',
       ci:'',
-      carnetmil:'',
-      carnetseg:'',
+      complemento:'',
+      codper:'',
+      email:'',
       celular:'',
       fechnacimeinto:'',
+      fechaegreso:'',
       gsanguineo:'',
+      carnetmil:'',
+      carnetseg:'',
       tipoper:'',
       estserv:'',
-      status:true,
       idfuerza:[],
       idespecialidad:[],
       idgrado:[],
       idsexo:[],
       idarma:[],
       idcv:[],
-      idexpedicion:[],
+      status:'',
       idsituacion:[],
+      idexpedicion:[],
       ...initialData,
     },
     enableReinitialize: true,
@@ -146,7 +147,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       .min(1, 'Selecciona una opción válida'),
       idsexo: Yup.number()
       .required('Debes seleccionar el genero') // Mensaje de error
-      .typeError('El valor debe ser un número válido') // Por si llega un string o undefined    idsituacion
+      .typeError('El valor debe ser un número válido') // Por si llega un string o undefined    
       .min(1, 'Selecciona una opción válida'),
       idsituacion: Yup.number()
       .required('Debes seleccionar la situación') // Mensaje de error

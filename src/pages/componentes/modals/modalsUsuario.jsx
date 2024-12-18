@@ -46,8 +46,8 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     },
     enableReinitialize: true,
     onSubmit:async (values) =>{
-      console.log(values);
-      return true;
+      // console.log(values);
+      // return true;
       try {
         if (initialData?.id) {
           // Si `initialData` tiene un `id`, es edición
