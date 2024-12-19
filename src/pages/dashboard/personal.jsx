@@ -26,19 +26,18 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-import { useUsers } from "@/context/UserContext";
+import { usePersonas } from "@/context/PersonasContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, statusOptions} from "@/data/dataUsers";
+import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 
-import CustomModalPrivilegios from '@/pages/componentes/modals/modalPrivilegios';
 
 
 
@@ -49,21 +48,21 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","puesto", "sigla","lastlogin","estado", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
 export function Personal() {
-  const { users,user, isInitialized, fetchUsers, loading, asignaciones } = useUsers();
+  const { users, isInitializedPer, fetchPersonas, loadingPer } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedRols, setSelectedRols] = useState(null);
   useEffect(() => {
-    if (!isInitialized) {
-      fetchUsers();
+    if (!isInitializedPer) {
+      fetchPersonas();
         console.log('desde el componete roles');
         console.log(users);
     }
-}, [isInitialized]);
+}, [isInitializedPer]);
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -74,24 +73,7 @@ export function Personal() {
     setModalOpen(false);
   };
 
-  const openModalP = async (accion, datauser = null) => {
-      try {
-          const roles = await asignaciones(datauser); // Espera los datos de asignaciones
-          setSelectedRols(roles);
-          // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
-          setModalOpenP(true); // Abrir el modal después de obtener los datos
-      } catch (error) {
-          console.error("Error fetching roles:", error);
-      }
-  };
-  
-  const closeModalP = () => {
-    setModalOpenP(false);
-  };
-  const handleActionP = () => {
-    alert("Action executed!");
-    closeModalP(); // Cierra el modal después de la acción
-  };
+
   const handleAction = () => {
     alert("Action executed!");
     closeModal(); // Cierra el modal después de la acción
@@ -194,34 +176,6 @@ export function Personal() {
                 <EditIcon />
               </span>
             </Button>
-            {/* <Tooltip color="danger" content="Eliminar" size="lg">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip> */}
-            <Button isIconOnly color="primary" size="sm" aria-label="Like">
-              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-              
-            </Button>
-            {/* <Button content="Editar" size="sm">
-              <span onClick={() => openModal("edit", user)} className="text-lg text-warning cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Button> */}
-            {/* <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown> */}
           </div>
         );
       default:
@@ -449,20 +403,6 @@ export function Personal() {
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
           />
-          <CustomModalPrivilegios
-              isOpen={isModalOpenP}
-              onClose={closeModalP}
-              title="REGISTRO DE NUEVO ROL"
-              bodyContent={[
-                "This is the first paragraph.",
-                "This is the second paragraph.",
-                "This is the third paragraph."
-              ]}
-              onAction={handleActionP}
-              initialData={selectedRols} // Pasar los datos iniciales
-              actionLabel="REGISTRAR"
-              closeLabel="CANCELAR"
-            />
         </CardBody>
       </Card>
     </div>

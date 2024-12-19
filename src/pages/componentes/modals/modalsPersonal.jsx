@@ -6,21 +6,13 @@ import {EyeSlashFilledIcon} from "@/pages/componentes/modals/password/EyeSlashFi
 import {CalendarDate} from "@internationalized/date";
 import { useFormik } from "formik";
 import { useUsers } from "@/context/UserContext";
-import { useOrganigrama } from "@/context/OrganigramaContext";
-import { useCargo } from "@/context/GargosContext";
-/*import de selects*/
 import { useselects } from "@/context/SelectsContext";
-// import { useArmas } from "@/context/ArmasContext";
-// import { useEspecial } from "@/context/EspecialidadContext";
-// import { useEstadocv } from "@/context/EstadocvContext";
-// import { useFuerzas } from "@/context/FuerzasContext";
-// import { useGeneros } from "@/context/GenerosContext";
-// import { useGrados } from "@/context/GradosContext";
-// import { useSitua } from "@/context/SituacionesContext";
-// import { useExpedido } from "@/context/ExpedicionesContext";
+import { usePersonas } from "@/context/PersonasContext";
+
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const { createUser,loading , updateUser } = useUsers();
+  const { createPersona,loadingPer , updatePersona } = usePersonas();
   const [selectedItem, setSelectedItem] = useState([]);
   const [Item, setItem] = useState([]);
   const [ItemFuerzas, setfuerza] = useState([]);
@@ -31,78 +23,74 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
   const [ItemSituad, setSituad] = useState([]);
   const [ItemExped, setExped] = useState([]);
   const [ItemStatuscv, setStatuscv] = useState([]);
-  const { organi,fetchOrganigrama, isInitializedOrg} = useOrganigrama();
-  const { cargos,fetchCargos, isInitializedCar } = useCargo();
 
   const { selects,fetchSelects, isInitializedSelect} = useselects();
 
-  // const { armas,fetchArmas, isInitializedArm} = useArmas();
-  // const { especial,fetchEspecialidades, isInitializedEsp} = useEspecial();
-  // const { statuscv,fetchStatuscv, isInitializedCV} = useEstadocv();
-  // const { fuerzas,fetchFuerzas, isInitializedF} = useFuerzas();
-  // const { sexos,fetchSexos, isInitializedGen} = useGeneros();
-  // const { grados,fetchGrados, isInitializedGra} = useGrados();
-  // const { situaciones,fetchSituacion, isInitializedSitua} = useSitua();
-  // const { expedidos,fetchExpedidos, isInitializedExp} = useExpedido();
 
-
+  const handleDateInput = (e, setFieldValue) => {
+    let value = e.target.value.replace(/\D/g, ""); // Elimina todo lo que no sea número
+    if (value.length >= 2) {
+      value = value.slice(0, 2) + "-" + value.slice(2);
+    }
+    if (value.length >= 5) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    }
+    setFieldValue("fechnacimeinto", value);
+  };
+  const handleDateInputEgreso = (e, setFieldValue) => {
+    let value = e.target.value.replace(/\D/g, ""); // Elimina todo lo que no sea número
+    if (value.length >= 2) {
+      value = value.slice(0, 2) + "-" + value.slice(2);
+    }
+    if (value.length >= 5) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    }
+    setFieldValue("fechaegreso", value);
+  };
 
 
   useEffect(() => {
     
     if (!isInitializedSelect) fetchSelects();
-    // console.log(selects);
-    // if (!isInitializedOrg) fetchOrganigrama();
-    // if (!isInitializedCar) fetchCargos();
-    // if (!isInitializedArm) fetchArmas();
-    // if (!isInitializedEsp) fetchEspecialidades();
-    // if (!isInitializedCV) fetchStatuscv();
-    // if (!isInitializedF) fetchFuerzas();
-    // if (!isInitializedGen) fetchSexos();
-    // if (!isInitializedGra) fetchGrados();
-    // if (!isInitializedSitua) fetchSituacion();
-    // if (!isInitializedExp) fetchExpedidos();
   },[fetchSelects]);
-  // const [value, setValue] = React.useState("");
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
-    initialValues:{
-      nombres:'',
-      appaterno:'',
-      apmaterno:'',
-      ci:'',
-      complemento:'',
-      codper:'',
-      email:'',
-      celular:'',
-      fechnacimeinto:'',
-      fechaegreso:'',
-      gsanguineo:'',
-      carnetmil:'',
-      carnetseg:'',
-      tipoper:'',
-      estserv:'',
+    initialValues: {
+      nombres: '',
+      appaterno: '',
+      apmaterno: '',
+      ci: '',
+      complemento: '',
+      codper: '',
+      email: '',
+      celular: '',
+      fechnacimeinto: '',
+      fechaegreso: '',
+      gsanguineo: '',
+      carnetmil: '',
+      carnetseg: '',
+      nuacua: '',
+      tipoper: 'M',
+      estserv: '',
       idfuerza:[],
-      idespecialidad:[],
-      idgrado:[],
-      idsexo:[],
-      idarma:[],
+      idespecialidad: [],
+      idgrado: [],
+      idsexo: [],
+      idarma: [],
       idcv:[],
-      status:'',
-      idsituacion:[],
-      idexpedicion:[],
-      pruebas:[],
-      ...initialData,
+      status: true,
+      idsituacion: [],
+      idexpedicion: [],
+      ...initialData, // Sobrescribe los valores con `initialData` si está presente
     },
     enableReinitialize: true,
     onSubmit:async (values) =>{
-      console.log(values);
       try {
         if (initialData?.id) {
           // Si `initialData` tiene un `id`, es edición
-          await updateUser(values); // Asume que tienes esta función
+          await updatePersona(values); // Asume que tienes esta función
         } else {
-          await createUser(values);
+          await createPersona(values);
         }
         resetForm();
         onClose();
@@ -116,24 +104,17 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       appaterno:Yup.string().max(30,'Debe tenere maximo 30 caracteres').min(3,'Debe tener como minimo 3 caracteres'),
       apmaterno: Yup.string().max(30,'Debe tenere maximo 30 caracteres'),
       email: Yup.string().email('El correo no tiene un formato corecto').required('El email es requerido'),
-      usuario: Yup.string().min(3,'Debe tener minimo 3 caracteres').max(10,'Debe tener maximo 10 caracteres').required('Campo requerido'),
-      password: Yup.string().nullable()
-      .min(5, 'La contraseña debe tener al menos 5 caracteres')
-      .max(15, 'La contraseña no debe exceder los 15 caracteres')
-      .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
-      .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
-      .matches(/\d/, 'La contraseña debe contener al menos un número')
-      .matches(/[@$!%*?&#]/, 'La contraseña debe contener al menos un carácter especial (@$!%*?&#)'),
-      ci:Yup.number().
-      min(6000000,'La cédula debe tener minimo 6 caracteres').
-      max(10000000000,'La cédula debe tener maximo 10 caracteres')
-      .required('La cédula de identidad es requerida'),
+      ci: Yup.string()
+    .matches(/^\d+$/, 'La cédula debe contener solo números') // Permitir solo dígitos
+    .min(6, 'La cédula debe tener mínimo 6 caracteres') // Longitud mínima
+    .max(10, 'La cédula debe tener máximo 10 caracteres') // Longitud máxima
+    .required('La cédula de identidad es requerida'),
       celular:Yup.string()
       .matches(/^[0-9]{8,15}$/, 'El número de celular debe tener entre 8 y 15 dígitos')
       .nullable(),
-      // idorg: Yup.number()
-      // .required('Es necesario seleccionar una unidad organizacional.'), 
-      grado :Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
+      idgrado: Yup.number()
+      .required('Es necesario seleccionar una unidad organizacional.'), 
+      // grado :Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
       idexpedicion: Yup.number()
       .required('Debes seleccionar una expedición') // Mensaje de error
       .typeError('El valor debe ser un número válido') // Por si llega un string o undefined 
@@ -154,64 +135,111 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       .required('Debes seleccionar la situación') // Mensaje de error
       .typeError('El valor debe ser un número válido') // Por si llega un string o undefined    
       .min(1, 'Selecciona una opción válida'),
+      fechnacimeinto: Yup.string()
+      .matches(
+        /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$/, // Cambiado para soportar DD-MM-YYYY
+        "El formato debe ser DD-MM-YYYY"
+      )
+      .test("is-valid-date", "Fecha inválida", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number); // Divide por '-' en lugar de '/'
+        const date = new Date(year, month - 1, day);
+        return (
+          date.getFullYear() === year &&
+          date.getMonth() === month - 1 &&
+          date.getDate() === day
+        );
+      })
+      .test("not-future-date", "La fecha no puede ser futura", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        return date <= new Date(); // La fecha ingresada debe ser menor o igual a hoy
+      })
+      .required("La fecha de nacimiento es obligatoria"),
+      fechaegreso:Yup.string()
+      .matches(
+        /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$/, // Cambiado para soportar DD-MM-YYYY
+        "El formato debe ser DD-MM-YYYY"
+      )
+      .test("is-valid-date", "Fecha inválida", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number); // Divide por '-' en lugar de '/'
+        const date = new Date(year, month - 1, day);
+        return (
+          date.getFullYear() === year &&
+          date.getMonth() === month - 1 &&
+          date.getDate() === day
+        );
+      })
+      .test("not-future-date", "La fecha no puede ser futura", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        return date <= new Date(); // La fecha ingresada debe ser menor o igual a hoy
+      })
+      .required("La fecha de nacimiento es obligatoria"),
+      carnetmil: Yup.string()
+      .matches(/^[a-zA-Z0-9]*$/, "El carnet militar debe contener solo letras y números")
+      .notRequired(), // No es obligatorio
+      carnetseg: Yup.string()
+        .matches(/^[a-zA-Z0-9]*$/, "El carnet de seguro debe contener solo letras y números")
+        .notRequired(), // No es obligatorio
+      codper: Yup.string()
+        .matches(/^\d{8}$/, "El código personal debe tener el formato 00002323 (8 dígitos exactos)")
+        .required("El código personal es obligatorio"), // Es obligatorio
+      gsanguineo: Yup.string()
+      .matches(
+        /^(A|B|AB|O)RH[+-]$/,
+        "El grupo sanguíneo debe ser un valor válido como ARH+, ORH-, etc."
+      )
+      .required("El grupo sanguineo es obligatorio"), // Es obligatorio
     })
   });
   useEffect(() => {
-    if (initialData?.idorg) {
-      const selectedOrg = organi.find((item) => item.idorg === Number(initialData.idorg)); // Forzar a tipo número
-      setSelectedItem(selectedOrg);
-      setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+    if (initialData?.idfuerza) {
+      const slectedFuerza = selects.fuerzas.data.find((item) => item.idfuerza === Number(initialData.idfuerza)); // Forzar a tipo número
+      setfuerza(slectedFuerza);
+      setFieldValue('idfuerza', slectedFuerza?.idfuerza || ''); // Actualiza Formik
     }
-  
-    if (initialData?.idpuesto) {
-      const selectedPuesto = cargos.find((item) => item.idpuesto === Number(initialData.idpuesto)); // Forzar a tipo número
-      setItem(selectedPuesto);
-      setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
+    if (initialData?.idgrado) {
+      const selectedGrados = selects.grados.data.find((item) => item.idgrado === Number(initialData.idgrado)); // Forzar a tipo número
+      setGrados(selectedGrados);
+      setFieldValue('idgrado', selectedGrados?.idgrado || ''); // Actualiza Formik
     }
-    // if (initialData?.idfuerza) {
-    //   const selectedFuerzas = fuerzas.find((item) => item.idfuerza === Number(initialData.idfuerza)); // Forzar a tipo número
-    //   setfuerza(selectedFuerzas);
-    //   setFieldValue('idfuerza', selectedFuerzas?.idfuerza || ''); // Actualiza Formik
-    // }
-    // if (initialData?.idgrado) {
-    //   const selectedGrados = grados.find((item) => item.idgrado === Number(initialData.idgrado)); // Forzar a tipo número
-    //   setGrados(selectedGrados);
-    //   setFieldValue('idgrado', selectedGrados?.idgrado || ''); // Actualiza Formik
-    // }
-    // if (initialData?.idarma) {
-    //   const selectedArmas = armas.find((item) => item.idarma === Number(initialData.idarma)); // Forzar a tipo número
-    //   setArmas(selectedArmas);
-    //   setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
-    // }
+    if (initialData?.idarma) {
+      const selectedArmas = selects.armas.data.find((item) => item.idarma === Number(initialData.idarma)); // Forzar a tipo número
+      setArmas(selectedArmas);
+      setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
+    }
 
-    // if (initialData?.idespecialidad) {
-    //   const selectedEspecial = especial.find((item) => item.idespecialidad === Number(initialData.idespecialidad)); // Forzar a tipo número
-    //   setEsp(selectedEspecial);
-    //   setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
-    // }
+    if (initialData?.idespecialidad) {
+      const selectedEspecial = selects.especialidades.data.find((item) => item.idespecialidad === Number(initialData.idespecialidad)); // Forzar a tipo número
+      setEsp(selectedEspecial);
+      setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
+    }
 
-    // if (initialData?.idcv) {
-    //   const selectedStatus = statuscv.find((item) => item.idcv === Number(initialData.idcv)); // Forzar a tipo número
-    //   setStatuscv(selectedStatus);
-    //   setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
-    // }
-    // if (initialData?.idsexo) {
-    //   const selectedsetSexo = sexos.find((item) => item.idsexo === Number(initialData.idsexo)); // Forzar a tipo número
-    //   setSexo(selectedsetSexo);
-    //   setFieldValue('idsexo', selectedsetSexo?.idsexo || ''); // Actualiza Formik
-    // }
-    // if (initialData?.idsituacion) {
-    //   const selectedSitua = situaciones.find((item) => item.idsituacion === Number(initialData.idsituacion)); // Forzar a tipo número
-    //   setSituad(selectedSitua);
-    //   setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
-    // }
-    // if (initialData?.idexpedicion) {
-    //   const selectedExped = expedidos.find((item) => item.idexpedicion === Number(initialData.idexpedicion)); // Forzar a tipo número
-    //   setExped(selectedExped);
-    //   setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
-    // }
-    // fuerzas, grados,especial,sexos,situaciones,expedidos,
-  }, [initialData, organi, cargos, setFieldValue]);
+    if (initialData?.idcv) {
+      const selectedStatus = selects.estadocv.data.find((item) => item.idcv === Number(initialData.idcv)); // Forzar a tipo número
+      setStatuscv(selectedStatus);
+      setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
+    }
+    if (initialData?.idsexo) {
+      const selectedsetSexo = selects.sexos.data.find((item) => item.idsexo === Number(initialData.idsexo)); // Forzar a tipo número
+      setSexo(selectedsetSexo);
+      setFieldValue('idsexo', selectedsetSexo?.idsexo || ''); // Actualiza Formik
+    }
+    if (initialData?.idsituacion) {
+      const selectedSitua = selects.situaciones.data.find((item) => item.idsituacion === Number(initialData.idsituacion)); // Forzar a tipo número
+      setSituad(selectedSitua);
+      setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
+    }
+    if (initialData?.idexpedicion) {
+      const selectedExped = selects.expediciones.data.find((item) => item.idexpedicion === Number(initialData.idexpedicion)); // Forzar a tipo número
+      setExped(selectedExped);
+      setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
+    }
+  }, [initialData,selects,  setFieldValue]);
  
 
 
@@ -282,7 +310,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 type="text" 
                 isRequired
                 name="ci"
-                label="NRO DE CEDUAL DE IDENTIDAD" 
+                label="CEDUAL DE IDENTIDAD" 
                 variant="bordered"
                 placeholder="Ingrese número de ci"
                 
@@ -296,17 +324,17 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 />
                 <Input 
                 size="sm" 
-                type="number" 
+                type="text" 
                 label="COMPLEMENTO" 
-                name="celular"
+                name="complemento"
                 placeholder="Ingrese el complemento" 
                 variant="bordered"
-                value={values.celular}
-                isInvalid={!!errors.celular && touched.celular}
+                value={values.complemento}
+                isInvalid={!!errors.complemento && touched.complemento}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                color={errors.celular ? "danger" : "success"}
-                errorMessage={errors.celular}
+                color={errors.complemento ? "danger" : "success"}
+                errorMessage={errors.complemento}
                 className="block w-full"
                 />
               </div>
@@ -319,7 +347,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   label="FECHA DE NACIMIENTO"
                   variant="bordered"
                   isInvalid={!!errors.fechnacimeinto && touched.fechnacimeinto}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => handleDateInput(e, setFieldValue)}
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="fechnacimeinto"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.fechnacimeinto}  // El valor actual del campo en el formulario
@@ -329,47 +357,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   className="block w-full"
                   placeholderValue={new CalendarDate(1995, 11, 6)}
                 />
-                <DateInput
-                  className="block w-full"
-                  variant="bordered"
-                  size="sm"
-                  label="FECHA DE NACIMIENTO"
-                  name="fechnacimeinto"
-                  placeholderValue={new CalendarDate(1995, 11, 6)}
-                />
-                {/* <DateInput
-                size="sm"
-                isRequired={true}
-                type="text"
-                variant="bordered"
-                isInvalid={!!errors.fechnacimeinto && touched.fechnacimeinto}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                name="fechnacimeinto"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                value={values.fechnacimeinto}  // El valor actual del campo en el formulario
-                color={errors.fechnacimeinto ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.fechnacimeinto}  // Mostrar el mensaje de error desde Formik
-                className="block w-full"
-                label={"Birth date"}
-                placeholderValue={new CalendarDate(1995, 11, 6)}
-                /> */}
-                {/* <Autocomplete
-                size="sm"
-                isRequired
-                label="Buscar unidad Expedicion"
-                variant="bordered"
-                className="block w-full"
-                selectedKey={values.idexpedicion ? String(values.idexpedicion) : undefined} // Asegúrate de que es una cadena
-                onSelectionChange={(key) => {
-                  const selectedExped = selects.expediciones.data.find((item) => item.idexpedicion === Number(key)); // Convertir clave a número
-                  setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
-                  setExped(selectedExped); // Actualiza el estado local
-                }}
-                defaultItems={selects.expediciones.data}
-              >
-                {(item) => <AutocompleteItem key={String(item.idexpedicion)}>{item.Departamento}</AutocompleteItem>}
-              </Autocomplete> */}
-              <Select
+              {/* <Select
                 isRequired
                 className="block w-full"
                 size="sm"
@@ -379,7 +367,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 isInvalid={!!errors.idexpedicion && touched.idexpedicion}  // Mostrar error si hay error y el campo ha sido tocado
                 onChange={handleChange}  // Manejar el cambio con Formik
                 onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idexpedicion}  // El valor actual del campo en el formulario
+                value={values.idexpedicion || ""}  // El valor actual del campo en el formulario
                 placeholder="Seleccione la expedición"
                 color={errors.idexpedicion ? "danger" : "success"}  // Cambiar color según el error
                 errorMessage={errors.idexpedicion}  // Mostrar el mensaje de error desde Formi
@@ -387,141 +375,178 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 {selects.expediciones.data.map((item) => (
                   <SelectItem key={item.idexpedicion}>{item.Departamento}</SelectItem>
                 ))}
-              </Select>
+              </Select> */}
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="BUCAR EL GRADO"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={values.idexpedicion ? String(values.idexpedicion) : undefined} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  if (!key) {
+                    setFieldValue('idexpedicion', ''); // Limpia el valor en Formik
+                    setExped(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedExped = selects.expediciones.data.find((item) => item.idexpedicion === Number(key)); // Convertir clave a número
+                  setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
+                  setExped(selectedExped); // Actualiza el estado local
+                }}
+                defaultItems={selects.expediciones.data}
+              >
+                {(item) => <AutocompleteItem key={String(item.idexpedicion)}>{item.Departamento}</AutocompleteItem>}
+              </Autocomplete>
               <Input 
               size="sm" 
-              type="number" 
+              type="text" 
               label="Carnet Mil." 
-              name="celular"
+              name="carnetmil"
               placeholder="Ingrese el n° de Carnet Mil." 
               variant="bordered"
-              value={values.celular}
-              isInvalid={!!errors.celular && touched.celular}
+              value={values.carnetmil}
+              isInvalid={!!errors.carnetmil && touched.carnetmil}
               onChange={handleChange}
               onBlur={handleBlur}
-              color={errors.celular ? "danger" : "success"}
-              errorMessage={errors.celular}
+              color={errors.carnetmil ? "danger" : "success"}
+              errorMessage={errors.carnetmil}
               className="block w-full"
               />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
               <Input 
                 size="sm" 
-                type="number" 
+                type="text" 
                 label="Cod. Persona" 
-                name="celular"
+                name="codper"
                 placeholder="Ingrese el Cod. Persona" 
                 variant="bordered"
-                value={values.celular}
-                isInvalid={!!errors.celular && touched.celular}
+                value={values.codper}
+                isInvalid={!!errors.codper && touched.codper}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                color={errors.celular ? "danger" : "success"}
-                errorMessage={errors.celular}
+                color={errors.codper ? "danger" : "success"}
+                errorMessage={errors.codper}
                 className="block w-full"
                 />
                 <Input 
                 isRequired
                 size="sm" 
-                value={values.email}
-                name="email"
-                type="email" 
+                value={values.carnetseg}
+                name="carnetseg"
                 label="Carnet de Seguro" 
                 placeholder="Enter your Carnet de Seguro" 
                 variant="bordered"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={!!errors.email && touched.email}
-                color={errors.email ? "danger" : "success"}
-                errorMessage={errors.email}
+                isInvalid={!!errors.carnetseg && touched.carnetseg}
+                color={errors.carnetseg ? "danger" : "success"}
+                errorMessage={errors.carnetseg}
                 className="block w-full "/>
                 <Input 
                 isRequired
                 size="sm" 
-                value={values.email}
-                name="email"
-                type="email" 
+                value={values.nuacua}
+                name="nuacua"
                 label="NUA/CUA" 
                 placeholder="Enter your Carnet de Seguro" 
                 variant="bordered"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                isInvalid={!!errors.email && touched.email}
-                color={errors.email ? "danger" : "success"}
-                errorMessage={errors.email}
+                isInvalid={!!errors.nuacua && touched.nuacua}
+                color={errors.nuacua ? "danger" : "success"}
+                errorMessage={errors.nuacua}
                 className="block w-full "/>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                type="number" 
-                label="Celular" 
-                name="celular"
-                placeholder="Ingrese el n° de celular" 
-                variant="bordered"
-                value={values.celular}
-                isInvalid={!!errors.celular && touched.celular}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                color={errors.celular ? "danger" : "success"}
-                errorMessage={errors.celular}
-                className="block w-full"
-                />
-              <Input 
-                isRequired
-                size="sm" 
-                value={values.email}
-                name="email"
-                type="email" 
-                label="Email" 
-                placeholder="Enter your email" 
-                variant="bordered"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isInvalid={!!errors.email && touched.email}
-                color={errors.email ? "danger" : "success"}
-                errorMessage={errors.email}
-                className="block w-full "/>
+                <Input 
+                  size="sm" 
+                  type="text" 
+                  label="Celular" 
+                  name="celular"
+                  placeholder="Ingrese el n° de celular" 
+                  variant="bordered"
+                  value={values.celular}
+                  isInvalid={!!errors.celular && touched.celular}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  color={errors.celular ? "danger" : "success"}
+                  errorMessage={errors.celular}
+                  className="block w-full"
+                  />
+                <Input 
+                  isRequired
+                  size="sm" 
+                  value={values.email}
+                  name="email"
+                  type="email" 
+                  label="Email" 
+                  placeholder="Enter your email" 
+                  variant="bordered"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={!!errors.email && touched.email}
+                  color={errors.email ? "danger" : "success"}
+                  errorMessage={errors.email}
+                  className="block w-full "/>
                 
                 <Input
                   size="sm"
                   isRequired={true}
-                  type="text"
                   label="TIPO DE SANGRE"
                   variant="bordered"
-                  isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
+                  isInvalid={!!errors.gsanguineo && touched.gsanguineo}  // Mostrar error si hay error y el campo ha sido tocado
                   onChange={handleChange}  // Manejar el cambio con Formik
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                  name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                  value={values.grado}  // El valor actual del campo en el formulario
-                  placeholder="Ingrese el grado de forma Abreviada"
-                  color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
-                  errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
+                  name="gsanguineo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                  value={values.gsanguineo}  // El valor actual del campo en el formulario
+                  placeholder="Ingrese el gsanguineo de forma Abreviada"
+                  color={errors.gsanguineo ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.gsanguineo}  // Mostrar el mensaje de error desde Formik
                   className="block w-full"
                 />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input
+                <Input
+                  size="sm"
+                  isRequired={true}
+                  label="FECHA DE ALTA"
+                  variant="bordered"
+                  isInvalid={!!errors.fechaegreso && touched.fechaegreso}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={(e) => handleDateInputEgreso(e, setFieldValue)}
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  name="fechaegreso"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                  value={values.fechaegreso}  // El valor actual del campo en el formulario
+                  placeholder="Ingrese el fechaegreso de forma Abreviada"
+                  color={errors.fechaegreso ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.fechaegreso}  // Mostrar el mensaje de error desde Formik
+                  className="block w-full"
+                />
+                {/* <Select
+                  isRequired
+                  className="block w-full"
+                  size="sm"
+                  name="idfuerza"
+                  variant="bordered"
+                  label="SELECCIONAR FUERZA"
+                  isInvalid={!!errors.idfuerza && touched.idfuerza}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.idfuerza || ''} // Convierte a cadena para evitar inconsistencias
+                  placeholder="Seleccione la fuerza"
+                  color={errors.idfuerza ? "danger" : "success"}
+                  errorMessage={errors.idfuerza}
+              >
+                  {selects.fuerzas.data.map((item) => (
+                      <SelectItem key={String(item.idfuerza)} value={String(item.idfuerza)}>
+                          {item.fuerza}
+                      </SelectItem>
+                  ))}
+              </Select> */}
+              <Autocomplete
                 size="sm"
-                isRequired={true}
-                type="text"
-                label="FECHA DE ALTA"
-                variant="bordered"
-                isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                value={values.grado}  // El valor actual del campo en el formulario
-                placeholder="Ingrese el grado de forma Abreviada"
-                color={errors.grado ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.grado}  // Mostrar el mensaje de error desde Formik
-                className="block w-full"
-              />
-              {/* <Autocomplete
-                size="sm"
-                allowsCustomValue
                 isRequired
-                label="BUCAR LA FUERZA"
+                label="ELECCIONAR FUERZA"
                 variant="bordered"
                 className="block w-full"
                 selectedKey={values.idfuerza ? String(values.idfuerza) : undefined} // Asegúrate de que es una cadena
@@ -531,33 +556,14 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                     setfuerza(null); // Limpia el estado local
                     return;
                   }
-                  const selectedFuerzas = selects.fuerzas.data.find((item) => item.idfuerza === Number(key)); // Convertir clave a número
-                  setFieldValue('idfuerza', selectedFuerzas?.idfuerza || []); // Actualiza Formik
-                  setfuerza(selectedFuerzas); // Actualiza el estado local
+                  const selectedExped = selects.fuerzas.data.find((item) => item.idfuerza === Number(key)); // Convertir clave a número
+                  setFieldValue('idfuerza', selectedExped?.idfuerza || ''); // Actualiza Formik
+                  setfuerza(selectedExped); // Actualiza el estado local
                 }}
                 defaultItems={selects.fuerzas.data}
               >
                 {(item) => <AutocompleteItem key={String(item.idfuerza)}>{item.fuerza}</AutocompleteItem>}
-              </Autocomplete> */}
-              <Select
-                isRequired
-                className="block w-full"
-                size="sm"
-                name="idfuerza"
-                variant="bordered"
-                label="SELECIONAR FUERZA"
-                isInvalid={!!errors.idfuerza && touched.idfuerza}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idfuerza}  // El valor actual del campo en el formulario
-                placeholder="Seleccione la fuerza"
-                color={errors.idfuerza ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.idfuerza}  // Mostrar el mensaje de error desde Formi
-              >
-                {selects.fuerzas.data.map((item) => (
-                  <SelectItem key={item.idfuerza}>{item.fuerza}</SelectItem>
-                ))}
-              </Select>
+              </Autocomplete>
               <Autocomplete
                 size="sm"
                 isRequired
@@ -581,25 +587,25 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               </Autocomplete>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Autocomplete
-                size="sm"
-                isRequired
-                label="BUSCAR EL ARMA"
-                variant="bordered"
-                className="block w-full"
-                selectedKey={values.idarma ? String(values.idarma) : undefined} // Asegúrate de que es una cadena
-                onSelectionChange={(key) => {
-                  if (!key) {
-                    setFieldValue('idarma', ''); // Limpia el valor en Formik
-                    setArmas(null); // Limpia el estado local
-                    return;
-                  }
-                  const selectedArmas = selects.armas.data.find((item) => item.idarma === Number(key)); // Convertir clave a número
-                  setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
-                  setArmas(selectedArmas); // Actualiza el estado local
-                }}
-                defaultItems={selects.armas.data}
-              >
+                <Autocomplete
+                  size="sm"
+                  isRequired
+                  label="BUSCAR EL ARMA"
+                  variant="bordered"
+                  className="block w-full"
+                  selectedKey={values.idarma ? String(values.idarma) : undefined} // Asegúrate de que es una cadena
+                  onSelectionChange={(key) => {
+                    if (!key) {
+                      setFieldValue('idarma', ''); // Limpia el valor en Formik
+                      setArmas(null); // Limpia el estado local
+                      return;
+                    }
+                    const selectedArmas = selects.armas.data.find((item) => item.idarma === Number(key)); // Convertir clave a número
+                    setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
+                    setArmas(selectedArmas); // Actualiza el estado local
+                  }}
+                  defaultItems={selects.armas.data}
+                >
                 {(item) => <AutocompleteItem key={String(item.idarma)}>{item.abrearma}</AutocompleteItem>}
               </Autocomplete>
               <Autocomplete
@@ -623,128 +629,130 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idespecialidad)}>{item.especialidad}</AutocompleteItem>}
               </Autocomplete>
-              {/* <Autocomplete
+              {/* <Select
                 isRequired
+                className="block w-full"
                 size="sm"
-                label="BUSCAR EL ESTADO CIVIL"
+                name="idcv"
+                variant="bordered"
+                label="SELECCIONAR ESTADO CIVIL"
+                isInvalid={!!errors.idcv && touched.idcv}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={String(values.idcv) || ''} // Convierte a cadena para evitar inconsistencias
+                placeholder="Seleccione estado civil"
+                color={errors.idcv ? "danger" : "success"}
+                errorMessage={errors.idcv}
+            >
+                {selects.estadocv.data.map((item) => (
+                    <SelectItem key={String(item.idcv)} value={String(item.idcv)}>
+                        {item.name}
+                    </SelectItem>
+                ))}
+            </Select> */}
+            <Autocomplete
+                size="sm"
+                isRequired
+                label="SELECCIONAR ESTADO CIVIL"
                 variant="bordered"
                 className="block w-full"
                 selectedKey={values.idcv ? String(values.idcv) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
                   if (!key) {
                     setFieldValue('idcv', ''); // Limpia el valor en Formik
-                    setEsp(null); // Limpia el estado local
+                    setStatuscv(null); // Limpia el estado local
                     return;
                   }
-                  const selectedStatus = selects.estadocv.data.find((item) => item.idcv === Number(key)); // Convertir clave a número
-                  setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
-                  setItem(selectedStatus); // Actualiza el estado local
+                  const selectedExped = selects.estadocv.data.find((item) => item.idcv === Number(key)); // Convertir clave a número
+                  setFieldValue('idcv', selectedExped?.idcv || ''); // Actualiza Formik
+                  setStatuscv(selectedExped); // Actualiza el estadocv local
                 }}
                 defaultItems={selects.estadocv.data}
               >
                 {(item) => <AutocompleteItem key={String(item.idcv)}>{item.name}</AutocompleteItem>}
-              </Autocomplete> */}
-              <Select
-                isRequired
-                className="block w-full"
-                size="sm"
-                name="idcv"
-                variant="bordered"
-                label="SELECIONAR ESTADO CIVIL"
-                isInvalid={!!errors.idcv && touched.idcv}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idcv}  // El valor actual del campo en el formulario
-                placeholder="Seleccione estado civil"
-                color={errors.idcv ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.idcv}  // Mostrar el mensaje de error desde Formi
-              > 
-                {selects.estadocv.data.map((item) => (
-                  <SelectItem key={item.idcv}>{item.name}</SelectItem>
-                ))}
-              </Select>
+              </Autocomplete>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              {/* <Autocomplete
+                {/* <Select
+                  isRequired
+                  className="block w-full"
+                  size="sm"
+                  name="idsexo"
+                  variant="bordered"
+                  label="SELECIONAR GENERO"
+                  isInvalid={!!errors.idsexo && touched.idsexo}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  value={values.idsexo}  // El valor actual del campo en el formulario
+                  placeholder="Seleccione el genero"
+                  color={errors.idsexo ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.idsexo}  // Mostrar el mensaje de error desde Formi
+                > 
+                  {selects.sexos.data.map((item) => (
+                    <SelectItem key={item.idsexo}>{item.sexo}</SelectItem>
+                  ))}
+                </Select> */}
+                <Autocomplete
                 size="sm"
                 isRequired
-                label="BUSCAR EL GENERO"
+                label="SELECIONAR GENERO"
                 variant="bordered"
                 className="block w-full"
                 selectedKey={values.idsexo ? String(values.idsexo) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
                   if (!key) {
                     setFieldValue('idsexo', ''); // Limpia el valor en Formik
-                    setEsp(null); // Limpia el estado local
+                    setSexo(null); // Limpia el estado local
                     return;
                   }
-                  const selectedSexo = selects.sexos.data.find((item) => item.idsexo === Number(key)); // Convertir clave a número
-                  setFieldValue('idsexo', selectedSexo?.idsexo || ''); // Actualiza Formik
-                  setItem(selectedSexo); // Actualiza el estado local
+                  const selectedExped = selects.sexos.data.find((item) => item.idsexo === Number(key)); // Convertir clave a número
+                  setFieldValue('idsexo', selectedExped?.idsexo || ''); // Actualiza Formik
+                  setSexo(selectedExped); // Actualiza el sexos local
                 }}
                 defaultItems={selects.sexos.data}
               >
                 {(item) => <AutocompleteItem key={String(item.idsexo)}>{item.sexo}</AutocompleteItem>}
-              </Autocomplete> */}
-              <Select
-                isRequired
-                className="block w-full"
+              </Autocomplete>
+                {/* <Select
+                  isRequired
+                  className="block w-full"
+                  size="sm"
+                  name="idsituacion"
+                  variant="bordered"
+                  label="SELECIONAR SITUACIÓN"
+                  isInvalid={!!errors.idsituacion && touched.idsituacion}  // Mostrar error si hay error y el campo ha sido tocado
+                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                  value={values.idsituacion}  // El valor actual del campo en el formulario
+                  placeholder="Seleccione situación"
+                  color={errors.idsituacion ? "danger" : "success"}  // Cambiar color según el error
+                  errorMessage={errors.idsituacion}  // Mostrar el mensaje de error desde Formi
+                >
+                  {selects.situaciones.data.map((item) => (
+                    <SelectItem key={item.idsituacion}>{item.situacion}</SelectItem>
+                  ))}
+                </Select> */}
+                <Autocomplete
                 size="sm"
-                name="idsexo"
-                variant="bordered"
-                label="SELECIONAR GENERO"
-                isInvalid={!!errors.idsexo && touched.idsexo}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idsexo}  // El valor actual del campo en el formulario
-                placeholder="Seleccione el genero"
-                color={errors.idsexo ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.idsexo}  // Mostrar el mensaje de error desde Formi
-              > 
-                {selects.sexos.data.map((item) => (
-                  <SelectItem key={item.idsexo}>{item.sexo}</SelectItem>
-                ))}
-              </Select>
-              {/* <Autocomplete
-                size="sm"
                 isRequired
-                label="BUSCAR SITUACION"
+                label="SELECIONAR SITUACIÓN"
                 variant="bordered"
                 className="block w-full"
                 selectedKey={values.idsituacion ? String(values.idsituacion) : undefined} // Asegúrate de que es una cadena
                 onSelectionChange={(key) => {
                   if (!key) {
                     setFieldValue('idsituacion', ''); // Limpia el valor en Formik
-                    setEsp(null); // Limpia el estado local
+                    setSituad(null); // Limpia el estado local
                     return;
                   }
-                  const selectedSitua = selects.situaciones.data.find((item) => item.idsituacion === Number(key)); // Convertir clave a número
-                  setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
-                  setItem(selectedSitua); // Actualiza el estado local
+                  const selectedExped = selects.situaciones.data.find((item) => item.idsituacion === Number(key)); // Convertir clave a número
+                  setFieldValue('idsituacion', selectedExped?.idsituacion || ''); // Actualiza Formik
+                  setSituad(selectedExped); // Actualiza el sexos local
                 }}
                 defaultItems={selects.situaciones.data}
               >
                 {(item) => <AutocompleteItem key={String(item.idsituacion)}>{item.situacion}</AutocompleteItem>}
-              </Autocomplete> */}
-              <Select
-                isRequired
-                className="block w-full"
-                size="sm"
-                name="idsituacion"
-                variant="bordered"
-                label="SELECIONAR SITUACIÓN"
-                isInvalid={!!errors.idsituacion && touched.idsituacion}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idsituacion}  // El valor actual del campo en el formulario
-                placeholder="Seleccione situación"
-                color={errors.idsituacion ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.idsituacion}  // Mostrar el mensaje de error desde Formi
-              >
-                {selects.situaciones.data.map((item) => (
-                  <SelectItem key={item.idsituacion}>{item.situacion}</SelectItem>
-                ))}
-              </Select>
+              </Autocomplete>
               </div>
               </ModalBody>
               <ModalFooter>

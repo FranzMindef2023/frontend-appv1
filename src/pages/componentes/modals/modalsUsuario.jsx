@@ -168,21 +168,21 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                type="text" 
-                label="Materno" 
-                variant="bordered"
-                name="apmaterno"
-                placeholder="Ingrese el apellido materno"
-                value={values.apmaterno}
-                isInvalid={!!errors.apmaterno && touched.apmaterno}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                color={errors.apmaterno ? "danger" : "success"}
-                errorMessage={errors.apmaterno}
-                className="block w-full"
-                />
+                <Input 
+                  size="sm" 
+                  type="text" 
+                  label="Materno" 
+                  variant="bordered"
+                  name="apmaterno"
+                  placeholder="Ingrese el apellido materno"
+                  value={values.apmaterno}
+                  isInvalid={!!errors.apmaterno && touched.apmaterno}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  color={errors.apmaterno ? "danger" : "success"}
+                  errorMessage={errors.apmaterno}
+                  className="block w-full"
+                  />
                 <Input 
                 isRequired
                 size="sm" 
@@ -200,23 +200,23 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 className="block w-full "/>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                type="text" 
-                isRequired
-                name="ci"
-                label="N° de CI" 
-                variant="bordered"
-                placeholder="Ingrese el numero de ci"
-                
-                value={values.ci}
-                isInvalid={!!errors.ci && touched.ci}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                color={errors.ci ? "danger" : "success"}
-                errorMessage={errors.ci}
-                className="block w-full"
-                />
+                <Input 
+                  size="sm" 
+                  type="text" 
+                  isRequired
+                  name="ci"
+                  label="N° de CI" 
+                  variant="bordered"
+                  placeholder="Ingrese el numero de ci"
+                  
+                  value={values.ci}
+                  isInvalid={!!errors.ci && touched.ci}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  color={errors.ci ? "danger" : "success"}
+                  errorMessage={errors.ci}
+                  className="block w-full"
+                  />
                 <Input 
                 size="sm" 
                 type="number" 
@@ -234,22 +234,22 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 />
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                isRequired
-                type="text" 
-                name="usuario"
-                label="Usuario" 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isInvalid={!!errors.usuario && touched.usuario}
-                color={errors.usuario ? "danger" : "success"}
-                variant="bordered"
-                placeholder="Ingrese el nobre de usuario"
-                value={values.usuario}
-                errorMessage={errors.usuario}
-                className="block w-full"
-                />
+                <Input 
+                  size="sm" 
+                  isRequired
+                  type="text" 
+                  name="usuario"
+                  label="Usuario" 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={!!errors.usuario && touched.usuario}
+                  color={errors.usuario ? "danger" : "success"}
+                  variant="bordered"
+                  placeholder="Ingrese el nobre de usuario"
+                  value={values.usuario}
+                  errorMessage={errors.usuario}
+                  className="block w-full"
+                  />
                 <Input
                   label="Password"
                   size="sm" 
