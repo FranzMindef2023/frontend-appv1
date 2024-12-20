@@ -37,6 +37,7 @@ import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
+import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 
 
 
@@ -73,7 +74,26 @@ export function Personal() {
     setModalOpen(false);
   };
 
+  const openModalP = async (accion, datauser = null) => {
+    try {
+      // console.log(datauser);
+        // const roles = await asignaciones(datauser); // Espera los datos de asignaciones
+        // setSelectedRols(roles);
+        setSelectedUser(datauser);
+        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
+        setModalOpenP(true); // Abrir el modal después de obtener los datos
+    } catch (error) {
+        console.error("Error fetching roles:", error);
+    }
+  };
 
+  const closeModalP = () => {
+    setModalOpenP(false);
+  };
+  const handleActionP = () => {
+    alert("Action executed!");
+    closeModalP(); // Cierra el modal después de la acción
+  };
   const handleAction = () => {
     alert("Action executed!");
     closeModal(); // Cierra el modal después de la acción
@@ -175,6 +195,12 @@ export function Personal() {
               <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
+            </Button>
+            <Button isIconOnly color="primary" size="sm" aria-label="Like">
+              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
+                <EyeIcon />
+              </span>
+              
             </Button>
           </div>
         );
@@ -402,6 +428,20 @@ export function Personal() {
             actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
+          />
+          <CustomModalDest
+            isOpen={isModalOpenP}
+            onClose={closeModalP}
+            title="REGISTRO DE NUEVO ROL"
+            bodyContent={[
+              "This is the first paragraph.",
+              "This is the second paragraph.",
+              "This is the third paragraph."
+            ]}
+            onAction={handleActionP}
+            initialData={selectedUser} // Pasar los datos iniciales
+            actionLabel="REGISTRAR"
+            closeLabel="CANCELAR"
           />
         </CardBody>
       </Card>
