@@ -9,8 +9,12 @@ const OrganigramaContext = createContext();
 
 export const OrganigramaProvider = ({ children }) => {
     const [isInitializedOrg, setIsInitializedOrg] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
     const [organi, setOrga] = useState([]);
+    const [organPhat, setOrgaPhat] = useState([]);
     const [org, setOrg] = useState(null);
+    const [orgChil, setOrgChil] = useState(null);
+    const [orgChilphat, setOrgChilPhat] = useState(null);
     const [loading, setLoading] = useState(false);
 
 
@@ -33,68 +37,26 @@ export const OrganigramaProvider = ({ children }) => {
             setIsInitializedOrg(true); // Marcar como inicializado
         }
     };
-    // Crear un rol
-    const createOrganigrama = async (userData) => {
+    // Obtener todos los Organigrama Padres
+    const fetchOrgPhat = async () => {
+        if(isInitialized)return;
         setLoading(true);
         try {
-            const response = await organigramaService.createOrganigrama(userData);
-           console.log(response.data);
-            if (response.status === 200) {
-                console.log();
-                Swal.fire("¡Éxito!", response.data.message, "success");
-                await fetchOrganigrama();
-                // showNotification('success', response.data.message || 'Role created successfully');
-                return response.data;
+            const response = await organigramaService.getOrganigramasPhat();
+            if (response.data && Array.isArray(response.data.data)) {
+                setOrgaPhat(response.data.data); // Asegura que users sea un arreglo
+            } else {
+                setOrgaPhat([]); // Si no es un arreglo, inicializa vacío
             }
         } catch (error) {
-            if (error.response) {
-                const { status, data } = error.response;
-                switch (status) {
-                    case 422: {
-                        // Manejar errores de validación
-                        const errorMessages = Object.entries(data.errors || {})
-                            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-                            .join("\n");
-            
-                        Swal.fire({
-                            icon: "error",
-                            title: "Errores de Validación",
-                            text: errorMessages,
-                        });
-                        break;
-                    }
-                    case 500: {
-                        // Manejar errores internos del servidor
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error del Servidor",
-                            text: data.message || "Ocurrió un error interno. Inténtalo nuevamente.",
-                        });
-                        break;
-                    }
-                    default: {
-                        // Manejar otros errores no esperados
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error Desconocido",
-                            text: data.message || "Algo salió mal. Inténtalo más tarde.",
-                        });
-                        break;
-                    }
-                }
-            } else {
-                // Manejar errores donde no hay respuesta del servidor
-                Swal.fire({
-                    icon: "error",
-                    title: "Error de Conexión",
-                    text: "No se recibió respuesta del servidor. Por favor, verifica tu conexión a internet.",
-                });
-            }
-            
+            console.error("Error fetching Organigrama:", error);
+            setOrgaPhat([]);
         } finally {
             setLoading(false);
+            setIsInitialized(true); // Marcar como inicializado
         }
     };
+    
 
     // Obtener un rol por ID
     const getOrganigrama = async (id) => {
@@ -110,38 +72,39 @@ export const OrganigramaProvider = ({ children }) => {
             setLoading(false);
         }
     };
-
-    // Actualizar un rol
-    const updateOrganigrama = async (id, userData) => {
+    // Obtener un rol por ID
+    const getOrgByIdPhat = async (id) => {
         setLoading(true);
         try {
-            const response = await organigramaService.updateOrganigrama(id, userData);
-            await fetchOrganigrama();
-            // showNotification('success', response.data.message || 'Role updated successfully');
+            const response = await organigramaService.getOrganigramaByPhat(id);
+            setOrgChil(response.data.data);
             return response.data;
         } catch (error) {
-            // showNotification('error', 'Error updating role. Please try again.');
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
         } finally {
             setLoading(false);
         }
     };
-
-    // Eliminar un rol
-    const deleteOrganigrama = async (id) => {
+    // Obtener un rol por ID
+    const getOrganigramaByHijo = async (id) => {
         setLoading(true);
         try {
-            await organigramaService.deleteOrganigrama(id);
-            await fetchOrganigrama();
-            // showNotification('success', 'Role deleted successfully');
+            const response = await organigramaService.getOrganigramaByHijo(id);
+            setOrgChilPhat(response.data.data);
+            return response.data;
         } catch (error) {
-            // showNotification('error', 'Error deleting role. Please try again.');
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
         } finally {
             setLoading(false);
         }
     };
 
+
+
     return (
-        <OrganigramaContext.Provider value={{ organi, org, createOrganigrama, getOrganigrama, updateOrganigrama, deleteOrganigrama, fetchOrganigrama, loading, isInitializedOrg }}>
+        <OrganigramaContext.Provider value={{ organi, org,organPhat, getOrganigrama,orgChil,orgChilphat, fetchOrganigrama,fetchOrgPhat,getOrgByIdPhat,getOrganigramaByHijo, loading, isInitializedOrg,isInitialized }}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

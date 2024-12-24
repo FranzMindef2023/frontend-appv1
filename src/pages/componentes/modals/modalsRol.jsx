@@ -52,10 +52,15 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   size="sm"
                   isRequired={true}
                   type="text"
-                  label="Rol"
+                  label="ROL DE USUARIO"
                   variant="bordered"
                   isInvalid={!!errors.rol && touched.rol}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="rol"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.rol}  // El valor actual del campo en el formulario

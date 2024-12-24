@@ -13,26 +13,31 @@ import {
   Textarea
 } from "@nextui-org/react";
 import { useUsers } from "@/context/UserContext";
+import { useOrganigrama } from "@/context/OrganigramaContext";
+import { useCargo } from "@/context/GargosContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData, initialDataUser}) => {
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedItem, setSelectedItem] = useState([]);
+  const { fetchOrgPhat,getOrgByIdPhat,organPhat,orgChil,isInitialized,loading,orgChilphat,getOrganigramaByHijo} = useOrganigrama();
+  const { cargos,fetchCargos, isInitializedCar } = useCargo();
   const { createUserRols} = useUsers();
+  useEffect(() => {
+    
+    if (!isInitialized) fetchOrgPhat();
+    if (!isInitializedCar) fetchCargos();
+  },[isInitialized,isInitializedCar]);
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
-      nombres: '',
-      appaterno: '',
-      apmaterno: '',
-      email: '',
-      usuario: '',
-      password: '',
-      ci:'',
-      celular:'',
+      gestion: '',
+      startdate: '',
       status:true,
       idorg:[],
+      idorgn1:[],
       idpuesto:[],
-      grado:'',
+      motivo:'',
       ...initialData,
     },
     enableReinitialize: true,
@@ -54,53 +59,67 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
       }
     },
     validationSchema:Yup.object({
-      nombres: Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
-      appaterno:Yup.string().max(30,'Debe tenere maximo 30 caracteres').min(3,'Debe tener como minimo 3 caracteres'),
-      apmaterno: Yup.string().max(30,'Debe tenere maximo 30 caracteres'),
-      email: Yup.string().email('El correo no tiene un formato corecto').required('El email es requerido'),
-      usuario: Yup.string().min(3,'Debe tener minimo 3 caracteres').max(10,'Debe tener maximo 10 caracteres').required('Campo requerido'),
-      password: Yup.string().nullable()
-      .min(5, 'La contraseña debe tener al menos 5 caracteres')
-      .max(15, 'La contraseña no debe exceder los 15 caracteres')
-      .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
-      .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
-      .matches(/\d/, 'La contraseña debe contener al menos un número')
-      .matches(/[@$!%*?&#]/, 'La contraseña debe contener al menos un carácter especial (@$!%*?&#)'),
-      ci:Yup.number().
-      min(6000000,'La cédula debe tener minimo 6 caracteres').
-      max(10000000000,'La cédula debe tener maximo 10 caracteres')
-      .required('La cédula de identidad es requerida'),
-      celular:Yup.string()
-      .matches(/^[0-9]{8,15}$/, 'El número de celular debe tener entre 8 y 15 dígitos')
-      .nullable(),
-      // idorg: Yup.number()
-      // .required('Es necesario seleccionar una unidad organizacional.'), 
-      grado :Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
+      motivo: Yup.string().max(250,'Debe tener maximo de 250 caracteres').required('Campo requerido'),
+      startdate: Yup.string()
+            .matches(
+              /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$/, // Cambiado para soportar DD-MM-YYYY
+              "El formato debe ser DD-MM-YYYY"
+            )
+            .test("is-valid-date", "Fecha inválida", (value) => {
+              if (!value) return false;
+              const [day, month, year] = value.split("-").map(Number); // Divide por '-' en lugar de '/'
+              const date = new Date(year, month - 1, day);
+              return (
+                date.getFullYear() === year &&
+                date.getMonth() === month - 1 &&
+                date.getDate() === day
+              );
+            })
+            .test("not-future-date", "La fecha no puede ser futura", (value) => {
+              if (!value) return false;
+              const [day, month, year] = value.split("-").map(Number);
+              const date = new Date(year, month - 1, day);
+              return date <= new Date(); // La fecha ingresada debe ser menor o igual a hoy
+            })
+            .required("La fecha de nacimiento es obligatoria"),
+
     })
   });
   // Configurar el rol seleccionado basado en `assigned`
   useEffect(() => {
-    console.log(initialData);
-    // if (Array.isArray(initialData)) {
-    //   const initiallySelected = initialData.find((role) => role.assigned === 1);
-    //   setSelectedRole(initiallySelected ? initiallySelected.idrol.toString() : null);
-    // }
+    if (initialData?.idorg) {
+      const selectedOrg = organPhat.find((item) => item.idorg === Number(initialData.idorg)); // Forzar a tipo número
+      setSelectedItem(selectedOrg);
+      setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+    }
   }, [initialData]);
 
-  // Manejar cambio de switches (único rol activo)
-  const handleSwitchChange = (id) => {
-    setSelectedRole(id); // Actualiza el rol seleccionado
+  const handleFilter = async (key) => {
+    try {
+      await getOrganigramaByHijo(key);
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario");
+    }
   };
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     await createUserRols(selectedRole,initialDataUser);
-  //     onClose(); // Cierra el modal
-  //   } catch (error) {
-  //     console.error("Error al registrar usuario:", error);
-  //     alert("Error al registrar usuario");
-  //   }
-  // };
+  const handleFilterHijos = async (key) => {
+    try {
+      await getOrgByIdPhat(key);
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario");
+    }
+  };
+  const handleDateInput = (e, setFieldValue) => {
+    let value = e.target.value.replace(/\D/g, ""); // Elimina todo lo que no sea número
+    if (value.length >= 2) {
+      value = value.slice(0, 2) + "-" + value.slice(2);
+    }
+    if (value.length >= 5) {
+      value = value.slice(0, 5) + "-" + value.slice(5);
+    }
+    setFieldValue("startdate", value);
+  };
   
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -161,58 +180,115 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
               />
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input
+            <Autocomplete
+              size="sm"
+              isRequired
+              label="Buscar repaticion"
+              variant="bordered"
+              className="block w-full"
+              selectedKey={values.idorgani ? String(values.idorgani) : undefined} // Maneja valores vacíos correctamente
+              onSelectionChange={(key) => {
+                // console.log('key del padre');
+                // console.log(key);
+                if (!key) {
+                  
+                  setFieldValue('idorgani', ''); // Limpia el valor en Formik
+                  setSelectedItem(null); // Limpia el estado local
+                  return;
+                }
+                handleFilter(key);
+                const selectedOrg = organPhat.find((item) => item.idorgani === Number(key));
+                setFieldValue('idorgani', selectedOrg?.idorgani || ''); // Actualiza Formik
+                setSelectedItem(selectedOrg); // Actualiza el estado local
+              }}
+              defaultItems={organPhat}
+            >
+              {(item) => <AutocompleteItem key={String(item.idorgani)}>{item.nomorg}</AutocompleteItem>}
+            </Autocomplete>
+            </div>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
                 size="sm"
-                isRequired={true}
-                type="text"
-                label="REPARTICION"
-                variant="bordered"
-                isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                name="nombres"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                value={values.nombres}  // El valor actual del campo en el formulario
-                placeholder="Ingrese los nombres"
-                color={errors.nombres ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.nombres}  // Mostrar el mensaje de error desde Formik
-                className="block w-full"
-              />
-            </div>
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                type="text" 
-                label="UNIDAD" 
-                variant="bordered"
-                name="apmaterno"
-                placeholder="Ingrese el apellido materno"
-                value={values.apmaterno}
-                isInvalid={!!errors.apmaterno && touched.apmaterno}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                color={errors.apmaterno ? "danger" : "success"}
-                errorMessage={errors.apmaterno}
-                className="block w-full"
-                />
-            </div>
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <Input 
-                size="sm" 
-                type="text" 
                 isRequired
-                name="ci"
-                label="SECCION" 
+                label="Buscar unidad orgnaizacional"
                 variant="bordered"
-                placeholder="Ingrese el numero de ci"
-                
-                value={values.ci}
-                isInvalid={!!errors.ci && touched.ci}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                color={errors.ci ? "danger" : "success"}
-                errorMessage={errors.ci}
                 className="block w-full"
-                />
+                selectedKey={values.idhijastro ? String(values.idhijastro) : undefined} // Maneja valores vacíos correctamente
+                onSelectionChange={(key) => {
+                  // console.log('key del padre');
+                  // console.log(key);
+                  if (!key) {
+                    
+                    setFieldValue('idhijastro', ''); // Limpia el valor en Formik
+                    setSelectedItem(null); // Limpia el estado local
+                    return;
+                  }
+                  handleFilterHijos(key);
+                  const selectedOrg = orgChilphat.find((item) => item.idhijastro === Number(key));
+                  setFieldValue('idhijastro', selectedOrg?.idhijastro || ''); // Actualiza Formik
+                  setSelectedItem(selectedOrg); // Actualiza el estado local
+                }}
+                // defaultItems={orgChilphat}
+                defaultItems={orgChilphat?.length > 0 ? orgChilphat : []}
+              >
+                {(item) => <AutocompleteItem key={String(item.idhijastro)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="Buscar unidades organizacional dependiente"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={values.idorg ? String(values.idorg) : undefined} // Maneja valores vacíos correctamente
+                onSelectionChange={(key) => {
+                  // console.log('key del padre');
+                  // console.log(key);
+                  if (!key) {
+                    
+                    setFieldValue('idorg', ''); // Limpia el valor en Formik
+                    setSelectedItem(null); // Limpia el estado local
+                    return;
+                  }
+                  // handleFilterHijos(key);
+                  const selectedOrg = orgChil.find((item) => item.idorg === Number(key));
+                  setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
+                  setSelectedItem(selectedOrg); // Actualiza el estado local
+                }}
+                // defaultItems={orgChil}
+                defaultItems={orgChil?.length > 0 ? orgChil : []}
+              >
+                {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="Buscar cargo"
+                variant="bordered"
+                className="block w-full"
+                selectedKey={values.idpuesto ? String(values.idpuesto) : undefined} // Maneja valores vacíos correctamente
+                onSelectionChange={(key) => {
+                  // console.log('key del padre');
+                  // console.log(key);
+                  if (!key) {
+                    
+                    setFieldValue('idpuesto', ''); // Limpia el valor en Formik
+                    setSelectedItem(null); // Limpia el estado local
+                    return;
+                  }
+                  // handleFilterHijos(key);
+                  const selectedOrg = cargos.find((item) => item.idpuesto === Number(key));
+                  setFieldValue('idpuesto', selectedOrg?.idpuesto || ''); // Actualiza Formik
+                  setSelectedItem(selectedOrg); // Actualiza el estado local
+                }}
+                // defaultItems={cargos}
+                defaultItems={cargos?.length > 0 ? cargos : []}
+              >
+                {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
+              </Autocomplete>
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
               <Input
@@ -221,14 +297,14 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                 type="text"
                 label="GESTION"
                 variant="bordered"
-                isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
+                isInvalid={!!errors.gestion && touched.gestion}  // Mostrar error si hay error y el campo ha sido tocado
                 onChange={handleChange}  // Manejar el cambio con Formik
                 onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                name="nombres"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                value={values.nombres}  // El valor actual del campo en el formulario
-                placeholder="Ingrese los nombres"
-                color={errors.nombres ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.nombres}  // Mostrar el mensaje de error desde Formik
+                name="gestion"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                value={values.gestion}  // El valor actual del campo en el formulario
+                placeholder="Ingrese los gestion"
+                color={errors.gestion ? "danger" : "success"}  // Cambiar color según el error
+                errorMessage={errors.gestion}  // Mostrar el mensaje de error desde Formik
                 className="block w-full"
               />
               <Input
@@ -237,14 +313,14 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                 type="text"
                 label="FECHA DE DESTINO"
                 variant="bordered"
-                isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
+                isInvalid={!!errors.startdate && touched.startdate}  // Mostrar error si hay error y el campo ha sido tocado
+                onChange={(e) => handleDateInput(e, setFieldValue)}
                 onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                name="nombres"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-                value={values.nombres}  // El valor actual del campo en el formulario
-                placeholder="Ingrese los nombres"
-                color={errors.nombres ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.nombres}  // Mostrar el mensaje de error desde Formik
+                name="startdate"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                value={values.startdate}  // El valor actual del campo en el formulario
+                placeholder="Ingrese los startdate"
+                color={errors.startdate ? "danger" : "success"}  // Cambiar color según el error
+                errorMessage={errors.startdate}  // Mostrar el mensaje de error desde Formik
                 className="block w-full"
               />
             </div>
@@ -255,45 +331,21 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
               label="DESCRIPCION DE MOTIVO"
               placeholder="Enter your description"
               variant="bordered"
+              isRequired={true}
+              type="text"
+              isInvalid={!!errors.motivo && touched.motivo}  // Mostrar error si hay error y el campo ha sido tocado
+              onChange={(e) => {
+                // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                handleChange({
+                  target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                });
+              }}
+              onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+              name="motivo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+              value={values.motivo}  // El valor actual del campo en el formulario
+              color={errors.motivo ? "danger" : "success"}  // Cambiar color según el error
+              errorMessage={errors.motivo}  // Mostrar el mensaje de error desde Formik
             />
-            {/* <Autocomplete
-              size="sm"
-              isRequired
-              label="Buscar unidad orgnaizacional"
-              variant="bordered"
-              className="block w-full"
-              selectedKey={values.idorg ? String(values.idorg) : undefined} // Maneja valores vacíos correctamente
-              onSelectionChange={(key) => {
-                if (!key) {
-                  setFieldValue('idorg', ''); // Limpia el valor en Formik
-                  setItem(null); // Limpia el estado local
-                  return;
-                }
-
-                const selectedOrg = organi.find((item) => item.idorg === Number(key));
-                setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
-                setItem(selectedOrg); // Actualiza el estado local
-              }}
-              defaultItems={organi}
-            >
-              {(item) => <AutocompleteItem key={String(item.idorg)}>{item.nomorg}</AutocompleteItem>}
-            </Autocomplete>
-            <Autocomplete
-              isRequired
-              size="sm"
-              label="Buscar puesto"
-              variant="bordered"
-              className="block w-full"
-              selectedKey={values.idpuesto ? String(values.idpuesto) : undefined} // Asegúrate de que es una cadena
-              onSelectionChange={(key) => {
-                const selectedPuesto = cargos.find((item) => item.idpuesto === Number(key)); // Convertir clave a número
-                setFieldValue('idpuesto', selectedPuesto?.idpuesto || ''); // Actualiza Formik
-                setItem(selectedPuesto); // Actualiza el estado local
-              }}
-              defaultItems={cargos}
-            >
-              {(item) => <AutocompleteItem key={String(item.idpuesto)}>{item.nompuesto}</AutocompleteItem>}
-            </Autocomplete> */}
             </div>
           </ModalBody>
           <ModalFooter>

@@ -124,7 +124,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   label="Abreviatura del grado"
                   variant="bordered"
                   isInvalid={!!errors.grado && touched.grado}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}  // Manejar el cambio con Formik
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="grado"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.grado}  // El valor actual del campo en el formulario
@@ -142,7 +147,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   label="Nombres"
                   variant="bordered"
                   isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}  // Manejar el cambio con Formik
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="nombres"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.nombres}  // El valor actual del campo en el formulario
@@ -160,7 +170,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 placeholder="Ingrese el apellido paterno" 
                 value={values.appaterno}
                 isInvalid={!!errors.appaterno && touched.appaterno}
-                onChange={handleChange}
+                onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                 onBlur={handleBlur}
                 color={errors.appaterno ? "danger" : "success"}
                 errorMessage={errors.appaterno}
@@ -177,7 +192,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   placeholder="Ingrese el apellido materno"
                   value={values.apmaterno}
                   isInvalid={!!errors.apmaterno && touched.apmaterno}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                   onBlur={handleBlur}
                   color={errors.apmaterno ? "danger" : "success"}
                   errorMessage={errors.apmaterno}
@@ -211,7 +231,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   
                   value={values.ci}
                   isInvalid={!!errors.ci && touched.ci}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                   onBlur={handleBlur}
                   color={errors.ci ? "danger" : "success"}
                   errorMessage={errors.ci}
@@ -226,7 +251,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 variant="bordered"
                 value={values.celular}
                 isInvalid={!!errors.celular && touched.celular}
-                onChange={handleChange}
+                onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                 onBlur={handleBlur}
                 color={errors.celular ? "danger" : "success"}
                 errorMessage={errors.celular}

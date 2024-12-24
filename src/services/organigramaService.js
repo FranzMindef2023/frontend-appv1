@@ -14,5 +14,11 @@ const updateOrganigrama = (id, userData) => api.put(`/organizacion/${id}`, userD
 
 // Eliminar un rol
 const deleteOrganigrama = (id) => api.delete(`/organizacion/${id}`);
+// Obtener todos los organizacion padre
+const getOrganigramasPhat = () => api.get('/obtenerOrganizacionesPadres');
+// Obtener un rol por ID
+const getOrganigramaByPhat = (id) => api.get(`/organizacion/${id}/hijos`);
+// Obtener un rol por ID
+const getOrganigramaByHijo = (id) => api.get(`/obtenerHijastros/${id}/hijos`);
 
-export default { createOrganigrama, getOrganigramas, getOrganigramaById, updateOrganigrama, deleteOrganigrama };
+export default { createOrganigrama, getOrganigramas, getOrganigramaById, updateOrganigrama, deleteOrganigrama, getOrganigramasPhat,getOrganigramaByPhat,getOrganigramaByHijo};
