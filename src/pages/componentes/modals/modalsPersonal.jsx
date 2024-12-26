@@ -264,7 +264,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   label="NOMBRES"
                   variant="bordered"
                   isInvalid={!!errors.nombres && touched.nombres}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="nombres"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.nombres}  // El valor actual del campo en el formulario
@@ -282,7 +287,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 placeholder="Ingrese apellido paterno" 
                 value={values.appaterno}
                 isInvalid={!!errors.appaterno && touched.appaterno}
-                onChange={handleChange}
+                onChange={(e) => {
+                  // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                  handleChange({
+                    target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                  });
+                }}
                 onBlur={handleBlur}
                 color={errors.appaterno ? "danger" : "success"}
                 errorMessage={errors.appaterno}
@@ -299,7 +309,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 placeholder="Ingrese apellido materno"
                 value={values.apmaterno}
                 isInvalid={!!errors.apmaterno && touched.apmaterno}
-                onChange={handleChange}
+                onChange={(e) => {
+                  // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                  handleChange({
+                    target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                  });
+                }}
                 onBlur={handleBlur}
                 color={errors.apmaterno ? "danger" : "success"}
                 errorMessage={errors.apmaterno}
@@ -331,7 +346,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 variant="bordered"
                 value={values.complemento}
                 isInvalid={!!errors.complemento && touched.complemento}
-                onChange={handleChange}
+                onChange={(e) => {
+                  // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                  handleChange({
+                    target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                  });
+                }}
                 onBlur={handleBlur}
                 color={errors.complemento ? "danger" : "success"}
                 errorMessage={errors.complemento}
@@ -357,25 +377,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   className="block w-full"
                   placeholderValue={new CalendarDate(1995, 11, 6)}
                 />
-              {/* <Select
-                isRequired
-                className="block w-full"
-                size="sm"
-                name="idexpedicion"
-                variant="bordered"
-                label="SELECIONAR EXPEDICIÓN"
-                isInvalid={!!errors.idexpedicion && touched.idexpedicion}  // Mostrar error si hay error y el campo ha sido tocado
-                onChange={handleChange}  // Manejar el cambio con Formik
-                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                value={values.idexpedicion || ""}  // El valor actual del campo en el formulario
-                placeholder="Seleccione la expedición"
-                color={errors.idexpedicion ? "danger" : "success"}  // Cambiar color según el error
-                errorMessage={errors.idexpedicion}  // Mostrar el mensaje de error desde Formi
-              >
-                {selects.expediciones.data.map((item) => (
-                  <SelectItem key={item.idexpedicion}>{item.Departamento}</SelectItem>
-                ))}
-              </Select> */}
               <Autocomplete
                 size="sm"
                 isRequired
@@ -406,7 +407,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               variant="bordered"
               value={values.carnetmil}
               isInvalid={!!errors.carnetmil && touched.carnetmil}
-              onChange={handleChange}
+              onChange={(e) => {
+                // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                handleChange({
+                  target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                });
+              }}
               onBlur={handleBlur}
               color={errors.carnetmil ? "danger" : "success"}
               errorMessage={errors.carnetmil}
@@ -437,7 +443,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 label="Carnet de Seguro" 
                 placeholder="Enter your Carnet de Seguro" 
                 variant="bordered"
-                onChange={handleChange}
+                onChange={(e) => {
+                  // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                  handleChange({
+                    target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                  });
+                }}
                 onBlur={handleBlur}
                 isInvalid={!!errors.carnetseg && touched.carnetseg}
                 color={errors.carnetseg ? "danger" : "success"}
@@ -496,7 +507,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   label="TIPO DE SANGRE"
                   variant="bordered"
                   isInvalid={!!errors.gsanguineo && touched.gsanguineo}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
+                  onChange={(e) => {
+                    // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                    handleChange({
+                      target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                    });
+                  }}
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="gsanguineo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.gsanguineo}  // El valor actual del campo en el formulario
@@ -522,27 +538,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   errorMessage={errors.fechaegreso}  // Mostrar el mensaje de error desde Formik
                   className="block w-full"
                 />
-                {/* <Select
-                  isRequired
-                  className="block w-full"
-                  size="sm"
-                  name="idfuerza"
-                  variant="bordered"
-                  label="SELECCIONAR FUERZA"
-                  isInvalid={!!errors.idfuerza && touched.idfuerza}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.idfuerza || ''} // Convierte a cadena para evitar inconsistencias
-                  placeholder="Seleccione la fuerza"
-                  color={errors.idfuerza ? "danger" : "success"}
-                  errorMessage={errors.idfuerza}
-              >
-                  {selects.fuerzas.data.map((item) => (
-                      <SelectItem key={String(item.idfuerza)} value={String(item.idfuerza)}>
-                          {item.fuerza}
-                      </SelectItem>
-                  ))}
-              </Select> */}
               <Autocomplete
                 size="sm"
                 isRequired
@@ -629,27 +624,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idespecialidad)}>{item.especialidad}</AutocompleteItem>}
               </Autocomplete>
-              {/* <Select
-                isRequired
-                className="block w-full"
-                size="sm"
-                name="idcv"
-                variant="bordered"
-                label="SELECCIONAR ESTADO CIVIL"
-                isInvalid={!!errors.idcv && touched.idcv}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={String(values.idcv) || ''} // Convierte a cadena para evitar inconsistencias
-                placeholder="Seleccione estado civil"
-                color={errors.idcv ? "danger" : "success"}
-                errorMessage={errors.idcv}
-            >
-                {selects.estadocv.data.map((item) => (
-                    <SelectItem key={String(item.idcv)} value={String(item.idcv)}>
-                        {item.name}
-                    </SelectItem>
-                ))}
-            </Select> */}
             <Autocomplete
                 size="sm"
                 isRequired
@@ -673,25 +647,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               </Autocomplete>
               </div>
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-                {/* <Select
-                  isRequired
-                  className="block w-full"
-                  size="sm"
-                  name="idsexo"
-                  variant="bordered"
-                  label="SELECIONAR GENERO"
-                  isInvalid={!!errors.idsexo && touched.idsexo}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
-                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                  value={values.idsexo}  // El valor actual del campo en el formulario
-                  placeholder="Seleccione el genero"
-                  color={errors.idsexo ? "danger" : "success"}  // Cambiar color según el error
-                  errorMessage={errors.idsexo}  // Mostrar el mensaje de error desde Formi
-                > 
-                  {selects.sexos.data.map((item) => (
-                    <SelectItem key={item.idsexo}>{item.sexo}</SelectItem>
-                  ))}
-                </Select> */}
                 <Autocomplete
                 size="sm"
                 isRequired
@@ -713,25 +668,6 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               >
                 {(item) => <AutocompleteItem key={String(item.idsexo)}>{item.sexo}</AutocompleteItem>}
               </Autocomplete>
-                {/* <Select
-                  isRequired
-                  className="block w-full"
-                  size="sm"
-                  name="idsituacion"
-                  variant="bordered"
-                  label="SELECIONAR SITUACIÓN"
-                  isInvalid={!!errors.idsituacion && touched.idsituacion}  // Mostrar error si hay error y el campo ha sido tocado
-                  onChange={handleChange}  // Manejar el cambio con Formik
-                  onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-                  value={values.idsituacion}  // El valor actual del campo en el formulario
-                  placeholder="Seleccione situación"
-                  color={errors.idsituacion ? "danger" : "success"}  // Cambiar color según el error
-                  errorMessage={errors.idsituacion}  // Mostrar el mensaje de error desde Formi
-                >
-                  {selects.situaciones.data.map((item) => (
-                    <SelectItem key={item.idsituacion}>{item.situacion}</SelectItem>
-                  ))}
-                </Select> */}
                 <Autocomplete
                 size="sm"
                 isRequired

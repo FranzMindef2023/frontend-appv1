@@ -12,18 +12,19 @@ import {
   AutocompleteItem,
   Textarea
 } from "@nextui-org/react";
-import { useUsers } from "@/context/UserContext";
+import { usePersonas } from "@/context/PersonasContext";
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useCargo } from "@/context/GargosContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData, initialDataUser}) => {
+const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData, initialAssing}) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedItem, setSelectedItem] = useState([]);
   const { fetchOrgPhat,getOrgByIdPhat,organPhat,orgChil,isInitialized,loading,orgChilphat,getOrganigramaByHijo} = useOrganigrama();
   const { cargos,fetchCargos, isInitializedCar } = useCargo();
-  const { createUserRols} = useUsers();
+  const { createAsignacion,updateAsignacion,changeAssignment} = usePersonas();
+
   useEffect(() => {
     
     if (!isInitialized) fetchOrgPhat();
@@ -31,25 +32,28 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
   },[isInitialized,isInitializedCar]);
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
-      gestion: '',
+      gestion:new Date().getFullYear().toString(),
       startdate: '',
       status:true,
       idorg:[],
-      idorgn1:[],
+      idorgani:[],
+      idhijastro:[],
       idpuesto:[],
       motivo:'',
       ...initialData,
+      ...initialAssing
     },
     enableReinitialize: true,
     onSubmit:async (values) =>{
-      // console.log(values);
-      // return true;
       try {
-        if (initialData?.id) {
-          // Si `initialData` tiene un `id`, es edición
-          await updateUser(values); // Asume que tienes esta función
+        if (initialAssing?.idassig) {
+          if (values.action === 'update') {
+            await updateAsignacion(values); // Asume que tienes esta función
+          } else if (values.action === 'change') {
+            await changeAssignment(values);
+          }
         } else {
-          await createUser(values);
+          await createAsignacion(values);
         }
         resetForm();
         onClose();
@@ -57,42 +61,62 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
         console.error('Error al registrar usuario:', error);
         alert('Error al registrar usuario');
       }
+      
     },
     validationSchema:Yup.object({
       motivo: Yup.string().max(250,'Debe tener maximo de 250 caracteres').required('Campo requerido'),
       startdate: Yup.string()
-            .matches(
-              /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$/, // Cambiado para soportar DD-MM-YYYY
-              "El formato debe ser DD-MM-YYYY"
-            )
-            .test("is-valid-date", "Fecha inválida", (value) => {
-              if (!value) return false;
-              const [day, month, year] = value.split("-").map(Number); // Divide por '-' en lugar de '/'
-              const date = new Date(year, month - 1, day);
-              return (
-                date.getFullYear() === year &&
-                date.getMonth() === month - 1 &&
-                date.getDate() === day
-              );
-            })
-            .test("not-future-date", "La fecha no puede ser futura", (value) => {
-              if (!value) return false;
-              const [day, month, year] = value.split("-").map(Number);
-              const date = new Date(year, month - 1, day);
-              return date <= new Date(); // La fecha ingresada debe ser menor o igual a hoy
-            })
-            .required("La fecha de nacimiento es obligatoria"),
+      .matches(
+        /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$/, // Cambiado para soportar DD-MM-YYYY
+        "El formato debe ser DD-MM-YYYY"
+      )
+      .test("is-valid-date", "Fecha inválida", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number); // Divide por '-' en lugar de '/'
+        const date = new Date(year, month - 1, day);
+        return (
+          date.getFullYear() === year &&
+          date.getMonth() === month - 1 &&
+          date.getDate() === day
+        );
+      })
+      .test("not-future-date", "La fecha no puede ser futura", (value) => {
+        if (!value) return false;
+        const [day, month, year] = value.split("-").map(Number);
+        const date = new Date(year, month - 1, day);
+        return date <= new Date(); // La fecha ingresada debe ser menor o igual a hoy
+      })
+      .required("La fecha de destino es obligatoria"),
+      idorgani: Yup.number()
+            .required('Debes seleccionar la reparticion') 
+            .typeError('Debes seleccionar la reparticion'),
+      idorg: Yup.number()
+      .required('Debes seleccionar la unidad dependiente') 
+      .typeError('Debes seleccionar la reparticion'),
+      idhijastro: Yup.number()
+            .required('Debes seleccionar unidad organizacional') 
+            .typeError('Debes seleccionar la reparticion'),
+            idpuesto: Yup.number()
+      .required('Debes seleccionar un cargo') 
+      .typeError('Debes seleccionar la reparticion'),
 
     })
   });
   // Configurar el rol seleccionado basado en `assigned`
   useEffect(() => {
+    console.log(initialAssing);
     if (initialData?.idorg) {
       const selectedOrg = organPhat.find((item) => item.idorg === Number(initialData.idorg)); // Forzar a tipo número
       setSelectedItem(selectedOrg);
       setFieldValue('idorg', selectedOrg?.idorg || ''); // Actualiza Formik
     }
-  }, [initialData]);
+    if(initialAssing?.idorgani){
+      handleFilter(initialAssing.idorgani);
+    }
+    if(initialAssing?.idhijastro){
+      getOrgByIdPhat(initialAssing.idhijastro);
+    }
+  }, [initialData,initialAssing]);
 
   const handleFilter = async (key) => {
     try {
@@ -185,7 +209,11 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
               isRequired
               label="Buscar repaticion"
               variant="bordered"
+              name="idorgani"
               className="block w-full"
+              isInvalid={!!errors.idorgani && touched.idorgani}
+              color={errors.idorgani ? "danger" : "success"}
+              errorMessage={errors.idorgani} 
               selectedKey={values.idorgani ? String(values.idorgani) : undefined} // Maneja valores vacíos correctamente
               onSelectionChange={(key) => {
                 // console.log('key del padre');
@@ -213,6 +241,9 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                 label="Buscar unidad orgnaizacional"
                 variant="bordered"
                 className="block w-full"
+                isInvalid={!!errors.idhijastro && touched.idhijastro}
+                color={errors.idhijastro ? "danger" : "success"}
+                errorMessage={errors.idhijastro} 
                 selectedKey={values.idhijastro ? String(values.idhijastro) : undefined} // Maneja valores vacíos correctamente
                 onSelectionChange={(key) => {
                   // console.log('key del padre');
@@ -241,6 +272,9 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                 label="Buscar unidades organizacional dependiente"
                 variant="bordered"
                 className="block w-full"
+                isInvalid={!!errors.idorg && touched.idorg}
+                color={errors.idorg ? "danger" : "success"}
+                errorMessage={errors.idorg} 
                 selectedKey={values.idorg ? String(values.idorg) : undefined} // Maneja valores vacíos correctamente
                 onSelectionChange={(key) => {
                   // console.log('key del padre');
@@ -269,6 +303,9 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                 label="Buscar cargo"
                 variant="bordered"
                 className="block w-full"
+                isInvalid={!!errors.idpuesto && touched.idpuesto}
+                color={errors.idpuesto ? "danger" : "success"}
+                errorMessage={errors.idpuesto} 
                 selectedKey={values.idpuesto ? String(values.idpuesto) : undefined} // Maneja valores vacíos correctamente
                 onSelectionChange={(key) => {
                   // console.log('key del padre');
@@ -329,7 +366,7 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
               key="bordered"
               className="col-span-12 md:col-span-6 mb-6 md:mb-0"
               label="DESCRIPCION DE MOTIVO"
-              placeholder="Enter your description"
+              placeholder="Ingrese la descripcion"
               variant="bordered"
               isRequired={true}
               type="text"
@@ -349,17 +386,45 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
             </div>
           </ModalBody>
           <ModalFooter>
-          <Button color="danger" variant="light" onClick={() => {
-              resetForm();  // Call reset form function
-              onClose();    // Call close function
-            }}>
-            {closeLabel}
-          </Button>
-          {/* disabled={loading} */}
-          <Button color="primary" type="submit"  >
-            {actionLabel}
-          </Button>
+            {/* Botón para cerrar el modal */}
+            <Button 
+              color="danger" 
+              variant="light" 
+              onClick={() => {
+                resetForm();  // Llamar la función para resetear el formulario
+                onClose();    // Llamar la función para cerrar el modal
+              }}
+            >
+              {closeLabel}
+            </Button>
+
+            {/* Mostrar botones condicionalmente */}
+            {initialAssing === null ? (
+              // Mostrar solo el botón de "submit" si initialAssing es null
+              <Button color="primary" type="submit">
+                {actionLabel}
+              </Button>
+            ) : (
+              // Mostrar los botones "Actualizar" y "Cambiar" si initialAssing no es null
+              <>
+                <Button 
+                  color="warning" 
+                  type="submit"
+                  onClick={() => (setFieldValue('action', 'update'))}
+                >
+                  ACTUALIZAR DATOS
+                </Button>
+                <Button 
+                  type="submit"
+                  color="secondary" 
+                  onClick={() => (setFieldValue('action', 'change'))}
+                >
+                  CAMBIAR DE REPARTICION
+                </Button>
+              </>
+            )}
           </ModalFooter>
+
         </form>
       </ModalContent>
     </Modal>

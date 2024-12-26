@@ -52,11 +52,11 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
 export function Personal() {
-  const { users, isInitializedPer, fetchPersonas, loadingPer } = usePersonas();
+  const { users, isInitializedPer, fetchPersonas, loadingPer, getshowAssignments } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedRols, setSelectedRols] = useState(null);
+  const [assing, setAssing] = useState(null);
   useEffect(() => {
     if (!isInitializedPer) {
       fetchPersonas();
@@ -77,8 +77,8 @@ export function Personal() {
   const openModalP = async (accion, datauser = null) => {
     try {
       // console.log(datauser);
-        // const roles = await asignaciones(datauser); // Espera los datos de asignaciones
-        // setSelectedRols(roles);
+        const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
+        setAssing(assing);
         setSelectedUser(datauser);
         // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
         setModalOpenP(true); // Abrir el modal después de obtener los datos
@@ -439,7 +439,8 @@ export function Personal() {
               "This is the third paragraph."
             ]}
             onAction={handleActionP}
-            initialData={selectedUser} // Pasar los datos iniciales
+            initialData={selectedUser} // Pasar los datos iniciales 
+            initialAssing={assing} // Pasar los datos iniciales 
             actionLabel="REGISTRAR"
             closeLabel="CANCELAR"
           />
