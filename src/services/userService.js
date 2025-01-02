@@ -8,6 +8,8 @@ export const createUserRols = (user) => api.post('/roldeusuario', user);
 
 // Obtener todos los usuarios
 export const getUsers = () => api.get('/usuarios');
+// Obtener todos los usuarios con cargos y grados
+export const getUserindex = () => api.get('/userindex');
 
 // Obtener un usuario por su ID
 export const getUserById = (id) => api.get(`/usuarios/${id}`);
@@ -20,4 +22,4 @@ export const deleteUser = (id) => api.delete(`/usuarios/${id}`);
 // Roles asignados
 const getrolesasig = (id) => api.get(`/showroluser/${id}`);
 
-export default { createUser, getUsers, getUserById, updateUser, deleteUser,getrolesasig, createUserRols};
+export default { createUser, getUsers, getUserById, updateUser, deleteUser,getrolesasig, createUserRols,getUserindex};

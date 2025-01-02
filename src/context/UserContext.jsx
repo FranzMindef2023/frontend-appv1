@@ -9,7 +9,9 @@ const UserContext = createContext();
 
 export const UsersProvider = ({ children }) => {
     const [isInitialized, setIsInitialized] = useState(false);
+    const [isInitialUser, setIsInitialUser] = useState(false);
     const [users, setUsers] = useState([]);
+    const [usersAccess, setUsersAccess] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -30,6 +32,25 @@ export const UsersProvider = ({ children }) => {
         } finally {
             setLoading(false);
             setIsInitialized(true); // Marcar como inicializado
+        }
+    };
+    // Obtener todos los usuario con cargos
+    const fetchUsersAccess = async () => {
+        setLoading(true);
+        try {
+            const response = await userService.getUserindex();
+            if (response.data && Array.isArray(response.data.data)) {
+                setUsersAccess(response.data.data); // Asegura que users sea un arreglo
+                console.log(response.data.data);
+            } else {
+                setUsersAccess([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setUsersAccess([]);
+        } finally {
+            setLoading(false);
+            setIsInitialUser(true); // Marcar como inicializado
         }
     };
     // Crear un rol
@@ -262,7 +283,7 @@ export const UsersProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser,asignaciones, fetchUsers, loading, isInitialized, createUserRols}}>
+        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser,asignaciones, fetchUsers, loading, isInitialized, createUserRols, usersAccess, fetchUsersAccess,isInitialUser}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
