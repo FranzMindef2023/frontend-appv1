@@ -22,6 +22,7 @@ import ProtectedRoute from "@/component/ProtectedRoute";
 import AuthRoute from "@/component/AuthRoute";
 import Personal from "./pages/dashboard/personal";
 import Accesos from "./pages/dashboard/accesos";
+import Desvinculacion from "./pages/dashboard/desvinculacion";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -60,6 +61,12 @@ export const routes = [
         name: "personal",
         path: "/personal",
         element: <ProtectedRoute element={<Personal />} />,
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "desvinculacion",
+        path: "/desvinculacion",
+        element: <ProtectedRoute element={<Desvinculacion />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,

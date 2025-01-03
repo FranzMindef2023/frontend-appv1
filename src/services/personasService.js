@@ -9,6 +9,8 @@ const changeAssignment = (user) => api.post('/changeAssignment', user);
 
 // Obtener todos los Persona
 const getPersonas = () => api.get('/persona');
+// Obtener todos los Persona activas
+const getPerActivas = () => api.get('/indexpersonal');
 // Obtener todos los Asignaciones
 const getshowAssignments = (id) => api.get(`/showAssignments/${id}`);
 // Obtener un Persona por ID
@@ -23,4 +25,13 @@ const updateAsignacion = (id, userData) => api.put(`/assignments/${id}`, userDat
 // Eliminar un Persona
 const deletePersona = (id) => api.delete(`/persona/${id}`);
 
-export default { createPersona, getPersonas, getPersonaById, updatePersona, deletePersona, createAsignacion, getshowAssignments, updateAsignacion, changeAssignment};
+export default { createPersona, 
+                getPersonas, 
+                getPersonaById, 
+                updatePersona, 
+                deletePersona, 
+                createAsignacion, 
+                getshowAssignments, 
+                updateAsignacion, 
+                changeAssignment,
+                getPerActivas};

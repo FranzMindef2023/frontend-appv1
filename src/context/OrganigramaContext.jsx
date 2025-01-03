@@ -58,47 +58,32 @@ export const OrganigramaProvider = ({ children }) => {
         }
     };
     // Obtener todos los Organigrama Padres
-    // const fetchOrgAccess = async (iduser,idor) => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await organigramaService.getShowuseraccesses(iduser,idor);
-    //         if (response.data && Array.isArray(response.data.data)) {
-    //             setOrgaAccess(response.data.data); // Asegura que users sea un arreglo
-    //         } else {
-    //             setOrgaAccess([]); // Si no es un arreglo, inicializa vacío
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching Organigrama:", error);
-    //         setOrgaAccess([]);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
     const fetchOrgAccess = async (iduser, idor) => {
-        console.log(iduser);
-        console.log(idor);
         setLoading(true);
         try {
-          const response = await organigramaService.getShowuseraccesses(iduser, idor);
-          if (response.data && Array.isArray(response.data.data)) {
-            setOrgaAccess((prev) => ({
-              ...prev, // Mantener los datos existentes
-              [idor]: response.data.data, // Agregar los hijos del nodo actual
-            }));
-          } else {
-            setOrgaAccess((prev) => ({
-              ...prev,
-              [idor]: [], // Si no hay datos, inicializar como vacío
-            }));
-          }
+            // Si idor es null, limpiar orgaAccess para cargar nuevos datos
+            if (idor === null) {
+                setOrgaAccess({});
+                return;
+            }
+            const response = await organigramaService.getShowuseraccesses(iduser, idor);
+            if (response.data && Array.isArray(response.data.data)) {
+                setOrgaAccess((prev) => ({
+                    ...prev,
+                    [idor]: response.data.data,
+                }));
+            } else {
+                setOrgaAccess((prev) => ({
+                    ...prev,
+                    [idor]: [],
+                }));
+            }
         } catch (error) {
-          console.error("Error fetching Organigrama:", error);
+            console.error("Error fetching Organigrama:", error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };      
-    
-
+    };
     // Obtener un rol por ID
     const getOrganigrama = async (id) => {
         setLoading(true);

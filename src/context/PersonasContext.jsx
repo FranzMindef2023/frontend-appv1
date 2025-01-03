@@ -36,6 +36,24 @@ export const PersonasProvider = ({ children }) => {
             setIsInitializedPer(true); // Marcar como inicializado
         }
     };
+    const getPerActivas = async () => {
+        if(isInitializedPer)return;
+        setLoading(true);
+        try {
+            const response = await personasService.getPerActivas();
+            if (response.data && Array.isArray(response.data.data)) {
+                setPersonas(response.data.data); // Asegura que personas sea un arreglo
+            } else {
+                setPersonas([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setPersonas([]);
+        } finally {
+            setLoading(false);
+            setIsInitializedPer(true); // Marcar como inicializado
+        }
+    };
     // Crear persona
     const createPersona = async (userData) => {
         setLoading(true);
@@ -447,7 +465,9 @@ export const PersonasProvider = ({ children }) => {
                                            assing,
                                            getshowAssignments,
                                            updateAsignacion,
-                                           changeAssignment}}>
+                                           changeAssignment,
+                                           getPerActivas
+                                           }}>
             {children}
             {loadingPer && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

@@ -1,5 +1,5 @@
-import React,{useState ,useEffect} from "react";
-import Swal from 'sweetalert2';
+import React,{useState, useEffect } from "react";
+
 import {
   Table,
   TableHeader,
@@ -16,7 +16,6 @@ import {
   Chip,
   User,
   Pagination,
-  Switch,
   Tooltip
 } from "@nextui-org/react";
 
@@ -27,16 +26,19 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-import { useRols } from "@/context/RolesContext";
+import { usePersonas } from "@/context/PersonasContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, statusOptions} from "@/data/dataRols";
+import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
-import CustomModal from '@/pages/componentes/modals/modalsRol';
+import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
+import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
+import CustomModalDest from '@/pages/componentes/modals/modalDestino';
+
 
 
 
@@ -47,61 +49,21 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "role", "situacion","actions"];
+const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
-export function Roles() {
-  const { users, isInitialized, fetchRols, loading,updateRols } = useRols();
-
-    useEffect(() => {
-        if (!isInitialized) {
-            fetchRols();
-            console.log('desde el componete roles');
-            console.log(users);
-        }
-    }, [isInitialized]);
-  //actualizar estado del rol Activo Inactivo
-  const handlestatus = async(e,user) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Estás a punto de cambiar el estado a Activo/Inactivo. Si no estás seguro, puedes cancelar esta acción.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, continuar",
-      cancelButtonText: "Cancelar"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        try {
-
-          // Llamar a la función createUser del contexto
-           updateRols(!e.target.checked,user);
-          // resetForm();
-          // onClose();
-        } catch (error) {
-          console.error('Error al registrar usuario:', error);
-          // alert('Error al registrar usuario');
-        }
-        Swal.fire({
-          title: "¡Actualizado!",
-          text: "El estado se ha actualizado correctamente.",
-          icon: "success"
-        });
-      } else {
-        // // Opcional: Mensaje cuando el usuario cancela
-        // Swal.fire({
-        //   title: "Cancelado",
-        //   text: "La acción ha sido cancelada.",
-        //   icon: "info"
-        // });
-      }
-    });
-    
-    
-  };
+export function Desvinculacion() {
+  const { users, isInitializedPer, fetchPersonas, loadingPer, getshowAssignments,getPerActivas,perActive } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [assing, setAssing] = useState(null);
+  useEffect(() => {
+    if (!isInitializedPer) {
+      getPerActivas();
+    }
+}, [isInitializedPer]);
   const openModal = (accion, user = null) => {
+    
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
     setModalOpen(true); // Abrir el modal
   };
@@ -110,6 +72,26 @@ export function Roles() {
     setModalOpen(false);
   };
 
+  const openModalP = async (accion, datauser = null) => {
+    try {
+      // console.log(datauser);
+        const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
+        setAssing(assing);
+        setSelectedUser(datauser);
+        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
+        setModalOpenP(true); // Abrir el modal después de obtener los datos
+    } catch (error) {
+        console.error("Error fetching roles:", error);
+    }
+  };
+
+  const closeModalP = () => {
+    setModalOpenP(false);
+  };
+  const handleActionP = () => {
+    alert("Action executed!");
+    closeModalP(); // Cierra el modal después de la acción
+  };
   const handleAction = () => {
     alert("Action executed!");
     closeModal(); // Cierra el modal después de la acción
@@ -173,6 +155,19 @@ export function Roles() {
     const cellValue = user[columnKey];
 
     switch (columnKey) {
+      case "name":
+        return (
+          <User
+            avatarProps={{radius: "full", size: "sm", src: user.avatar}}
+            classNames={{
+              description: "text-default-500",
+            }}
+            description={user.email}
+            name={cellValue}
+          >
+            {user.email}
+          </User>
+        );
       case "role":
         return (
           <div className="flex flex-col">
@@ -180,44 +175,32 @@ export function Roles() {
             <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
           </div>
         );
-      case "status":
+      case "estado":
         return (
           <Chip
             className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
+            color={statusColorMap[user.estado]}
             size="sm"
             variant="dot"
           >
             {cellValue}
           </Chip>
         );
-        case "situacion":
-        return (
-          <Switch
-            size="sm"
-            color="success"
-            isSelected={user.status === "Activo"} // Encender si el status es Activo
-            onChange={(e) => handlestatus(e, user)} // Pasar el evento y el usuario
-          ></Switch>
-        );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Button content="Editar" size="sm">
-              <span onClick={() => openModal("edit", user)} className="text-lg text-warning cursor-pointer active:opacity-50">
+            <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
+              <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
             </Button>
-            {/* <Button  radius="full" size="lg" variant="light">
-              <EditIcon />
-            </Button> */}
-            <Tooltip color="danger" content="Eliminar" size="lg">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
+            <Button isIconOnly color="primary" size="sm" aria-label="Like">
+              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
+                <EyeIcon />
               </span>
-            </Tooltip>
+              
+            </Button>
           </div>
-          
         );
       default:
         return cellValue;
@@ -387,15 +370,12 @@ export function Roles() {
     }),
     [],
   );
-  // if (!isInitialized) {
-  //     return <div>Cargando datos...</div>; // Muestra un indicador de carga mientras los datos se inicializan
-  // }
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Perfil de Usuarios
+            Desvinculación Militar
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
@@ -442,10 +422,25 @@ export function Roles() {
           <CustomModal
             isOpen={isModalOpen}
             onClose={closeModal}
-            title={selectedUser ? "EDITAR USUARIO" : "REGISTRO DE NUEVO USUARIO"} // Cambiar el título dinámicamente
+            title={selectedUser ? "EDITAR DATOS DesvinculaciónES" : "REGISTRO DE NUEVO Desvinculación MILITAR"} // Cambiar el título dinámicamente
             actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
+          />
+          <CustomModalDest
+            isOpen={isModalOpenP}
+            onClose={closeModalP}
+            title="REGISTRO DE NUEVO ROL"
+            bodyContent={[
+              "This is the first paragraph.",
+              "This is the second paragraph.",
+              "This is the third paragraph."
+            ]}
+            onAction={handleActionP}
+            initialData={selectedUser} // Pasar los datos iniciales 
+            initialAssing={assing} // Pasar los datos iniciales 
+            actionLabel="REGISTRAR"
+            closeLabel="CANCELAR"
           />
         </CardBody>
       </Card>
@@ -453,4 +448,4 @@ export function Roles() {
   );
 }
 
-export default Roles;
+export default Desvinculacion;
