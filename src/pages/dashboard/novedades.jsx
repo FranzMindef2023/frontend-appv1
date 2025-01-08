@@ -28,14 +28,12 @@ import {
 } from "@material-tailwind/react";
 import { usePersonas } from "@/context/PersonasContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsDesvincular';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 
@@ -51,8 +49,8 @@ const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
-export function Desvinculacion() {
-  const {  isInitializedPer, getshowAssignments,getDesvinculados,users10 } = usePersonas();
+export function Novedades() {
+  const {  isInitializedPer, getshowAssignments,getDesvinculados,users10, fetchListPersonas} = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -60,6 +58,7 @@ export function Desvinculacion() {
   useEffect(() => {
     if (!isInitializedPer) {
       getDesvinculados();
+      fetchListPersonas();
     }
   }, [isInitializedPer]);
   const openModal = (accion, user = null) => {
@@ -375,7 +374,7 @@ export function Desvinculacion() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Desvinculación Personal
+            Novedades Personales
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
@@ -422,7 +421,7 @@ export function Desvinculacion() {
           <CustomModal
             isOpen={isModalOpen}
             onClose={closeModal}
-            title={selectedUser ? "EDITAR DE DESVINCULACION" : "REGISTRO DE DESVINCULACION"} // Cambiar el título dinámicamente
+            title={selectedUser ? "EDITAR DE Novedades" : "REGISTRO DE Novedades"} // Cambiar el título dinámicamente
             actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
@@ -448,4 +447,4 @@ export function Desvinculacion() {
   );
 }
 
-export default Desvinculacion;
+export default Novedades;

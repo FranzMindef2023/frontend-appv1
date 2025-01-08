@@ -11,13 +11,23 @@ const changeAssignment = (user) => api.post('/changeAssignment', user);
 const getPersonas = () => api.get('/persona');
 // Obtener todos los Persona activas
 const getPerActivas = () => api.get('/indexpersonal');
+// Obtener todos los Persona desvinculadas en la gestion actual
+const getDesvinculados = () => api.get('/getdesvinculados');
 // Obtener todos los Asignaciones
 const getshowAssignments = (id) => api.get(`/showAssignments/${id}`);
 // Obtener un Persona por ID
 const getPersonaById = (id) => api.get(`/persona/${id}`);
+// Obtener un Persona por ID
+const showPersonalById = (id) => api.get(`/showpersonal/${id}`);
+
+// Obtener personal del usuaro en cargado
+const listPersonalById = (id) => api.get(`/listpersonasbyuseraccess/${id}`);
 
 // Actualizar un Persona
 const updatePersona = (id, userData) => api.put(`/persona/${id}`, userData);
+
+// registra la fecha y motivo de la desvinculacion
+const updateEndDate = (id, userData) => api.put(`/updateEndDate/${id}`, userData);
 
 // Actualizar un Persona
 const updateAsignacion = (id, userData) => api.put(`/assignments/${id}`, userData);
@@ -34,4 +44,8 @@ export default { createPersona,
                 getshowAssignments, 
                 updateAsignacion, 
                 changeAssignment,
-                getPerActivas};
+                getPerActivas,
+                updateEndDate,
+                showPersonalById,
+                getDesvinculados,
+                listPersonalById};

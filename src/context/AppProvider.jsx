@@ -10,6 +10,7 @@ import { OrganigramaProvider } from '@/context/OrganigramaContext';
 
 import { SelectsProvider } from '@/context/SelectsContext';
 import { PersonasProvider } from '@/context/PersonasContext';
+import { NovedadesProvider } from '@/context/NovedadesContext';
 
 const AppProvider = ({ children }) => (
   <AxiosProvider>
@@ -20,7 +21,9 @@ const AppProvider = ({ children }) => (
             <OrganigramaProvider>
               <SelectsProvider>
                 <PersonasProvider>
-                  {children}
+                  <NovedadesProvider>
+                    {children}
+                  </NovedadesProvider>
                 </PersonasProvider>
               </SelectsProvider>
             </OrganigramaProvider>

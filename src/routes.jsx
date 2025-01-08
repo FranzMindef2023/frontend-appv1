@@ -23,6 +23,7 @@ import AuthRoute from "@/component/AuthRoute";
 import Personal from "./pages/dashboard/personal";
 import Accesos from "./pages/dashboard/accesos";
 import Desvinculacion from "./pages/dashboard/desvinculacion";
+import Novedades from "./pages/dashboard/novedades";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -70,28 +71,34 @@ export const routes = [
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "departamentos",
-        path: "/departamentos",
-        element: <ProtectedRoute element={<Departamentos />} />,
+        name: "novedades",
+        path: "/novedades",
+        element: <ProtectedRoute element={<Novedades />} />,
       },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "division",
-        path: "/division",
-        element: <ProtectedRoute element={<Divisiones />} />,
-      },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "u educativas",
-        path: "/u-educativas",
-        element: <ProtectedRoute element={<Ueducativas />} />,
-      },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "u militares",
-        path: "/u-militares",
-        element: <ProtectedRoute element={<Umilitares />} />,
-      },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "departamentos",
+      //   path: "/departamentos",
+      //   element: <ProtectedRoute element={<Departamentos />} />,
+      // },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "division",
+      //   path: "/division",
+      //   element: <ProtectedRoute element={<Divisiones />} />,
+      // },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "u educativas",
+      //   path: "/u-educativas",
+      //   element: <ProtectedRoute element={<Ueducativas />} />,
+      // },
+      // {
+      //   icon: <UserCircleIcon {...icon} />,
+      //   name: "u militares",
+      //   path: "/u-militares",
+      //   element: <ProtectedRoute element={<Umilitares />} />,
+      // },
       {
         icon: <TableCellsIcon {...icon} />,
         name: "tables",
