@@ -6,39 +6,41 @@ import {
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {Button,Input } from "@nextui-org/react";
-import React,{useState } from "react";
-import {EyeFilledIcon} from "@/pages/componentes/modals/password/EyeFilledIcon";
-import {EyeSlashFilledIcon} from "@/pages/componentes/modals/password/EyeSlashFilledIcon";
+import { Button, Input } from "@nextui-org/react";
+import React, { useState } from "react";
+import { EyeFilledIcon } from "@/pages/componentes/modals/password/EyeFilledIcon";
+import { EyeSlashFilledIcon } from "@/pages/componentes/modals/password/EyeSlashFilledIcon";
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Loader from "../../component/Loader/Loader";
+
 
 export function SignIn() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm }= useFormik({
-    initialValues:{
+  const [isLoading, setIsLoading] = useState(false); // Controla el estado del loader
+  const { handleSubmit, handleBlur, values, handleChange, errors, touched, resetForm } = useFormik({
+    initialValues: {
       email: 'juan1.perez@example.com',
       password: '123456789',
     },
-    onSubmit:async (values)=>{
-      // e.preventDefault();
+    onSubmit: async (values) => {
+      setIsLoading(true); // Activa el loader
       const success = await loginUser(values);
+      setIsLoading(false); // Desactiva el loader
       if (success) {
         navigate('/dashboard/home'); // Redirige a la ruta deseada tras el login
-      }else {
-        // Mostrar mensaje de error si el inicio de sesión falla
+      } else {
         alert('Credenciales incorrectas. Por favor, intenta de nuevo.');
       }
       resetForm();
     },
-    validationSchema:Yup.object({
-      password: Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
+    validationSchema: Yup.object({
+      password: Yup.string().max(50, 'Debe tener maximo de 50 caracteres').required('Campo requerido'),
       email: Yup.string().email('El correo no tiene un formato corecto').required('El email es requerido'),
-    })
+    }),
   });
- 
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -46,7 +48,9 @@ export function SignIn() {
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">¡Bienvenido/a!</Typography>
+          <Typography variant="h2" className="font-bold mb-4" >¡Bienvenido/a!<span aria-label="emoji" className="ml-2" role="img" >
+            👋
+          </span></Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to Sign In.</Typography>
         </div>
         <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
@@ -59,40 +63,40 @@ export function SignIn() {
               placeholder="name@mail.com"
               variant="bordered"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              isInvalid={!!errors.email && touched.email}  // Mostrar error si hay error y el campo ha sido tocado
-              onChange={handleChange}  // Manejar el cambio con Formik
-              onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-              name="email"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-              value={values.email}  // El valor actual del campo en el formulario
-              color={errors.email ? "danger" : "success"}  // Cambiar color según el error
-              errorMessage={errors.email}  // Mostrar el mensaje de error desde Formik
+              isInvalid={!!errors.email && touched.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              name="email"
+              value={values.email}
+              color={errors.email ? "danger" : "success"}
+              errorMessage={errors.email}
             />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Contraseña
             </Typography>
             <Input
-            size="lg"
-                  isRequired
-                  name="password"
-                  value={values.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  isInvalid={!!errors.password && touched.password}
-                  errorMessage={errors.password}
-                  color={errors.password ? "danger" : "success"}
-                  variant="bordered"
-                  placeholder="Ingrese la contraseña"
-                  endContent={
-                    <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">
-                      {isVisible ? (
-                        <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                      ) : (
-                        <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                      )}
-                    </button>
-                  }
-                  type={isVisible ? "text" : "password"}
-                />
+              size="lg"
+              isRequired
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              isInvalid={!!errors.password && touched.password}
+              errorMessage={errors.password}
+              color={errors.password ? "danger" : "success"}
+              variant="bordered"
+              placeholder="Ingrese la contraseña"
+              endContent={
+                <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">
+                  {isVisible ? (
+                    <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                  ) : (
+                    <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                  )}
+                </button>
+              }
+              type={isVisible ? "text" : "password"}
+            />
           </div>
           <Checkbox
             label={
@@ -112,9 +116,14 @@ export function SignIn() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth type="submit">
-           INGRESAR
+          <Button
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-2 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+            type="submit"
+            disabled={isLoading} // Deshabilita el botón mientras carga
+          >
+            {isLoading ? <Loader /> : "INGRESAR"} {/* Muestra el loader si está cargando */}
           </Button>
+
 
           <div className="flex items-center justify-between gap-2 mt-6">
             <Checkbox
@@ -162,7 +171,6 @@ export function SignIn() {
             <Link to="/auth/sign-up" className="text-gray-900 ml-1">Create account</Link>
           </Typography>
         </form>
-
       </div>
       <div className="w-2/5 h-full hidden lg:block">
         <img
@@ -170,7 +178,6 @@ export function SignIn() {
           className="h-full w-full object-cover rounded-3xl"
         />
       </div>
-
     </section>
   );
 }

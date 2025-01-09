@@ -1,10 +1,12 @@
-import React,{useStat,useEffect} from "react";
+import React,{useState,useEffect} from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRols } from "@/context/RolesContext";
+import Loader from "../../../component/Loader/Loader";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input } from "@nextui-org/react";
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData  }) => {
   const { createRols,updateRolsData } = useRols();
+  const [isLoading, setIsLoading] = useState(false); 
   // Verificar que `initialData` se recibe correctamente
   useEffect(() => {
     console.log("Initial data received:", initialData);
@@ -18,6 +20,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     enableReinitialize: true,
     onSubmit:async (values) =>{
       try {
+        setIsLoading(true); // Activa el loader
         if (initialData?.id) {
           // Si `initialData` tiene un `id`, es edición
           await updateRolsData(true, values); // Asume que tienes esta función
@@ -26,6 +29,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
           console.log("Registrando nuevo usuario:", values);
           await createRols(values);
         }
+      setIsLoading(false); // Desactiva el loader
         resetForm();
         onClose();
       } catch (error) {
@@ -75,8 +79,11 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
             <Button color="danger" variant="light" onClick={() => {
                   resetForm();  // Call reset form function
                   onClose();    // Call close function
-                }}>
-                {closeLabel}
+                }}
+                disabled={isLoading} // Deshabilita el botón mientras carga
+                >
+                
+                {isLoading ? <Loader /> : closeLabel}
               </Button>
               <Button color="primary" type="submit">
                 {actionLabel}

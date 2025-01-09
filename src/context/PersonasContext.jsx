@@ -41,21 +41,23 @@ export const PersonasProvider = ({ children }) => {
     const fetchListPersonas = async () => {
         setLoading(true);
         const usuario = sessionStorage.getItem('user');
-        console.log(usuario);
-        // try {
-        //     const response = await personasService.listPersonalById();
-        //     if (response.data && Array.isArray(response.data.data)) {
-        //         setPersonal(response.data.data); // Asegura que personas sea un arreglo
-        //     } else {
-        //         setPersonal([]); // Si no es un arreglo, inicializa vacío
-        //     }
-        // } catch (error) {
-        //     console.error("Error fetching roles:", error);
-        //     setPersonal([]);
-        // } finally {
-        //     setLoading(false);
-        //     // setIsInitializedPer(true); // Marcar como inicializado
-        // }
+        const usuarioJSON = JSON.parse(usuario);
+        try {
+            const response = await personasService.listPersonalById(usuarioJSON.iduser);
+            console.log(response.data.data);
+            return;
+            if (response.data && Array.isArray(response.data.data)) {
+                setPersonal(response.data.data); // Asegura que personas sea un arreglo
+            } else {
+                setPersonal([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setPersonal([]);
+        } finally {
+            setLoading(false);
+            // setIsInitializedPer(true); // Marcar como inicializado
+        }
     };
     const getPerActivas = async () => {
         if(isInitializedPer)return;
