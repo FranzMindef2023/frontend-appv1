@@ -121,20 +121,24 @@ export function Personal() {
 
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...users];
-
+  
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+        Object.values(user).some((value) =>
+          value && value.toString().toLowerCase().includes(filterValue.toLowerCase())
+        )
       );
     }
+  
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
       filteredUsers = filteredUsers.filter((user) =>
         Array.from(statusFilter).includes(user.status),
       );
     }
-
+  
     return filteredUsers;
   }, [users, filterValue, statusFilter]);
+  
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;

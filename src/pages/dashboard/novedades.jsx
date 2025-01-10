@@ -50,17 +50,16 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
 export function Novedades() {
-  const {  isInitializedPer, getshowAssignments,getDesvinculados,users10, fetchListPersonas} = usePersonas();
+  const {  isInitPersonal, getshowAssignments,personal, fetchListPersonas} = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [assing, setAssing] = useState(null);
   useEffect(() => {
-    if (!isInitializedPer) {
-      getDesvinculados();
+    if (!isInitPersonal) {
       fetchListPersonas();
     }
-  }, [isInitializedPer]);
+  }, [isInitPersonal]);
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -106,7 +105,7 @@ export function Novedades() {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(users10.length / rowsPerPage);
+  const pages = Math.ceil(personal.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -117,7 +116,7 @@ export function Novedades() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users10];
+    let filteredUsers = [...personal];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -131,7 +130,7 @@ export function Novedades() {
     }
 
     return filteredUsers;
-  }, [users10, filterValue, statusFilter]);
+  }, [personal, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -301,7 +300,7 @@ export function Novedades() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users10.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {personal.length} Usuarios</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -323,7 +322,7 @@ export function Novedades() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users10.length,
+    personal.length,
     hasSearchFilter,
   ]);
 

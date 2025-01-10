@@ -261,7 +261,7 @@ export function Accesos() {
           {/* Tabla principal */}
           <Table aria-label="Example access management table" className="min-w-full">
             <TableHeader>
-              <TableColumn>Usuario</TableColumn>
+              <TableColumn>REPARTICION</TableColumn>
               <TableColumn>SIGLA</TableColumn>
               <TableColumn>CODIGO</TableColumn>
               <TableColumn>PADRE</TableColumn>

@@ -9,6 +9,8 @@ const PersonasContext = createContext();
 
 export const PersonasProvider = ({ children }) => {
     const [isInitializedPer, setIsInitializedPer] = useState(false);
+    const [isInitPersonal, setIsInitPersonal] = useState(false);
+    const [isInitDesvincu, setIsInitDesvincu] = useState(false);
     const [users, setPersonas] = useState([]);
     const [usersAct, setPersonasAct] = useState([]);
     const [users10, setDesvincu] = useState([]);
@@ -23,8 +25,6 @@ export const PersonasProvider = ({ children }) => {
         try {
             const response = await personasService.getPersonas();
             if (response.data && Array.isArray(response.data.data)) {
-                console.log('desde contxto personas');
-                console.log(response.data.data);
                 setPersonas(response.data.data); // Asegura que personas sea un arreglo
             } else {
                 setPersonas([]); // Si no es un arreglo, inicializa vacío
@@ -34,7 +34,7 @@ export const PersonasProvider = ({ children }) => {
             setPersonas([]);
         } finally {
             setLoading(false);
-            // setIsInitializedPer(true); // Marcar como inicializado
+            setIsInitializedPer(true); // Marcar como inicializado
         }
     };
     // Obtener todo el persona del usuario
@@ -44,8 +44,6 @@ export const PersonasProvider = ({ children }) => {
         const usuarioJSON = JSON.parse(usuario);
         try {
             const response = await personasService.listPersonalById(usuarioJSON.iduser);
-            console.log(response.data.data);
-            return;
             if (response.data && Array.isArray(response.data.data)) {
                 setPersonal(response.data.data); // Asegura que personas sea un arreglo
             } else {
@@ -56,18 +54,16 @@ export const PersonasProvider = ({ children }) => {
             setPersonal([]);
         } finally {
             setLoading(false);
-            // setIsInitializedPer(true); // Marcar como inicializado
+            setIsInitPersonal(true); // Marcar como inicializado
         }
     };
     const getPerActivas = async () => {
-        if(isInitializedPer)return;
+        if(usersAct)return;
         setLoading(true);
         try {
             const response = await personasService.getPerActivas();
             if (response.data && Array.isArray(response.data.data)) {
                 setPersonasAct(response.data.data); // Asegura que personas sea un arreglo
-                console.log('desde contexto personas activas');
-                console.log(response.data.data);
             } else {
                 setPersonasAct([]); // Si no es un arreglo, inicializa vacío
             }
@@ -80,14 +76,12 @@ export const PersonasProvider = ({ children }) => {
         }
     };
     const getDesvinculados = async () => {
-        if(isInitializedPer)return;
+        // if(isInitializedPer)return;
         setLoading(true);
         try {
             const response = await personasService.getDesvinculados();
             if (response.data && Array.isArray(response.data.data)) {
                 setDesvincu(response.data.data); // Asegura que personas sea un arreglo
-                // console.log('desde contexto personas activas');
-                // console.log(response.data.data);
             } else {
                 setDesvincu([]); // Si no es un arreglo, inicializa vacío
             }
@@ -96,7 +90,7 @@ export const PersonasProvider = ({ children }) => {
             setDesvincu([]);
         } finally {
             setLoading(false);
-            setIsInitializedPer(true); // Marcar como inicializado
+            setIsInitDesvincu(true); // Marcar como inicializado
         }
     };
     // Crear persona
@@ -189,6 +183,7 @@ export const PersonasProvider = ({ children }) => {
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
+                await fetchListPersonas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -256,6 +251,7 @@ export const PersonasProvider = ({ children }) => {
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
+                await fetchListPersonas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -420,6 +416,8 @@ export const PersonasProvider = ({ children }) => {
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
+                await fetchListPersonas();
+                await getDesvinculados();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -486,7 +484,8 @@ export const PersonasProvider = ({ children }) => {
             const response = await personasService.updateEndDate(userData.idassig, userData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
-                await fetchPersonas();
+                await getDesvinculados();
+                await fetchListPersonas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -554,6 +553,7 @@ export const PersonasProvider = ({ children }) => {
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
+                await fetchListPersonas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -642,9 +642,11 @@ export const PersonasProvider = ({ children }) => {
                                            showPersonalById,
                                            selectPer,
                                            getDesvinculados,
+                                           isInitDesvincu,
                                            users10,
                                            fetchListPersonas,
-                                           personal
+                                           personal,
+                                           isInitPersonal
                                            }}>
             {children}
             {loadingPer && (

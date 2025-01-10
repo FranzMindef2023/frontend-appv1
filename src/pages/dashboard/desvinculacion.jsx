@@ -52,16 +52,16 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
 export function Desvinculacion() {
-  const {  isInitializedPer, getshowAssignments,getDesvinculados,users10 } = usePersonas();
+  const {  isInitDesvincu, getshowAssignments,getDesvinculados,users10 } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [assing, setAssing] = useState(null);
   useEffect(() => {
-    if (!isInitializedPer) {
+    if (!isInitDesvincu) {
       getDesvinculados();
     }
-  }, [isInitializedPer]);
+  }, [isInitDesvincu]);
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado

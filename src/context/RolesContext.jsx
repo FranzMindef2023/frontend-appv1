@@ -29,6 +29,7 @@ export const RolesProvider = ({ children }) => {
             setUsers([]);
         } finally {
             setLoading(false);
+            setIsInitialized(true);
         }
     };
     // Crear un rol
@@ -126,16 +127,6 @@ export const RolesProvider = ({ children }) => {
     const updateRolsData = async (status, userData) => {
         const newData={status:status,rol:userData.rol}
         setLoading(true);
-        // try {
-        //     const response = await rolesService.updateRols(userData.id, newData);
-        //     await fetchRols();
-        //     // showNotification('success', response.data.message || 'Role updated successfully');
-        //     return response.data;
-        // } catch (error) {
-        //     // showNotification('error', 'Error updating role. Please try again.');
-        // } finally {
-        //     setLoading(false);
-        // }
         try {
             const response = await rolesService.updateRols(userData.id, newData);
             if (response.status === 200) {

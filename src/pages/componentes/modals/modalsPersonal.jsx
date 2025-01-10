@@ -1,8 +1,6 @@
 import React,{useState,useEffect } from "react";
 import * as Yup from "yup";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button,Input,Autocomplete,DateInput, AutocompleteItem,Select, SelectItem } from "@nextui-org/react";
-import {EyeFilledIcon} from "@/pages/componentes/modals/password/EyeFilledIcon";
-import {EyeSlashFilledIcon} from "@/pages/componentes/modals/password/EyeSlashFilledIcon";
 import {CalendarDate} from "@internationalized/date";
 import { useFormik } from "formik";
 import { useUsers } from "@/context/UserContext";
@@ -13,7 +11,6 @@ import { usePersonas } from "@/context/PersonasContext";
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const { createUser,loading , updateUser } = useUsers();
   const { createPersona,loadingPer , updatePersona } = usePersonas();
-  const [selectedItem, setSelectedItem] = useState([]);
   const [Item, setItem] = useState([]);
   const [ItemFuerzas, setfuerza] = useState([]);
   const [ItemGrados, setGrados] = useState([]);
@@ -101,8 +98,8 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     },
     validationSchema:Yup.object({
       nombres: Yup.string().max(50,'Debe tener maximo de 50 caracteres').required('Campo requerido'),
-      appaterno:Yup.string().max(30,'Debe tenere maximo 30 caracteres').min(3,'Debe tener como minimo 3 caracteres'),
-      apmaterno: Yup.string().max(30,'Debe tenere maximo 30 caracteres'),
+      appaterno:Yup.string().max(30,'Debe tenere maximo 30 caracteres').min(3,'Debe tener como minimo 3 caracteres').nullable(),
+      apmaterno: Yup.string().max(30,'Debe tenere maximo 30 caracteres').nullable(),
       email: Yup.string().email('El correo no tiene un formato corecto').required('El email es requerido'),
       ci: Yup.string()
     .matches(/^\d+$/, 'La cédula debe contener solo números') // Permitir solo dígitos
