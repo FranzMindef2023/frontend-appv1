@@ -217,6 +217,8 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               label="Event Date"
               variant="bordered"
             />
+            </div>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
             <DatePicker
               hideTimeZone
               showMonthAndYearPickers
