@@ -9,3 +9,4 @@ export * from "@/pages/dashboard/divisiones";
 export * from "@/pages/dashboard/ueducativas";
 export * from "@/pages/dashboard/umilitares";
 export * from "@/pages/dashboard/novedades";
+export * from "@/pages/dashboard/partediaria";

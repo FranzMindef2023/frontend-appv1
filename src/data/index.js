@@ -8,3 +8,4 @@ export * from "@/data/projects-data";
 export * from "@/data/authors-table-data";
 export * from "@/data/data";
 export * from "@/data/selectdata";
+export * from "@/data/statisticscaeds";

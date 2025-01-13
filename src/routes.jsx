@@ -24,6 +24,7 @@ import Personal from "./pages/dashboard/personal";
 import Accesos from "./pages/dashboard/accesos";
 import Desvinculacion from "./pages/dashboard/desvinculacion";
 import Novedades from "./pages/dashboard/novedades";
+import Partediaria from "./pages/dashboard/partediaria";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -75,12 +76,12 @@ export const routes = [
         path: "/novedades",
         element: <ProtectedRoute element={<Novedades />} />,
       },
-      // {
-      //   icon: <UserCircleIcon {...icon} />,
-      //   name: "departamentos",
-      //   path: "/departamentos",
-      //   element: <ProtectedRoute element={<Departamentos />} />,
-      // },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "Partediaria",
+        path: "/Partediaria",
+        element: <ProtectedRoute element={<Partediaria />} />,
+      },
       // {
       //   icon: <UserCircleIcon {...icon} />,
       //   name: "division",

@@ -9,6 +9,8 @@ const NovedadesContext = createContext();
 
 export const NovedadesProvider = ({ children }) => {
     const [isInitialized, setIsInitialized] = useState(false);
+    const [isInitPermisos, setIsInitPermisos] = useState(false);
+    const [permisos, setPermisos] = useState([]);
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -32,7 +34,7 @@ export const NovedadesProvider = ({ children }) => {
         }
     };
     
-    // Crear un rol
+    // Crear nuevo permiso
     const createNovedad = async (userData) => {
         setLoading(true);
         try {
@@ -92,7 +94,26 @@ export const NovedadesProvider = ({ children }) => {
             setLoading(false);
         }
     };
-
+    const fetchPermisos = async () => {
+        setLoading(true);
+        const usuario = sessionStorage.getItem('user');
+        const usuarioJSON = JSON.parse(usuario);
+        try {
+            const response = await novedadesService.listPersonalPermisos(usuarioJSON.iduser);
+            console.log(response.data.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                setPermisos(response.data.data); // Asegura que personas sea un arreglo
+            } else {
+                setPermisos([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setPermisos([]);
+        } finally {
+            setLoading(false);
+            setIsInitPermisos(true); // Marcar como inicializado
+        }
+    };
     // Obtener un rol por ID
     const getNovedadById = async (id) => {
         setLoading(true);
@@ -138,7 +159,17 @@ export const NovedadesProvider = ({ children }) => {
     };
 
     return (
-        <NovedadesContext.Provider value={{ users, user, createNovedad, getNovedadById, updateNovedad, deleteNovedad, fetchNovedades, loading, isInitialized }}>
+        <NovedadesContext.Provider value={{ users, user, 
+                                            createNovedad, 
+                                            getNovedadById, 
+                                            updateNovedad, 
+                                            deleteNovedad, 
+                                            fetchNovedades, 
+                                            loading, 
+                                            isInitialized,
+                                            isInitPermisos,
+                                            permisos,
+                                            fetchPermisos }}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

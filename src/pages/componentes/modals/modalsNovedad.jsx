@@ -6,21 +6,23 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Input,
   Autocomplete, 
   AutocompleteItem,
   Textarea,
   DatePicker
 } from "@nextui-org/react";
-import {getLocalTimeZone, today} from "@internationalized/date";
 import { usePersonas } from "@/context/PersonasContext";
-import { useTipNov } from "@/context/TipoNovedadContext";
+import { useTipNov } from "@/context/TipoNovedadContext"; 
+import { useNovedades } from "@/context/NovedadesContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const [selectedItem, setSelectedItem] = useState([]);
-  const { createAsignacion,updateAsignacion,changeAssignment,isInitPersonal,fetchListPersonas,personal} = usePersonas();
+  const { isInitPersonal,fetchListPersonas,personal} = usePersonas();
   const { isInitializedNov,fetchTipNovs,novedad} = useTipNov();
+  const {createNovedad,updateNovedad}=useNovedades();
   useEffect(() => {
 
     if (!isInitPersonal) fetchListPersonas();
@@ -40,17 +42,17 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
     onSubmit:async (values) =>{
       console.log(values);
       try {
-        // if (initialData?.idnovedad) {
-        //   if (values.action === 'update') {
-        //     await updateAsignacion(values); // Asume que tienes esta función
-        //   } else if (values.action === 'change') {
-        //     await changeAssignment(values);
-        //   }
-        // } else {
-        //   await createAsignacion(values);
-        // }
-        // resetForm();
-        // onClose();
+        if (initialData?.idnovedad) {
+          // if (values.action === 'update') {
+          //   await updateAsignacion(values); // Asume que tienes esta función
+          // } else if (values.action === 'change') {
+          //   await changeAssignment(values);
+          // }
+        } else {
+          await createNovedad(values);
+        }
+        resetForm();
+        onClose();
       } catch (error) {
         console.error('Error al registrar usuario:', error);
         alert('Error al registrar usuario');
@@ -67,13 +69,11 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
           .typeError('Debes seleccionar el tipo de permiso'),
       startdate: Yup.date()
           .required('La fecha desde es obligatoria.')
-          .typeError('Debe ser una fecha válida.')
-          .max(new Date(), 'La fecha no puede ser en el futuro.'),
+          .typeError('Debe ser una fecha válida.'),
       enddate: Yup.date()
           .required('La fecha hasta es obligatoria.')
           .typeError('Debe ser una fecha válida.')
-          .min(Yup.ref('startdate'), 'La fecha hasta debe ser igual o posterior a la fecha desde.')
-          .max(new Date(), 'La fecha no puede ser en el futuro.'),
+          .min(Yup.ref('startdate'), 'La fecha hasta debe ser igual o posterior a la fecha desde.'),
       })
   });
   // Configurar el rol seleccionado basado en `assigned`
@@ -149,7 +149,20 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
             </Autocomplete>
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-              <DatePicker 
+              <Input 
+              isRequired 
+              name="startdate"
+              label="FECHA DESDE" 
+              type="date" 
+              onBlur={handleBlur}  
+              onChange={handleChange}
+              isInvalid={!!errors.startdate && touched.startdate}
+              color={errors.startdate ? "danger" : "success"}
+              errorMessage={errors.startdate} 
+              className="block w-full"
+              variant="bordered"
+              />
+              {/* <DatePicker 
               isRequired 
               name="startdate"
               type="date"
@@ -162,11 +175,24 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               errorMessage={errors.startdate} 
               className="block w-full"
               variant="bordered"
-              />
+              /> */}
             
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-            <DatePicker
+            <Input 
+              isRequired 
+              name="enddate"
+              label="FECHA HASTA"
+              type="date" 
+              onBlur={handleBlur}  
+              onChange={handleChange}
+              isInvalid={!!errors.enddate && touched.enddate}
+              color={errors.enddate ? "danger" : "success"}
+              errorMessage={errors.enddate} 
+              className="block w-full"
+              variant="bordered"
+              />
+            {/* <DatePicker
               isRequired
               name="enddate"
               onBlur={handleBlur}  
@@ -178,7 +204,7 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               isInvalid={!!errors.enddate && touched.enddate}
               color={errors.enddate ? "danger" : "success"}
               errorMessage={errors.enddate} 
-            />
+            /> */}
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
             <Textarea

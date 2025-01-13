@@ -36,7 +36,10 @@ import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
-
+import { StatisticsCard } from "@/widgets/cards";
+import {
+  CardsData,
+} from "@/data";
 
 
 
@@ -49,7 +52,7 @@ const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci","fuerza","tipo_novedad","inicio","fin","descripcion", "actions"];
 
-export function Novedades() {
+export function Partediaria() {
   const {  isInitPermisos,permisos, fetchPermisos} = useNovedades();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
@@ -374,10 +377,32 @@ export function Novedades() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Solicitud de Permisos
+            Generacion del Parte diaria
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
+          <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+                  {CardsData.map(({ icon, title, footer, ...rest }) => (
+                    <StatisticsCard
+                      key={title}
+                      {...rest}
+                      title={title}
+                      icon={React.createElement(icon, {
+                        className: "w-6 h-6 text-white",
+                      })}
+                      footer={
+                        <Typography className="font-normal text-blue-gray-600">
+                          <strong className={footer.color}>{footer.value}</strong>
+                          &nbsp;{footer.label}
+                        </Typography>
+                      }
+                    />
+                  ))}
+                </div>
+        <div className="relative flex justify-end items-center gap-2">
+        <Button color="primary">Button</Button>
+        </div>
+        
           <Table
             isCompact
             removeWrapper
@@ -447,4 +472,4 @@ export function Novedades() {
   );
 }
 
-export default Novedades;
+export default Partediaria;

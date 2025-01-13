@@ -11,6 +11,7 @@ export const PersonasProvider = ({ children }) => {
     const [isInitializedPer, setIsInitializedPer] = useState(false);
     const [isInitPersonal, setIsInitPersonal] = useState(false);
     const [isInitDesvincu, setIsInitDesvincu] = useState(false);
+    
     const [users, setPersonas] = useState([]);
     const [usersAct, setPersonasAct] = useState([]);
     const [users10, setDesvincu] = useState([]);
@@ -37,6 +38,7 @@ export const PersonasProvider = ({ children }) => {
             setIsInitializedPer(true); // Marcar como inicializado
         }
     };
+    
     // Obtener todo el persona del usuario
     const fetchListPersonas = async () => {
         setLoading(true);
