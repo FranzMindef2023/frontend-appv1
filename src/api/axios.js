@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://laravel.local/api',
+  baseURL: 'http://laravel-appv1.local/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,7 +27,7 @@ const refreshAuthToken = async () => {
   }
 
   try {
-    const response = await axios.post('http://laravel.local/api/refresh', {}, {
+    const response = await axios.post('http://laravel-appv1.local/api/refresh', {}, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
