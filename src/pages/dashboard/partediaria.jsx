@@ -30,7 +30,7 @@ import { useNovedades } from "@/context/NovedadesContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, statusOptions} from "@/data/dataPermisos";
+import {columns, statusOptions} from "@/data/dataPartes";
 import {capitalize} from "@/data/utils";
 import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
@@ -50,20 +50,23 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci","fuerza","tipo_novedad","inicio","fin","descripcion", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","fuerza","puesto","organizacion","estado_forma"];
 
 export function Partediaria() {
-  const {  isInitPermisos,permisos, fetchPermisos} = useNovedades();
+  const {  isInitNovedades,novedades, fetchPerNovedades} = useNovedades();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [assing, setAssing] = useState(null);
-  useEffect(() => {
-    if (!isInitPermisos) {
-      fetchPermisos();
-      console.log(permisos);
-    }
-  }, [isInitPermisos]);
+  // useEffect(() => {
+  //   if (!isInitNovedades) {
+  //     fetchPerNovedades();
+  //     console.log(novedades);
+  //   }
+  // }, [isInitNovedades]);
+  const getRelacionNominal=()=>{
+    fetchPerNovedades();
+  }
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -97,7 +100,7 @@ export function Partediaria() {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(permisos.length / rowsPerPage);
+  const pages = Math.ceil(novedades.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -108,7 +111,7 @@ export function Partediaria() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...permisos];
+    let filteredUsers = [...novedades];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -122,7 +125,7 @@ export function Partediaria() {
     }
 
     return filteredUsers;
-  }, [permisos, filterValue, statusFilter]);
+  }, [novedades, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -281,12 +284,12 @@ export function Partediaria() {
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            <Button color="primary">Relacion Nominal</Button>
+            <Button onClick={() => getRelacionNominal()} color="primary">Relacion Nominal</Button>
             <Button color="secondary">Enviar Parte</Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {permisos.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {novedades.length} Usuarios</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -308,7 +311,7 @@ export function Partediaria() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    permisos.length,
+    novedades.length,
     hasSearchFilter,
   ]);
 

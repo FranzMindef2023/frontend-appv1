@@ -10,6 +10,8 @@ const getNovedades = () => api.get('/novedades');
 const getNovedadById = (id) => api.get(`/novedades/${id}`);
 // Obtener personal del usuaro en cargado
 const listPersonalPermisos = (id) => api.get(`/listpersonaspermisos/${id}`);
+// Obtener personal con novedades
+const listPeopleParteDiaria = (id) => api.get(`/listpeoplepartediaria/${id}`);
 
 // Actualizar un rol
 const updateNovedad = (id, userData) => api.put(`/novedades/${id}`, userData);
@@ -22,4 +24,5 @@ export default { createNovedad,
                 getNovedadById, 
                 updateNovedad, 
                 deleteNovedad ,
-                listPersonalPermisos};
+                listPersonalPermisos,
+                listPeopleParteDiaria};

@@ -10,7 +10,9 @@ const NovedadesContext = createContext();
 export const NovedadesProvider = ({ children }) => {
     const [isInitialized, setIsInitialized] = useState(false);
     const [isInitPermisos, setIsInitPermisos] = useState(false);
+    const [isInitNovedades, setIsInitNovedades] = useState(false);
     const [permisos, setPermisos] = useState([]);
+    const [novedades, setNovedades] = useState([]);
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -114,6 +116,26 @@ export const NovedadesProvider = ({ children }) => {
             setIsInitPermisos(true); // Marcar como inicializado
         }
     };
+    const fetchPerNovedades = async () => {
+        setLoading(true);
+        const usuario = sessionStorage.getItem('user');
+        const usuarioJSON = JSON.parse(usuario);
+        try {
+            const response = await novedadesService.listPeopleParteDiaria(usuarioJSON.iduser);
+            // console.log(response.data.data);
+            if (response.data && Array.isArray(response.data.data)) {
+                setNovedades(response.data.data); // Asegura que personas sea un arreglo
+            } else {
+                setNovedades([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setNovedades([]);
+        } finally {
+            setLoading(false);
+            setIsInitNovedades(true); // Marcar como inicializado
+        }
+    };
     // Obtener un rol por ID
     const getNovedadById = async (id) => {
         setLoading(true);
@@ -169,7 +191,10 @@ export const NovedadesProvider = ({ children }) => {
                                             isInitialized,
                                             isInitPermisos,
                                             permisos,
-                                            fetchPermisos }}>
+                                            fetchPermisos ,
+                                            fetchPerNovedades,
+                                            novedades,
+                                            isInitNovedades}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
