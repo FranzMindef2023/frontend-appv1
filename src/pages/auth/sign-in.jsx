@@ -23,7 +23,7 @@ export function SignIn() {
   const { handleSubmit, handleBlur, values, handleChange, errors, touched, resetForm } = useFormik({
     initialValues: {
       email: 'juan1.perez@example.com',
-      password: '123456789',
+      password: 'password123',
     },
     onSubmit: async (values) => {
       setIsLoading(true); // Activa el loader

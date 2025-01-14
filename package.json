@@ -20,6 +20,7 @@
     "react": "18.2.0",
     "react-apexcharts": "1.4.1",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.5.1",
     "react-router-dom": "6.17.0",
     "sweetalert2": "^11.14.5",
     "yup": "^1.4.0"

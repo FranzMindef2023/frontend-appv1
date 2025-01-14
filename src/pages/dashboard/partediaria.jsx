@@ -86,18 +86,6 @@ export function Partediaria() {
         console.error("Error fetching roles:", error);
     }
   };
-
-  const closeModalP = () => {
-    setModalOpenP(false);
-  };
-  const handleActionP = () => {
-    alert("Action executed!");
-    closeModalP(); // Cierra el modal después de la acción
-  };
-  const handleAction = () => {
-    alert("Action executed!");
-    closeModal(); // Cierra el modal después de la acción
-  };
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -243,7 +231,7 @@ export function Partediaria() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
@@ -292,15 +280,9 @@ export function Partediaria() {
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown>
-            <Button
-              className="bg-foreground text-background"
-              endContent={<PlusIcon />}
-              size="sm"
-              onPress={() => openModal("create")}
-            >
-              Usuario
-            </Button>
+            </Dropdown> */}
+            <Button color="primary">Relacion Nominal</Button>
+            <Button color="secondary">Enviar Parte</Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -381,28 +363,18 @@ export function Partediaria() {
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
-          <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-                  {CardsData.map(({ icon, title, footer, ...rest }) => (
-                    <StatisticsCard
-                      key={title}
-                      {...rest}
-                      title={title}
-                      icon={React.createElement(icon, {
-                        className: "w-6 h-6 text-white",
-                      })}
-                      footer={
-                        <Typography className="font-normal text-blue-gray-600">
-                          <strong className={footer.color}>{footer.value}</strong>
-                          &nbsp;{footer.label}
-                        </Typography>
-                      }
-                    />
-                  ))}
-                </div>
-        <div className="relative flex justify-end items-center gap-2">
-        <Button color="primary">Button</Button>
-        </div>
-        
+        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+            {CardsData.map(({ icon, title, ...rest }) => (
+              <StatisticsCard
+                key={title}
+                {...rest}
+                title={title}
+                icon={React.createElement(icon, {
+                  className: "w-6 h-6 text-white",
+                })}
+              />
+            ))}
+          </div>
           <Table
             isCompact
             removeWrapper
@@ -443,29 +415,7 @@ export function Partediaria() {
               )}
             </TableBody>
           </Table>
-          <CustomModals
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            title={selectedUser ? "EDITAR SOLICITUD DE PERMISO" : "SOLICITUD DE PERMISO"} // Cambiar el título dinámicamente
-            actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
-            closeLabel="CANCELAR"
-            initialData={selectedUser} // Pasar los datos iniciales
-          />
-          <CustomModalDest
-            isOpen={isModalOpenP}
-            onClose={closeModalP}
-            title="REGISTRO DE NUEVO ROL"
-            bodyContent={[
-              "This is the first paragraph.",
-              "This is the second paragraph.",
-              "This is the third paragraph."
-            ]}
-            onAction={handleActionP}
-            initialData={selectedUser} // Pasar los datos iniciales 
-            initialAssing={assing} // Pasar los datos iniciales 
-            actionLabel="REGISTRAR"
-            closeLabel="CANCELAR"
-          />
+          
         </CardBody>
       </Card>
     </div>

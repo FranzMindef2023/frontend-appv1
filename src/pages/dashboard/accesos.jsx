@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
+import toast, { Toaster } from 'react-hot-toast';
 import {
   Table,
   TableHeader,
@@ -39,6 +40,7 @@ export function Accesos() {
   const { usersAccess, fetchUsersAccess, isInitialUser, createAcceso, deleteAcceso} = useUsers();
   const [selectedUser, setSelectedUser] = useState(null);
   const [alertVisible, setAlertVisible] = useState(false);
+  const notify = () => toast('Here is your toast.');
 
   useEffect(() => {
     if (!isInitialized) fetchOrgPhat();
@@ -97,7 +99,7 @@ export function Accesos() {
     const handleStatusChange = async (e) => {
       try {
         await handlestatus(e, node.idorgani, node.idpadre);
-        console.log();
+        // console.log();
         // Actualizar el estado local del nodo asignado
         node.assigned = !e.target.checked ? 1 : 0; // Cambiar dinámicamente el valor
       } catch (error) {
@@ -161,55 +163,84 @@ export function Accesos() {
       setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
       return;
     }
-  
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Estás a punto de ejecutar el proceso. Si no estás seguro, puedes cancelar esta acción.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, continuar",
-      cancelButtonText: "Cancelar"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          if (!e.target.checked) {
-            // Llamar a la función createAcceso del contexto
-            await createAcceso(selectedUser,node);
-          } else {
-            // Llamar a la función deleteAcceso del contexto
-            await deleteAcceso(selectedUser, node);
-          }
-          // node.assigned = e.target.checked ? 1 : 0;
-          // Ejecutar fetchOrgAccess para actualizar el estado
-          // await fetchOrgAccess(selectedUser, idpadre);
-  
-          // Mostrar alerta de éxito
-          Swal.fire({
-            title: "¡Actualizado!",
-            text: "El estado se ha actualizado correctamente.",
-            icon: "success"
-          });
-        } catch (error) {
-          console.error("Error al actualizar el estado:", error);
-  
-          // Mostrar alerta de error
-          Swal.fire({
-            title: "Error",
-            text: "Ocurrió un error al actualizar el estado. Intenta nuevamente.",
-            icon: "error"
-          });
-        }
+    try {
+      if (e.target.checked) {
+        // Llamar a la función createAcceso del contexto
+        await createAcceso(selectedUser,node);
+        toast.success('Acceso permitido exitosamente.')
       } else {
-        // Mostrar alerta opcional para acción cancelada
-        Swal.fire({
-          title: "Cancelado",
-          text: "La acción ha sido cancelada.",
-          icon: "info"
-        });
+        // Llamar a la función deleteAcceso del contexto
+        await deleteAcceso(selectedUser, node);
+        toast.error('Acceso deshabilitado correctamente.')
       }
-    });
+      // node.assigned = e.target.checked ? 1 : 0;
+      // Ejecutar fetchOrgAccess para actualizar el estado
+      // await fetchOrgAccess(selectedUser, idpadre);
+
+      // Mostrar alerta de éxito
+      // Swal.fire({
+      //   title: "¡Actualizado!",
+      //   text: "El estado se ha actualizado correctamente.",
+      //   icon: "success"
+      // });
+    } catch (error) {
+      console.error("Error al actualizar el estado:", error);
+
+      // Mostrar alerta de error
+      // Swal.fire({
+      //   title: "Error",
+      //   text: "Ocurrió un error al actualizar el estado. Intenta nuevamente.",
+      //   icon: "error"
+      // });
+    }
+    // Swal.fire({
+    //   title: "¿Estás seguro?",
+    //   text: "Estás a punto de ejecutar el proceso. Si no estás seguro, puedes cancelar esta acción.",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Sí, continuar",
+    //   cancelButtonText: "Cancelar"
+    // }).then(async (result) => {
+    //   if (result.isConfirmed) {
+    //     try {
+    //       if (!e.target.checked) {
+    //         // Llamar a la función createAcceso del contexto
+    //         await createAcceso(selectedUser,node);
+    //       } else {
+    //         // Llamar a la función deleteAcceso del contexto
+    //         await deleteAcceso(selectedUser, node);
+    //       }
+    //       // node.assigned = e.target.checked ? 1 : 0;
+    //       // Ejecutar fetchOrgAccess para actualizar el estado
+    //       // await fetchOrgAccess(selectedUser, idpadre);
+  
+    //       // Mostrar alerta de éxito
+    //       Swal.fire({
+    //         title: "¡Actualizado!",
+    //         text: "El estado se ha actualizado correctamente.",
+    //         icon: "success"
+    //       });
+    //     } catch (error) {
+    //       console.error("Error al actualizar el estado:", error);
+  
+    //       // Mostrar alerta de error
+    //       Swal.fire({
+    //         title: "Error",
+    //         text: "Ocurrió un error al actualizar el estado. Intenta nuevamente.",
+    //         icon: "error"
+    //       });
+    //     }
+    //   } else {
+    //     // Mostrar alerta opcional para acción cancelada
+    //     Swal.fire({
+    //       title: "Cancelado",
+    //       text: "La acción ha sido cancelada.",
+    //       icon: "info"
+    //     });
+    //   }
+    // });
   };
   
 
@@ -226,6 +257,9 @@ export function Accesos() {
           {alertVisible && (
             <Alert color="warning" title="Por favor selecciona un usuario antes de continuar." />
           )}
+          <Toaster 
+          position="top-right"
+          />
           <Autocomplete
             size="sm"
             isRequired
