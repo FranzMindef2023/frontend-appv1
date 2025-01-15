@@ -67,6 +67,20 @@ export function Partediaria() {
   const getRelacionNominal=()=>{
     fetchPerNovedades();
   }
+
+  const enviarParte = () => {
+    console.log("Novedades:", novedades);
+    console.log("Selected keys:", Array.from(selectedKeys));
+  
+    const selectedKeysArray = Array.from(selectedKeys);
+    const selectedData = novedades.filter((user) =>
+      selectedKeysArray.includes(String(user.id))
+    );
+  
+    console.log("Datos seleccionados para enviar:", selectedData);
+  };
+  
+  
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -285,7 +299,7 @@ export function Partediaria() {
               </DropdownMenu>
             </Dropdown> */}
             <Button onClick={() => getRelacionNominal()} color="primary">Relacion Nominal</Button>
-            <Button color="secondary">Enviar Parte</Button>
+            <Button onClick={() => enviarParte()}  color="secondary">Enviar Parte</Button> 
           </div>
         </div>
         <div className="flex justify-between items-center">
