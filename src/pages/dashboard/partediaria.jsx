@@ -64,21 +64,46 @@ export function Partediaria() {
   //     console.log(novedades);
   //   }
   // }, [isInitNovedades]);
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: "age",
+    direction: "ascending",
+  });
   const getRelacionNominal=()=>{
     fetchPerNovedades();
   }
-
-  const enviarParte = () => {
-    console.log("Novedades:", novedades);
-    console.log("Selected keys:", Array.from(selectedKeys));
+  useEffect(() => {
+    console.log("Claves seleccionadas (updated):", Array.from(selectedKeys));
+  }, [selectedKeys]);
+  const enviarParte = (event) => {
+    // Evita el comportamiento predeterminado del botón o formulario
+    event.preventDefault();
   
-    const selectedKeysArray = Array.from(selectedKeys);
+    console.log("Botón clickeado, función enviarParte ejecutada",selectedKeys);
+  
+    const isAllSelected = selectedKeys === "all";
+    console.log("isAllSelected:", isAllSelected);
+  
+    const selectedKeysArray = isAllSelected
+      ? novedades.map((user) => String(user.id))
+      : Array.from(selectedKeys);
+  
+    if (selectedKeysArray.length === 0) {
+      console.warn("No hay usuarios seleccionados.");
+      return;
+    }
+  
     const selectedData = novedades.filter((user) =>
       selectedKeysArray.includes(String(user.id))
     );
   
-    console.log("Datos seleccionados para enviar:", selectedData);
+    console.log("Usuarios seleccionados para enviar:", selectedData);
   };
+  
   
   
   const openModal = (accion, user = null) => {
@@ -103,15 +128,10 @@ export function Partediaria() {
         console.error("Error fetching roles:", error);
     }
   };
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
-    direction: "ascending",
-  });
+  useEffect(() => {
+    console.log("selectedKeys actualizado:", Array.from(selectedKeys));
+  }, [selectedKeys]);
+  
   const [page, setPage] = React.useState(1);
 
   const pages = Math.ceil(novedades.length / rowsPerPage);
@@ -298,8 +318,8 @@ export function Partediaria() {
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            <Button onClick={() => getRelacionNominal()} color="primary">Relacion Nominal</Button>
-            <Button onClick={() => enviarParte()}  color="secondary">Enviar Parte</Button> 
+           
+            
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -346,8 +366,8 @@ export function Partediaria() {
         />
         <span className="text-small text-default-400">
           {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} de ${items.length} Seleccionados`}
+            ? `${novedades.length} usuarios seleccionados`
+            : `${selectedKeys.size} de ${items.length} seleccionados`}
         </span>
       </div>
     );
@@ -391,6 +411,14 @@ export function Partediaria() {
                 })}
               />
             ))}
+          </div>
+          <div className="mb-12 flex justify-end gap-4">
+            <Button onClick={() => getRelacionNominal()}  className="bg-foreground text-background">
+              Relacion Nominal
+            </Button>
+            <Button type="button" onClick={enviarParte} color="warning">
+              Enviar Parte
+            </Button>
           </div>
           <Table
             isCompact
