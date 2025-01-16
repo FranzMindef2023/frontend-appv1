@@ -2,6 +2,8 @@ import api from '@/api/axios';
 
 // Crear un nuevo rol
 const createNovedad = (user) => api.post('/novedades', user);
+// Crear registro de parte diaria
+const storeMassive = (user) => api.post('/storemassive', user);
 
 // Obtener todos los novedades
 const getNovedades = () => api.get('/novedades');
@@ -25,4 +27,5 @@ export default { createNovedad,
                 updateNovedad, 
                 deleteNovedad ,
                 listPersonalPermisos,
-                listPeopleParteDiaria};
+                listPeopleParteDiaria,
+                storeMassive};

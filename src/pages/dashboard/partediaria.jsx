@@ -53,33 +53,31 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "celular","fuerza","puesto","organizacion","estado_forma"];
 
 export function Partediaria() {
-  const {  isInitNovedades,novedades, fetchPerNovedades} = useNovedades();
+  const {  isInitNovedades, fetchPerNovedades,storeMassive} = useNovedades();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [novedades, setNovedades] = useState([]);
   const [assing, setAssing] = useState(null);
-  // useEffect(() => {
-  //   if (!isInitNovedades) {
-  //     fetchPerNovedades();
-  //     console.log(novedades);
-  //   }
-  // }, [isInitNovedades]);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = useState("all");
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [dateTime, setDateTime] = useState(new Date());
   const [sortDescriptor, setSortDescriptor] = useState({
     column: "age",
     direction: "ascending",
   });
-  const getRelacionNominal=()=>{
-    fetchPerNovedades();
+  const getRelacionNominal=async ()=>{
+    const usePersonas= await fetchPerNovedades();
+    console.log(usePersonas);
+    setNovedades(usePersonas);
   }
   useEffect(() => {
     console.log("Claves seleccionadas (updated):", Array.from(selectedKeys));
   }, [selectedKeys]);
-  const enviarParte = (event) => {
+  const enviarParte = async (event) => {
     // Evita el comportamiento predeterminado del botón o formulario
     event.preventDefault();
   
@@ -100,10 +98,9 @@ export function Partediaria() {
     const selectedData = novedades.filter((user) =>
       selectedKeysArray.includes(String(user.id))
     );
-  
+    await storeMassive(selectedData);
     console.log("Usuarios seleccionados para enviar:", selectedData);
   };
-  
   
   
   const openModal = (accion, user = null) => {
@@ -130,6 +127,13 @@ export function Partediaria() {
   };
   useEffect(() => {
     console.log("selectedKeys actualizado:", Array.from(selectedKeys));
+     // Crear un intervalo que actualice la hora cada segundo
+     const timer = setInterval(() => {
+      setDateTime(new Date());
+    }, 1000);
+
+    // Limpiar el intervalo al desmontar el componente
+    return () => clearInterval(timer);
   }, [selectedKeys]);
   
   const [page, setPage] = React.useState(1);
@@ -395,10 +399,14 @@ export function Partediaria() {
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
+          <Typography variant="h6" color="white" className="flex justify-between items-center">
             Generacion del Parte diaria
+            <span className="ml-auto text-right">
+              {dateTime.toLocaleDateString()} {dateTime.toLocaleTimeString()}
+            </span>
           </Typography>
         </CardHeader>
+
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
             {CardsData.map(({ icon, title, ...rest }) => (
@@ -420,6 +428,7 @@ export function Partediaria() {
               Enviar Parte
             </Button>
           </div>
+            <hr />
           <Table
             isCompact
             removeWrapper
