@@ -1,5 +1,6 @@
 import React,{useState ,useEffect} from "react";
 import Swal from 'sweetalert2';
+
 import {
   Table,
   TableHeader,
@@ -47,7 +48,7 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "role", "situacion","actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "role", "situacion","actions"];
 
 export function Roles() {
   const { users, isInitialized, fetchRols, loading,updateRols } = useRols();
@@ -193,29 +194,37 @@ export function Roles() {
         );
         case "situacion":
         return (
-          <Switch
-            size="sm"
-            color="success"
-            isSelected={user.status === "Activo"} // Encender si el status es Activo
-            onChange={(e) => handlestatus(e, user)} // Pasar el evento y el usuario
-          ></Switch>
+          <Tooltip color="danger" content={user.status === "Activo" ? "Inactivar" : "Activar"}>
+              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <Switch
+                size="sm"
+                color="success"
+                isSelected={user.status === "Activo"} // Encender si el status es Activo
+                onChange={(e) => handlestatus(e, user)} // Pasar el evento y el usuario
+              ></Switch>
+              </span>
+            </Tooltip>
+          
         );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Button content="Editar" size="sm">
-              <span onClick={() => openModal("edit", user)} className="text-lg text-warning cursor-pointer active:opacity-50">
-                <EditIcon />
+            <Tooltip content="Editar Rol" color="warning" size="lg">
+              <span
+                onClick={() => openModal("edit", user)}
+                className="text-lg text-warning cursor-pointer active:opacity-50"
+              >
+                <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
               </span>
-            </Button>
+            </Tooltip>
             {/* <Button  radius="full" size="lg" variant="light">
               <EditIcon />
             </Button> */}
-            <Tooltip color="danger" content="Eliminar" size="lg">
+            {/* <Tooltip color="danger" content="Eliminar" size="lg">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
                 <DeleteIcon />
               </span>
-            </Tooltip>
+            </Tooltip> */}
           </div>
           
         );
@@ -319,7 +328,7 @@ export function Roles() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {users.length} Roles</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -360,11 +369,11 @@ export function Roles() {
           variant="light"
           onChange={setPage}
         />
-        <span className="text-small text-default-400">
+        {/* <span className="text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
             : `${selectedKeys.size} de ${items.length} Seleccionados`}
-        </span>
+        </span> */}
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
@@ -413,7 +422,7 @@ export function Roles() {
             }}
             classNames={classNames}
             selectedKeys={selectedKeys}
-            selectionMode="multiple"
+
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"

@@ -1,5 +1,5 @@
 import React,{useState, useEffect } from "react";
-
+import { LockOpenIcon } from "@heroicons/react/24/solid";
 import {
   Table,
   TableHeader,
@@ -35,7 +35,7 @@ import {columns, statusOptions} from "@/data/dataUsers";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsUsuario';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
+import {KeyIcon} from "@/pages/componentes/modals/acctions/KeyIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 
 import CustomModalPrivilegios from '@/pages/componentes/modals/modalPrivilegios';
@@ -49,7 +49,7 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","puesto", "sigla","lastlogin","estado", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","puesto", "sigla","lastlogin","estado", "actions"];
 
 export function Profile() {
   const { users,user, isInitialized, fetchUsers, loading, asignaciones } = useUsers();
@@ -191,22 +191,30 @@ export function Profile() {
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
-              <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EditIcon />
+            <Tooltip content="Editar Usuario" color="warning" size="lg">
+              <span
+                onClick={() => openModal("edit", user)}
+                className="text-lg text-warning cursor-pointer active:opacity-50"
+              >
+                <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
               </span>
-            </Button>
+            </Tooltip>
             {/* <Tooltip color="danger" content="Eliminar" size="lg">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
             </Tooltip> */}
-            <Button isIconOnly color="primary" size="sm" aria-label="Like">
+            <Tooltip content="Rol de Usuario" color="primary" size="lg">
               <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EyeIcon />
+                <KeyIcon className="h-6 w-6 text-blue-500" />
+                </span>
+            </Tooltip>
+            {/* <Button isIconOnly color="primary" size="sm" aria-label="Like">
+              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
+              <LockOpenIcon className="h-6 w-6 text-gray-500" />
               </span>
               
-            </Button>
+            </Button> */}
             {/* <Button content="Editar" size="sm">
               <span onClick={() => openModal("edit", user)} className="text-lg text-warning cursor-pointer active:opacity-50">
                 <EyeIcon />
@@ -417,7 +425,6 @@ export function Profile() {
             }}
             classNames={classNames}
             selectedKeys={selectedKeys}
-            selectionMode="multiple"
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"

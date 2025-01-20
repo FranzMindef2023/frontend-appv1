@@ -24,6 +24,7 @@ import { PlusIcon } from "@/pages/componentes/PlusIcon";
 
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useUsers } from "@/context/UserContext";
+import {CustomIcon} from "@/pages/componentes/modals/acctions/CustomIcon";
 
 const statusColorMap = {
   Activo: "success",
@@ -114,11 +115,13 @@ export function Accesos() {
           }}
         >
           <TableCell>
-            <User
+          <CustomIcon className="h-6 w-6 text-green-500" />
+          {node.nomorg}
+            {/* <User
               name={node.nomorg}
               description={`Nivel ${level}`}
               avatar={node.avatar || "https://i.pravatar.cc/300"}
-            />
+            /> */}
           </TableCell>
           <TableCell>{node.sigla}</TableCell>
           <TableCell>{node.idorgani}</TableCell>
@@ -285,7 +288,7 @@ export function Accesos() {
             {usersAccess.map((user) => (
               <AutocompleteItem
                 key={user.iduser}
-                startContent={<Avatar alt={user.name} className="w-6 h-6" src={user.avatar || "https://i.pravatar.cc/300"} />}
+                // startContent={<Avatar alt={user.name} className="w-6 h-6" src={user.avatar || "https://i.pravatar.cc/300"} />}
               >
                 {user.name}
               </AutocompleteItem>
