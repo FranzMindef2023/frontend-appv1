@@ -36,6 +36,8 @@ import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
+import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
+import {CustomPdf} from "@/pages/componentes/modals/acctions/PdfDowIcon";
 
 
 
@@ -201,17 +203,21 @@ export function Informes() {
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
+            {/* <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
               <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
-            </Button>
-            <Button isIconOnly color="primary" size="sm" aria-label="Like">
-              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-              
-            </Button>
+            </Button> */}
+            <Tooltip content="Parte" color="danger" size="lg">
+              <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
+                <CustomDemIcon className="h-6 w-6 text-red-500" />
+                </span>
+            </Tooltip>
+            <Tooltip content="Demostración" color="danger" size="lg">
+              <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
+                <CustomDemIcon className="h-6 w-6 text-red-500" />
+                </span>
+            </Tooltip>
           </div>
         );
       default:
@@ -405,7 +411,6 @@ export function Informes() {
             }}
             classNames={classNames}
             selectedKeys={selectedKeys}
-            selectionMode="multiple"
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"

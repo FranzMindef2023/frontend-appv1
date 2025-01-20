@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Swal from 'sweetalert2';
 import toast, { Toaster } from 'react-hot-toast';
 import {
   Table,
