@@ -12,7 +12,8 @@ const downloadReporPartePDF = (iduser, fecha) => {
         responseType: 'blob', // Necesario para manejar la descarga del archivo como un blob
     });
 };
-
+// Obtener todos los roles
+const indexReporPartesrrhh = (id) => api.get(`/indexreporpartesrrhh`);
 // Obtener un rol por ID
 const getRolsById = (id) => api.get(`/roles/${id}`);
 
@@ -27,4 +28,5 @@ export default { createRols,
     getRolsById, 
     updateRols, 
     deleteRols,
-    downloadReporPartePDF };
+    downloadReporPartePDF,
+    indexReporPartesrrhh };
