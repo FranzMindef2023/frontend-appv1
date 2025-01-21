@@ -9,7 +9,8 @@ export const projectsTableData = [
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
     budget: "$14,000",
-    completion: 60,
+    efectivo: "Material XD Version",
+    completion: 100,
   },
   {
     img: "/img/logo-atlassian.svg",
@@ -19,6 +20,7 @@ export const projectsTableData = [
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
     budget: "$3,000",
+    efectivo: "Material XD Version",
     completion: 10,
   },
   {
@@ -29,6 +31,7 @@ export const projectsTableData = [
       { img: "/img/team-1.jpeg", name: "Romina Hadid" },
     ],
     budget: "Not set",
+    efectivo: "Material XD Version",
     completion: 100,
   },
   {
@@ -41,6 +44,7 @@ export const projectsTableData = [
       { img: "/img/team-1.jpeg", name: "Romina Hadid" },
     ],
     budget: "$20,500",
+    efectivo: "Material XD Version",
     completion: 100,
   },
   {
@@ -48,6 +52,7 @@ export const projectsTableData = [
     name: "Add the New Pricing Page",
     members: [{ img: "/img/team-4.jpeg", name: "Alexander Smith" }],
     budget: "$500",
+    efectivo: "Material XD Version",
     completion: 25,
   },
   {
@@ -58,6 +63,7 @@ export const projectsTableData = [
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
     budget: "$2,000",
+    efectivo: "Material XD Version",
     completion: 40,
   },
 ];

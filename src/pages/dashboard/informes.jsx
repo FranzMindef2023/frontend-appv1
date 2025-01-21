@@ -8,11 +8,6 @@ import {
   TableRow,
   TableCell,
   Input,
-  Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Chip,
   User,
   Pagination,
@@ -27,17 +22,11 @@ import {
 
 } from "@material-tailwind/react";
 import { usePartes } from "@/context/PartesContext";
-import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
-import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataInformes";
-import {capitalize} from "@/data/utils";
 import CustomModals from '@/pages/componentes/modals/modalsNovedad';
-import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
-import {CustomPdf} from "@/pages/componentes/modals/acctions/PdfDowIcon";
 
 
 
@@ -60,7 +49,7 @@ export function Informes() {
   useEffect(() => {
     if (!isInitialPartes) {
       fetchPartes();
-      console.log(users);
+      // console.log(users);
     }
   }, [isInitialPartes]);
   const handleDownload = async (user = null) => {
@@ -364,7 +353,7 @@ export function Informes() {
         <span className="text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} de ${items.length} Seleccionados`}
+            : `${items.length}`}
         </span>
       </div>
     );

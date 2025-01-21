@@ -26,6 +26,8 @@ import Desvinculacion from "./pages/dashboard/desvinculacion";
 import Novedades from "./pages/dashboard/novedades";
 import Partediaria from "./pages/dashboard/partediaria";
 import Informes from "./pages/dashboard/informes";
+import Permisos from "./pages/dashboard/permisos";
+import Parterrhh from "./pages/dashboard/parterrhh";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -37,70 +39,70 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
+        name: "INICIO",
         path: "/home",
         element: <ProtectedRoute element={<Home />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "roles",
+        name: "ROLES",
         path: "/roles",
         element: <ProtectedRoute element={<Roles />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "profile",
+        name: "PERFILES",
         path: "/profile",
         element: <ProtectedRoute element={<Profile />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "accesos",
+        name: "ACCESOS",
         path: "/accesos",
         element: <ProtectedRoute element={<Accesos />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "personal",
+        name: "PERSONAL MINDEF",
         path: "/personal",
         element: <ProtectedRoute element={<Personal />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "desvinculacion",
+        name: "DESVINCULACIÓN",
         path: "/desvinculacion",
         element: <ProtectedRoute element={<Desvinculacion />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "novedades",
+        name: "NOVEDADES",
         path: "/novedades",
         element: <ProtectedRoute element={<Novedades />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "Partediaria",
+        name: "PARTE DIARIA",
         path: "/Partediaria",
         element: <ProtectedRoute element={<Partediaria />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "Informes",
+        name: "INFORMES",
         path: "/Informes",
         element: <ProtectedRoute element={<Informes />} />,
       },
-      // {
-      //   icon: <UserCircleIcon {...icon} />,
-      //   name: "u educativas",
-      //   path: "/u-educativas",
-      //   element: <ProtectedRoute element={<Ueducativas />} />,
-      // },
-      // {
-      //   icon: <UserCircleIcon {...icon} />,
-      //   name: "u militares",
-      //   path: "/u-militares",
-      //   element: <ProtectedRoute element={<Umilitares />} />,
-      // },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "PERMISOS SOLICITADOS",
+        path: "/Permisos",
+        element: <ProtectedRoute element={<Permisos />} />,
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "PARTE RRHH",
+        path: "/Parterrhh",
+        element: <ProtectedRoute element={<Parterrhh />} />,
+      },
       {
         icon: <TableCellsIcon {...icon} />,
         name: "tables",

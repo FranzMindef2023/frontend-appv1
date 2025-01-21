@@ -28,15 +28,14 @@ import {
 } from "@material-tailwind/react";
 import { usePersonas } from "@/context/PersonasContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
-import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
+// import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
+// import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomIcon} from "@/pages/componentes/modals/acctions/CustomIcon";
 
@@ -209,12 +208,6 @@ export function Personal() {
                 <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
               </span>
             </Tooltip>
-            {/* <Button isIconOnly color="primary" size="sm" aria-label="Like">
-              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-              
-            </Button> */}
             <Tooltip content="Repartición" color="primary" size="lg">
               <span
                 onClick={() => openModalP("edit", user)}

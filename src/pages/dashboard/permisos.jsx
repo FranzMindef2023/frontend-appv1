@@ -9,10 +9,14 @@ import {
   TableCell,
   Input,
   Button,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
   Chip,
   User,
   Pagination,
-  Alert
+  Tooltip
 } from "@nextui-org/react";
 
 import {
@@ -22,21 +26,18 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-import Loader from "../../component/Loader/Loader";
 import { useNovedades } from "@/context/NovedadesContext";
-
+import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
-
-import {columns, statusOptions} from "@/data/dataPartes";
-
+import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
+import {columns, statusOptions} from "@/data/dataPermisos";
+import {capitalize} from "@/data/utils";
+import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
+import CustomModalDest from '@/pages/componentes/modals/modalDestino';
+import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
 
-import { StatisticsCard } from "@/widgets/cards";
-// import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
-import {
-  CardsData,
-} from "@/data";
 
 
 
@@ -47,68 +48,20 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "celular","fuerza","puesto","organizacion","estado_forma"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci","fuerza","tipo_novedad","inicio","fin","descripcion", "actions"];
 
-export function Partediaria() {
-  const {  isInitNovedades, fetchPerNovedades,storeMassive} = useNovedades();
+export function Permisos() {
+  const {  isInitPermisos,permisos, fetchPermisos} = useNovedades();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [isLoa, setIsLoa] = useState(false); 
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [novedades, setNovedades] = useState([]);
   const [assing, setAssing] = useState(null);
-  const [filterValue, setFilterValue] = useState("");
-  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [dateTime, setDateTime] = useState(new Date());
-  const [sortDescriptor, setSortDescriptor] = useState({
-    column: "age",
-    direction: "ascending",
-  });
-  const getRelacionNominal=async ()=>{
-    setIsLoading(true); // Activa el loader
-    const usePersonas= await fetchPerNovedades();
-    // console.log(usePersonas);
-    setNovedades(usePersonas);
-    setIsLoading(false); // Desactiva el loader
-  }
   useEffect(() => {
-    console.log("Claves seleccionadas (updated):", Array.from(selectedKeys));
-  }, [selectedKeys]);
-  const enviarParte = async (event) => {
-    setIsLoa(true);
-    // Evita el comportamiento predeterminado del botón o formulario
-    event.preventDefault();
-  
-    // console.log("Botón clickeado, función enviarParte ejecutada",selectedKeys);
-  
-    const isAllSelected = selectedKeys === "all";
-    // console.log("isAllSelected:", isAllSelected);
-  
-    const selectedKeysArray = isAllSelected
-      ? novedades.map((user) => String(user.id))
-      : Array.from(selectedKeys);
-  
-    if (selectedKeysArray.length === 0) {
-      setAlertVisible(true);
-      setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
-      setIsLoa(false);
-      return;
+    if (!isInitPermisos) {
+      fetchPermisos();
+      console.log(permisos);
     }
-  
-    const selectedData = novedades.filter((user) =>
-      selectedKeysArray.includes(String(user.id))
-    );
-    await storeMassive(selectedData);
-    console.log("Usuarios seleccionados para enviar:", selectedData);
-    setIsLoa(false);
-  };
-  
-  
+  }, [isInitPermisos]);
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -131,20 +84,30 @@ export function Partediaria() {
         console.error("Error fetching roles:", error);
     }
   };
-  useEffect(() => {
-    console.log("selectedKeys actualizado:", Array.from(selectedKeys));
-     // Crear un intervalo que actualice la hora cada segundo
-     const timer = setInterval(() => {
-      setDateTime(new Date());
-    }, 1000);
 
-    // Limpiar el intervalo al desmontar el componente
-    return () => clearInterval(timer);
-  }, [selectedKeys]);
-  
+  const closeModalP = () => {
+    setModalOpenP(false);
+  };
+  const handleActionP = () => {
+    alert("Action executed!");
+    closeModalP(); // Cierra el modal después de la acción
+  };
+  const handleAction = () => {
+    alert("Action executed!");
+    closeModal(); // Cierra el modal después de la acción
+  };
+  const [filterValue, setFilterValue] = React.useState("");
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [sortDescriptor, setSortDescriptor] = React.useState({
+    column: "age",
+    direction: "ascending",
+  });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(novedades.length / rowsPerPage);
+  const pages = Math.ceil(permisos.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -155,7 +118,7 @@ export function Partediaria() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...novedades];
+    let filteredUsers = [...permisos];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -169,7 +132,7 @@ export function Partediaria() {
     }
 
     return filteredUsers;
-  }, [novedades, filterValue, statusFilter]);
+  }, [permisos, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -226,17 +189,30 @@ export function Partediaria() {
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
+            {/* <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
               <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
-            </Button>
-            <Button isIconOnly color="primary" size="sm" aria-label="Like">
+            </Button> */}
+            <Tooltip content="Editar Permiso" color="warning" size="lg">
+              <span
+                onClick={() => openModal("edit", user)}
+                className="text-lg text-warning cursor-pointer active:opacity-50"
+              >
+                <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
+              </span>
+            </Tooltip>
+            <Tooltip content="Imprimir" color="danger" size="lg">
+              <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
+                <CustomDemIcon className="h-6 w-6 text-red-500" />
+                </span>
+            </Tooltip>
+            {/* <Button isIconOnly color="primary" size="sm" aria-label="Like">
               <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
               
-            </Button>
+            </Button> */}
           </div>
         );
       default:
@@ -278,7 +254,7 @@ export function Partediaria() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            {/* <Dropdown>
+            <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
@@ -327,13 +303,19 @@ export function Partediaria() {
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown> */}
-           
-            
+            </Dropdown>
+            <Button
+              className="bg-foreground text-background"
+              endContent={<PlusIcon />}
+              size="sm"
+              onPress={() => openModal("create")}
+            >
+              Usuario
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {novedades.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {permisos.length} Usuarios</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -355,7 +337,7 @@ export function Partediaria() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    novedades.length,
+    permisos.length,
     hasSearchFilter,
   ]);
 
@@ -376,8 +358,8 @@ export function Partediaria() {
         />
         <span className="text-small text-default-400">
           {selectedKeys === "all"
-            ? `${novedades.length} usuarios seleccionados`
-            : `${selectedKeys.size} de ${items.length} seleccionados`}
+            ? "All items selected"
+            : `${selectedKeys.size} de ${items.length} Seleccionados`}
         </span>
       </div>
     );
@@ -405,57 +387,11 @@ export function Partediaria() {
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
-          <Typography variant="h6" color="white" className="flex justify-between items-center">
-            Generacion del Parte diaria
-            <span className="ml-auto text-right">
-              {/* <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-400" /> */}
-              <strong>{dateTime.toLocaleDateString()} {dateTime.toLocaleTimeString()}</strong>
-              
-            </span>
+          <Typography variant="h6" color="white">
+            Solicitud de Permisos
           </Typography>
         </CardHeader>
-
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
-        {alertVisible && (
-          <Alert 
-            color="danger" 
-            title="Seleccione todo el personal de su repartición para generar el parte diario." 
-          />
-        )}
-        <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-            {CardsData.map(({ icon, title, ...rest }) => (
-              <StatisticsCard
-                key={title}
-                {...rest}
-                title={title}
-                icon={React.createElement(icon, {
-                  className: "w-6 h-6 text-white",
-                })}
-              />
-            ))}
-          </div>
-          <div className="mb-12 flex justify-end gap-4">
-          {isLoading && <Loader aria-live="polite" />}
-          <Button 
-            onClick={() => !isLoading && getRelacionNominal()}  
-            className={`bg-foreground text-background ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isLoading}
-            aria-busy={isLoading}
-          >
-            Relacion Nominal
-          </Button>
-          {isLoa && <Loader aria-live="polite" />}
-            <Button 
-            type="button" 
-            onClick={enviarParte} 
-            color="warning"
-            disabled={isLoa}
-            aria-busy={isLoa}
-            >
-              Enviar Parte
-            </Button>
-          </div>
-            <hr />
           <Table
             isCompact
             removeWrapper
@@ -470,7 +406,6 @@ export function Partediaria() {
             }}
             classNames={classNames}
             selectedKeys={selectedKeys}
-            selectionMode="multiple"
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
@@ -496,11 +431,33 @@ export function Partediaria() {
               )}
             </TableBody>
           </Table>
-          
+          <CustomModals
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            title={selectedUser ? "EDITAR SOLICITUD DE PERMISO" : "SOLICITUD DE PERMISO"} // Cambiar el título dinámicamente
+            actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
+            closeLabel="CANCELAR"
+            initialData={selectedUser} // Pasar los datos iniciales
+          />
+          <CustomModalDest
+            isOpen={isModalOpenP}
+            onClose={closeModalP}
+            title="REGISTRO DE NUEVO ROL"
+            bodyContent={[
+              "This is the first paragraph.",
+              "This is the second paragraph.",
+              "This is the third paragraph."
+            ]}
+            onAction={handleActionP}
+            initialData={selectedUser} // Pasar los datos iniciales 
+            initialAssing={assing} // Pasar los datos iniciales 
+            actionLabel="REGISTRAR"
+            closeLabel="CANCELAR"
+          />
         </CardBody>
       </Card>
     </div>
   );
 }
 
-export default Partediaria;
+export default Permisos;

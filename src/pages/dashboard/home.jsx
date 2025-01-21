@@ -48,7 +48,7 @@ export function Home() {
           />
         ))}
       </div>
-      <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
+      {/* <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {statisticsChartsData.map((props) => (
           <StatisticsChart
             key={props.title}
@@ -64,7 +64,7 @@ export function Home() {
             }
           />
         ))}
-      </div>
+      </div> */}
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
           <CardHeader
@@ -75,14 +75,14 @@ export function Home() {
           >
             <div>
               <Typography variant="h6" color="blue-gray" className="mb-1">
-                Projects
+                USUARIOS DEL SISTEMA
               </Typography>
               <Typography
                 variant="small"
                 className="flex items-center gap-1 font-normal text-blue-gray-600"
               >
                 <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                <strong>30 done</strong> this month
+                <strong>Envio del Parte</strong>
               </Typography>
             </div>
             <Menu placement="left-start">
@@ -96,9 +96,9 @@ export function Home() {
                 </IconButton>
               </MenuHandler>
               <MenuList>
-                <MenuItem>Action</MenuItem>
-                <MenuItem>Another Action</MenuItem>
-                <MenuItem>Something else here</MenuItem>
+                <MenuItem>Actualizar</MenuItem>
+                {/* <MenuItem>Another Action</MenuItem>
+                <MenuItem>Something else here</MenuItem> */}
               </MenuList>
             </Menu>
           </CardHeader>
@@ -106,7 +106,7 @@ export function Home() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["companies", "members", "budget", "completion"].map(
+                  {["nombres", "repartición", "celular","personal", "enviado"].map(
                     (el) => (
                       <th
                         key={el}
@@ -125,7 +125,7 @@ export function Home() {
               </thead>
               <tbody>
                 {projectsTableData.map(
-                  ({ img, name, members, budget, completion }, key) => {
+                  ({ img, name, members, budget,efectivo, completion }, key) => {
                     const className = `py-3 px-5 ${
                       key === projectsTableData.length - 1
                         ? ""
@@ -167,6 +167,14 @@ export function Home() {
                             className="text-xs font-medium text-blue-gray-600"
                           >
                             {budget}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography
+                            variant="small"
+                            className="text-xs font-medium text-blue-gray-600"
+                          >
+                            {efectivo}
                           </Typography>
                         </td>
                         <td className={className}>
