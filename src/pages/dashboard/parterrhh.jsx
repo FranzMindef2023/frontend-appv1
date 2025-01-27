@@ -23,7 +23,7 @@ import {
 } from "@material-tailwind/react";
 import { usePartes } from "@/context/PartesContext";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
-import {columns, statusOptions} from "@/data/dataInformes";
+import {columns, statusOptions} from "@/data/dataParterrhh";
 import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
@@ -41,24 +41,37 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id", "fechaparte","name","estado","total","total_forma","total_no_forma","efectivo", "actions"];
 
 export function Parterrhh() {
-  const {  isInitialPartes,users, fetchPartes,downloadPDF} = usePartes();
+  const {  isInitialrrhh,usersrrhh, fetchPartesrrhh,downloadPDFGeneral,downloadPDFDemoGeneral} = usePartes();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [assing, setAssing] = useState(null);
   useEffect(() => {
-    if (!isInitialPartes) {
-      fetchPartes();
-      console.log(users);
+    if (!isInitialrrhh) {
+      fetchPartesrrhh();
+      // console.log(usersrrhh);
     }
-  }, [isInitialPartes]);
+  }, [isInitialrrhh]);
   const handleDownload = async (user = null) => {
     // console.log(user);
     if (!user.fechaparte) {
       alert('Por favor, selecciona una fecha.');
       return;
     }
-    const result = await downloadPDF(user.fechaparte);
+    const result = await downloadPDFGeneral(user.fechaparte);
+    if (result.success) {
+      // alert('El reporte se descargó con éxito.');
+    } else {
+      alert('Error al descargar el reporte.');
+    }
+  };
+  const downloadPermisos = async (user = null) => {
+    // console.log(user);
+    if (!user.fechaparte) {
+      alert('Por favor, selecciona una fecha.');
+      return;
+    }
+    const result = await downloadPDFDemoGeneral(user.fechaparte);
     if (result.success) {
       // alert('El reporte se descargó con éxito.');
     } else {
@@ -110,7 +123,7 @@ export function Parterrhh() {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const pages = Math.ceil(usersrrhh.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -121,7 +134,7 @@ export function Parterrhh() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...usersrrhh];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -135,7 +148,7 @@ export function Parterrhh() {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [usersrrhh, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -203,7 +216,7 @@ export function Parterrhh() {
                 </span>
             </Tooltip>
             <Tooltip content="Demostración" color="danger" size="lg">
-              <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
+              <span onClick={() => downloadPermisos( user)} className="text-lg  cursor-pointer active:opacity-50">
                 <CustomDemIcon className="h-6 w-6 text-red-500" />
                 </span>
             </Tooltip>
@@ -309,7 +322,7 @@ export function Parterrhh() {
           </div> */}
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {usersrrhh.length} Usuarios</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -331,7 +344,7 @@ export function Parterrhh() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    usersrrhh.length,
     hasSearchFilter,
   ]);
 
@@ -382,7 +395,7 @@ export function Parterrhh() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Informes de Parte diaria
+            Parte del Personal Militar
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}

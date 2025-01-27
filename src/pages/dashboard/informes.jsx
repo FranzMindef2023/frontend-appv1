@@ -41,7 +41,7 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["id", "fechaparte","name","estado","total","total_forma","total_no_forma","efectivo", "actions"];
 
 export function Informes() {
-  const {  isInitialPartes,users, fetchPartes,downloadPDF} = usePartes();
+  const {  isInitialPartes,users, fetchPartes,downloadPDFUser,downloadPDF} = usePartes();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -53,6 +53,19 @@ export function Informes() {
     }
   }, [isInitialPartes]);
   const handleDownload = async (user = null) => {
+    // console.log(user);
+    if (!user.fechaparte) {
+      alert('Por favor, selecciona una fecha.');
+      return;
+    }
+    const result = await downloadPDFUser(user.fechaparte);
+    if (result.success) {
+      // alert('El reporte se descargó con éxito.');
+    } else {
+      alert('Error al descargar el reporte.');
+    }
+  };
+  const downloadDemostracion = async (user = null) => {
     // console.log(user);
     if (!user.fechaparte) {
       alert('Por favor, selecciona una fecha.');
@@ -203,7 +216,7 @@ export function Informes() {
                 </span>
             </Tooltip>
             <Tooltip content="Demostración" color="danger" size="lg">
-              <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
+              <span onClick={() => downloadDemostracion( user)} className="text-lg  cursor-pointer active:opacity-50">
                 <CustomDemIcon className="h-6 w-6 text-red-500" />
                 </span>
             </Tooltip>
