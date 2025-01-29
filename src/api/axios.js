@@ -1,7 +1,7 @@
 import axios from 'axios';
-
+import Cookies from "js-cookie";
 const api = axios.create({
-  baseURL: 'http://laravel-appv1.local/api',
+  baseURL: 'http://laravel.local/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,7 +10,7 @@ const api = axios.create({
 // Interceptor para incluir el token en todas las solicitudes
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('token');
+    const token = Cookies.get("token"); // Obtiene el token de la cookie
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,13 +21,13 @@ api.interceptors.request.use(
 
 // Función para refrescar el token
 const refreshAuthToken = async () => {
-  const token = sessionStorage.getItem('token');
+  const token = Cookies.get("token");
   if (!token) {
     throw new Error('No token found');
   }
 
   try {
-    const response = await axios.post('http://laravel-appv1.local/api/refresh', {}, {
+    const response = await axios.post('http://laravel.local/api/refresh', {}, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }

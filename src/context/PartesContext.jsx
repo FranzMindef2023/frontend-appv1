@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { Spinner } from '@nextui-org/react';
 import partesService from '@/services/partesService';
 import Swal from 'sweetalert2';
+import Cookies from "js-cookie";
 
 
 
@@ -21,8 +22,8 @@ export const PartesProvider = ({ children }) => {
     // Obtener partes enviados del usuario
     const fetchPartes = async () => {
         setLoading(true);
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         try {
             const response = await partesService.getIndexReporPartes(usuarioJSON.iduser);
             if (response.data && Array.isArray(response.data.data)) {
@@ -76,8 +77,8 @@ export const PartesProvider = ({ children }) => {
     };
     //descargar en formato pdf la demostracion
     const downloadPDF = async (fecha) => {
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         setLoading(true);
         try {
           const response = await partesService.downloadReporPartePDF(usuarioJSON.iduser, fecha);
@@ -101,8 +102,8 @@ export const PartesProvider = ({ children }) => {
     };
     //descargar en formato pdf la demostracion
     const downloadPDFUser = async (fecha) => {
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         setLoading(true);
         try {
           const response = await partesService.downloadPartUsers(usuarioJSON.iduser, fecha);
@@ -124,10 +125,33 @@ export const PartesProvider = ({ children }) => {
           return { success: false, error };
         }
     };
+    //descargar papeleta de permisos
+    const downloadPDFPermiso = async (id,fecha) => {
+        setLoading(true);
+        try {
+          const response = await partesService.downloadPapeletaPermiso(id);
+    
+          // Crear un enlace para descargar el archivo
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `reporte-novedades-${fecha}.pdf`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+    
+          setLoading(false);
+          return { success: true };
+        } catch (error) {
+          console.error('Error al descargar el PDF:', error);
+          setLoading(false);
+          return { success: false, error };
+        }
+    };
     //descargar en formato pdf parte general
     const downloadPDFGeneral = async (fecha) => {
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         setLoading(true);
         try {
           const response = await partesService.parteReportsGeneralrrhh(usuarioJSON.iduser, fecha);
@@ -151,8 +175,8 @@ export const PartesProvider = ({ children }) => {
     };
     //descargar en formato pdf demostracion general
     const downloadPDFDemoGeneral = async (fecha) => {
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         setLoading(true);
         try {
           const response = await partesService.downloadSolpermisosrrhh(usuarioJSON.iduser, fecha);
@@ -190,7 +214,8 @@ export const PartesProvider = ({ children }) => {
                                             PermisosSol,
                                             downloadPDFGeneral,
                                             downloadPDFUser,
-                                            downloadPDFDemoGeneral}}>
+                                            downloadPDFDemoGeneral,
+                                            downloadPDFPermiso}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

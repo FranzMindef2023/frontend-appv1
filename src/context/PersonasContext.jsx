@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { Spinner } from '@nextui-org/react';
 import personasService from '@/services/personasService';
 import Swal from 'sweetalert2';
+import Cookies from "js-cookie";
 
 
 
@@ -42,8 +43,8 @@ export const PersonasProvider = ({ children }) => {
     // Obtener todo el persona del usuario
     const fetchListPersonas = async () => {
         setLoading(true);
-        const usuario = sessionStorage.getItem('user');
-        const usuarioJSON = JSON.parse(usuario);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null; // Convierte a JSON si existe
         try {
             const response = await personasService.listPersonalById(usuarioJSON.iduser);
             if (response.data && Array.isArray(response.data.data)) {

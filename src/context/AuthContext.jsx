@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import authService from '@/services/authService';
 import { useAxios } from '@/context/AxiosContext';
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -8,18 +9,19 @@ export const AuthProvider = ({ children }) => {
   const { api } = useAxios();
 
   const [user, setUser] = useState(() => {
-    const storedUser = sessionStorage.getItem('user');
+    const storedUser = Cookies.get("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  const [token, setToken] = useState(() => sessionStorage.getItem('token'));
+  const [token, setToken] = useState(() => Cookies.get("token"));
   const [loggedIn, setLoggedIn] = useState(!!token);
 
   useEffect(() => {
     if (user && token) {
-      sessionStorage.setItem('user', JSON.stringify(user));
-      sessionStorage.setItem('token', token);
+      Cookies.set("user", JSON.stringify(user), { secure: true, sameSite: "Strict", expires: 1 });
+      Cookies.set("token", token, { secure: true, sameSite: "Strict", httpOnly: false, expires: 1 });
     } else {
-      sessionStorage.clear();
+      Cookies.remove("user");
+      Cookies.remove("token");
     }
   }, [user, token]);
 
@@ -44,12 +46,17 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       setUser(null);
       setToken(null);
       setLoggedIn(false);
-      sessionStorage.clear();
+      
+      // Limpiar cookies en lugar de sessionStorage
+      Cookies.remove("user");
+      Cookies.remove("token");
+  
+      // Si usas cookies en el backend, podrías hacer una petición para eliminarlas en el servidor
     }
   };
 

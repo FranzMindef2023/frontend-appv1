@@ -40,14 +40,10 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
     },
     enableReinitialize: true,
     onSubmit:async (values) =>{
-      console.log(values);
+      // console.log(values);
       try {
         if (initialData?.idnovedad) {
-          // if (values.action === 'update') {
-          //   await updateAsignacion(values); // Asume que tienes esta función
-          // } else if (values.action === 'change') {
-          //   await changeAssignment(values);
-          // }
+          await updateNovedad(values);
         } else {
           await createNovedad(values);
         }
@@ -162,20 +158,6 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               className="block w-full"
               variant="bordered"
               />
-              {/* <DatePicker 
-              isRequired 
-              name="startdate"
-              type="date"
-              label="FECHA DESDE" 
-              onBlur={handleBlur}  
-              onChange={handleChange}
-              defaultValue={today(getLocalTimeZone())}
-              isInvalid={!!errors.startdate && touched.startdate}
-              color={errors.startdate ? "danger" : "success"}
-              errorMessage={errors.startdate} 
-              className="block w-full"
-              variant="bordered"
-              /> */}
             
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
@@ -192,19 +174,6 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               className="block w-full"
               variant="bordered"
               />
-            {/* <DatePicker
-              isRequired
-              name="enddate"
-              onBlur={handleBlur}  
-              onChange={handleChange}
-              defaultValue={today(getLocalTimeZone())}
-              label="FECHA HASTA"
-              variant="bordered"
-              className="block w-full"
-              isInvalid={!!errors.enddate && touched.enddate}
-              color={errors.enddate ? "danger" : "success"}
-              errorMessage={errors.enddate} 
-            /> */}
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
             <Textarea

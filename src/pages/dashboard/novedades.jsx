@@ -27,6 +27,7 @@ import {
 
 } from "@material-tailwind/react";
 import { useNovedades } from "@/context/NovedadesContext";
+import { usePartes } from "@/context/PartesContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
@@ -52,6 +53,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci","fuerza","tipo_novedad",
 
 export function Novedades() {
   const {  isInitPermisos,permisos, fetchPermisos} = useNovedades();
+  const {  downloadPDFPermiso} = usePartes();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -65,6 +67,7 @@ export function Novedades() {
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
+    console.log(user);
     setModalOpen(true); // Abrir el modal
   };
   
@@ -95,6 +98,20 @@ export function Novedades() {
   const handleAction = () => {
     alert("Action executed!");
     closeModal(); // Cierra el modal después de la acción
+  };
+  const handleDownload = async (user = null) => {
+    //  console.log(user);
+    //  return;
+    if (!user.idnovedad) {
+      alert('Por favor, selecciona una fecha.');
+      return;
+    }
+    const result = await downloadPDFPermiso(user.idnovedad,user.enddate);
+    if (result.success) {
+      // alert('El reporte se descargó con éxito.');
+    } else {
+      alert('Error al descargar el reporte.');
+    }
   };
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));

@@ -26,6 +26,13 @@ const downloadSolpermisosrrhh = (iduser, fecha) => {
         responseType: 'blob', // Necesario para manejar la descarga del archivo como un blob
     });
 };
+
+// Descargar permiso del personal 
+const downloadPapeletaPermiso = (id) => {
+    return api.get(`/papeletapermiso/${id}`, {
+        responseType: 'blob', // Necesario para manejar la descarga del archivo como un blob
+    });
+};
 // Obtener todos las novedades para rrhh
 const indexReporPartesrrhh = () => api.get(`/indexreporpartesrrhh`);
 // Obtener parte por fecha para rrhh
@@ -38,4 +45,5 @@ export default {
     indexReporPartesrrhh,
     listPermisosSolicitados,
     downloadPartUsers,
+    downloadPapeletaPermiso,
     downloadSolpermisosrrhh };
