@@ -12,6 +12,7 @@ export const PersonasProvider = ({ children }) => {
     const [isInitializedPer, setIsInitializedPer] = useState(false);
     const [isInitPersonal, setIsInitPersonal] = useState(false);
     const [isInitDesvincu, setIsInitDesvincu] = useState(false);
+    const [isInitializeActivos, setIsInitializeActivos] = useState(false);
     
     const [users, setPersonas] = useState([]);
     const [usersAct, setPersonasAct] = useState([]);
@@ -61,7 +62,7 @@ export const PersonasProvider = ({ children }) => {
         }
     };
     const getPerActivas = async () => {
-        if(usersAct)return;
+        // if(usersAct)return;
         setLoading(true);
         try {
             const response = await personasService.getPerActivas();
@@ -75,7 +76,7 @@ export const PersonasProvider = ({ children }) => {
             setPersonasAct([]);
         } finally {
             setLoading(false);
-            setIsInitializedPer(true); // Marcar como inicializado
+            setIsInitializeActivos(true); // Marcar como inicializado
         }
     };
     const getDesvinculados = async () => {
@@ -649,7 +650,8 @@ export const PersonasProvider = ({ children }) => {
                                            users10,
                                            fetchListPersonas,
                                            personal,
-                                           isInitPersonal
+                                           isInitPersonal,
+                                           isInitializeActivos
                                            }}>
             {children}
             {loadingPer && (

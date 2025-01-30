@@ -9,15 +9,29 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useAuth } from "@/context/AuthContext";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
+  const { user } = useAuth();
+
+  if (!user) {
+    return <div>Cargando...</div>;
+  }
+
+  // 🔥 Filtrar solo las rutas permitidas para el usuario
+  const filteredRoutes = routes.map((route) => ({
+    ...route,
+    pages: route.pages.filter((page) =>
+      page.allowedRoles?.includes(user.idrol)
+    ),
+  }));
 
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
       <Sidenav
-        routes={routes}
+        routes={filteredRoutes}
         brandImg={
           sidenavType === "dark" ? "/img/logo-ct.png" : "/img/logo-ct-dark.png"
         }
@@ -35,12 +49,11 @@ export function Dashboard() {
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
         <Routes>
-          {routes.map(
-            ({ layout, pages }) =>
-              layout === "dashboard" &&
-              pages.map(({ path, element }) => (
-                <Route exact path={path} element={element} />
-              ))
+          {filteredRoutes.map(({ layout, pages }) =>
+            layout === "dashboard" &&
+            pages.map(({ path, element }) => (
+              <Route key={path} exact path={path} element={element} />
+            ))
           )}
         </Routes>
         <div className="text-blue-gray-600">
@@ -50,7 +63,5 @@ export function Dashboard() {
     </div>
   );
 }
-
-Dashboard.displayName = "/src/layout/dashboard.jsx";
 
 export default Dashboard;

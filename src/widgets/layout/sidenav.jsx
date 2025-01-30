@@ -2,16 +2,31 @@ import PropTypes from "prop-types";
 import { Link, NavLink } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  Avatar,
   Button,
   IconButton,
   Typography,
 } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { useAuth } from "@/context/AuthContext"; // Importamos el contexto de autenticación
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
+  const { user } = useAuth(); // Obtenemos la información del usuario
+
+  // Verificamos si el usuario está cargado
+  if (!user) {
+    return null; // No renderizar nada si el usuario aún no está definido
+  }
+
+  // 🔥 Filtrar solo las rutas permitidas para el usuario
+  const filteredRoutes = routes.map((route) => ({
+    ...route,
+    pages: route.pages.filter((page) =>
+      page.allowedRoles?.includes(user.idrol) // Filtra por el idrol del usuario
+    ),
+  }));
+
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",
     white: "bg-white shadow-sm",
@@ -24,9 +39,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         openSidenav ? "translate-x-0" : "-translate-x-80"
       } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
     >
-      <div
-        className={`relative`}
-      >
+      <div className="relative">
         <Link to="/" className="py-6 px-8 text-center">
           <Typography
             variant="h6"
@@ -47,7 +60,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         </IconButton>
       </div>
       <div className="m-4">
-        {routes.map(({ layout, title, pages }, key) => (
+        {filteredRoutes.map(({ layout, title, pages }, key) => (
           <ul key={key} className="mb-4 flex flex-col gap-1">
             {title && (
               <li className="mx-3.5 mt-4 mb-2">
@@ -106,6 +119,6 @@ Sidenav.propTypes = {
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-Sidenav.displayName = "/src/widgets/layout/sidnave.jsx";
+Sidenav.displayName = "/src/widgets/layout/sidenav.jsx";
 
 export default Sidenav;

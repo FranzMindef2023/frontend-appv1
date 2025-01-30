@@ -19,7 +19,7 @@ import { usePersonas } from "@/context/PersonasContext";
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   const { createUser,loading , updateUser } = useUsers();
-  const {getPerActivas, users, setIsInitializedPer,showPersonalById,selectPer,updateEndDate} = usePersonas();
+  const {getPerActivas, users, isInitializeActivos,showPersonalById,selectPer,updateEndDate} = usePersonas();
 
   const [ItemFuerzas, setfuerza] = useState([]);
   const [ItemGrados, setGrados] = useState([]);
@@ -48,7 +48,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
   useEffect(() => {
     
     if (!isInitializedSelect) fetchSelects();
-    if (!setIsInitializedPer) getPerActivas();
+    if (!isInitializeActivos) getPerActivas();
   },[fetchSelects, getPerActivas]);
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue,setValues }= useFormik({
