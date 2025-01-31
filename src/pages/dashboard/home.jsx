@@ -130,7 +130,7 @@ export function Home() {
               </thead>
               <tbody>
                 {users.map(
-                  ({ completo, name, members, budget,efectivo, completion }, key) => {
+                  ({ completo, name, celular, budget,efectivo, completion }, key) => {
                     const className = `py-3 px-5 ${
                       key === users.length - 1
                         ? ""
