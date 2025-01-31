@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import {
   Typography,
   Card,
@@ -18,16 +18,21 @@ import {
   ArrowUpIcon,
 } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
-import { StatisticsChart } from "@/widgets/charts";
 import {
   statisticsCardsData,
-  statisticsChartsData,
   projectsTableData,
   ordersOverviewData,
 } from "@/data";
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
+import { useHomes } from "@/context/HomeContext";
 
 export function Home() {
+  const { users, isInitialized, fetchUsuarios} = useHomes();
+  useEffect(() => {
+    if (!isInitialized) {
+      fetchUsuarios();
+    }
+  }, [isInitialized]);
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
@@ -124,10 +129,10 @@ export function Home() {
                 </tr>
               </thead>
               <tbody>
-                {projectsTableData.map(
-                  ({ img, name, members, budget,efectivo, completion }, key) => {
+                {users.map(
+                  ({ completo, name, members, budget,efectivo, completion }, key) => {
                     const className = `py-3 px-5 ${
-                      key === projectsTableData.length - 1
+                      key === users.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
@@ -136,21 +141,21 @@ export function Home() {
                       <tr key={name}>
                         <td className={className}>
                           <div className="flex items-center gap-4">
-                            <Avatar src={img} alt={name} size="sm" />
+                            {/* <Avatar src={completo} alt={name} size="sm" /> */}
                             <Typography
                               variant="small"
                               color="blue-gray"
                               className="font-bold"
                             >
-                              {name}
+                              {nomorg}
                             </Typography>
                           </div>
                         </td>
                         <td className={className}>
-                          {members.map(({ img, name }, key) => (
+                          {members.map(({ completo, name }, key) => (
                             <Tooltip key={name} content={name}>
                               <Avatar
-                                src={img}
+                                src={completo}
                                 alt={name}
                                 size="xs"
                                 variant="circular"
