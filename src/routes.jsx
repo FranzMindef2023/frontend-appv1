@@ -49,7 +49,7 @@ export const routes = [
         icon: <UserCircleIcon {...icon} />,
         name: "ROLES",
         path: "/roles",
-        allowedRoles: [1],
+        allowedRoles: [1,2],
         element: <ProtectedRoute element={<Roles />} />,
       },
       {

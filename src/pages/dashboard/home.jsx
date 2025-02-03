@@ -27,12 +27,33 @@ import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { useHomes } from "@/context/HomeContext";
 
 export function Home() {
-  const { users, isInitialized, fetchUsuarios} = useHomes();
+  const { users, 
+    isInitialized, 
+    fetchUsuarios,
+    fetchUsuariosCount,
+    isInitialcount,
+    userscount,
+    fetchPersonalCount,
+    isInitialPersonal,
+    personascount,
+    fetchNovedadesCount,
+    isInitialNovedades,
+    novedadescount} = useHomes();
+
   useEffect(() => {
     if (!isInitialized) {
       fetchUsuarios();
     }
-  }, [isInitialized]);
+    if (!isInitialcount) {
+      fetchUsuariosCount();
+    }
+    if (!isInitialPersonal) {
+      fetchPersonalCount();
+    }
+    if (!isInitialNovedades) {
+      fetchNovedadesCount();
+    }
+  }, [isInitialized,isInitialcount,isInitialPersonal,isInitialNovedades]);
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
@@ -130,7 +151,7 @@ export function Home() {
               </thead>
               <tbody>
                 {users.map(
-                  ({ completo, name, celular, budget,efectivo, completion }, key) => {
+                  ({ completo, name, nomorg, celular,personas_control, completion }, key) => {
                     const className = `py-3 px-5 ${
                       key === users.length - 1
                         ? ""
@@ -147,11 +168,11 @@ export function Home() {
                               color="blue-gray"
                               className="font-bold"
                             >
-                              {nomorg}
+                              {completo}
                             </Typography>
                           </div>
                         </td>
-                        <td className={className}>
+                        {/* <td className={className}>
                           {members.map(({ completo, name }, key) => (
                             <Tooltip key={name} content={name}>
                               <Avatar
@@ -165,13 +186,13 @@ export function Home() {
                               />
                             </Tooltip>
                           ))}
-                        </td>
+                        </td> */}
                         <td className={className}>
                           <Typography
                             variant="small"
                             className="text-xs font-medium text-blue-gray-600"
                           >
-                            {budget}
+                            {nomorg}
                           </Typography>
                         </td>
                         <td className={className}>
@@ -179,7 +200,15 @@ export function Home() {
                             variant="small"
                             className="text-xs font-medium text-blue-gray-600"
                           >
-                            {efectivo}
+                            {celular}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography
+                            variant="small"
+                            className="text-xs font-medium text-blue-gray-600"
+                          >
+                            {personas_control}
                           </Typography>
                         </td>
                         <td className={className}>

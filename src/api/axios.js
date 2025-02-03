@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from "js-cookie";
+
 const api = axios.create({
   baseURL: 'http://laravel.local/api',
   headers: {
@@ -19,49 +20,19 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Función para refrescar el token
-const refreshAuthToken = async () => {
-  const token = Cookies.get("token");
-  if (!token) {
-    throw new Error('No token found');
-  }
-
-  try {
-    const response = await axios.post('http://laravel.local/api/refresh', {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    });
-
-    const newToken = response.data.access_token;
-    sessionStorage.setItem('token', newToken);
-    return newToken;
-  } catch (error) {
-    console.error('Error al refrescar el token:', error.response?.data || error.message);
-    sessionStorage.clear();
-    window.location.href = '/auth/sign-in';
-    throw error;
-  }
-};
-
-// Interceptor para manejar la expiración del token y refrescarlo automáticamente
+// Interceptor de respuesta para cerrar sesión si el token expira
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const newToken = await refreshAuthToken();
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        console.error('No se pudo refrescar el token:', refreshError);
-        return Promise.reject(refreshError);
-      }
-    }
+    if (error.response?.status === 401) {
+      console.warn('Token expirado, cerrando sesión...');
+      
+      // Eliminar token y limpiar la sesión
+      Cookies.remove("token");
 
+      // Redirigir al usuario a la página de inicio de sesión
+      window.location.href = '/auth/sign-in';
+    }
     return Promise.reject(error);
   }
 );

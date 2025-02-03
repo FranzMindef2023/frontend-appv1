@@ -9,8 +9,15 @@ const HomeContext = createContext();
 
 export const HomesProvider = ({ children }) => {
     const [isInitialized, setIsInitialized] = useState(false);
+    const [isInitialcount, setIsInitialcount] = useState(false);
+    const [isInitialPersonal, setIsInitialPersonal] = useState(false);
+    const [isInitialNovedades, setIsInitialNovedades] = useState(false);
+
     const [users, setUsers] = useState([]);
-    const [user, setUser] = useState(null);
+    const [userscount, setUsersCount] = useState([]);
+    const [personascount, setPersonasCount] = useState([]);
+    const [novedadescount, setNovedadesCount] = useState([]);
+
     const [loading, setLoading] = useState(false);
 
 
@@ -33,86 +40,82 @@ export const HomesProvider = ({ children }) => {
             setIsInitialized(true);
         }
     };
-    // Crear un rol
-    const createRols = async (userData) => {
+
+    // Obtener cantidad de usuarios activos
+    const fetchUsuariosCount = async () => {
         setLoading(true);
         try {
-            const response = await homeService.createRols(userData);
-            if (response.status === 200) {
-                Swal.fire("¡Éxito!", response.data.message, "success");
-                await fetchRols();
-                // showNotification('success', response.data.message || 'Role created successfully');
-                return response.data;
-            }
-        } catch (error) {
-            if (error.response) {
-                const { status, data } = error.response;
-                switch (status) {
-                    case 422: {
-                        // Manejar errores de validación
-                        const errorMessages = Object.entries(data.errors || {})
-                            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-                            .join("\n");
-            
-                        Swal.fire({
-                            icon: "error",
-                            title: "Errores de Validación",
-                            text: errorMessages,
-                        });
-                        break;
-                    }
-                    case 500: {
-                        // Manejar errores internos del servidor
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error del Servidor",
-                            text: data.message || "Ocurrió un error interno. Inténtalo nuevamente.",
-                        });
-                        break;
-                    }
-                    default: {
-                        // Manejar otros errores no esperados
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error Desconocido",
-                            text: data.message || "Algo salió mal. Inténtalo más tarde.",
-                        });
-                        break;
-                    }
-                }
+            const response = await homeService.userhomecuadros();
+            if (response.data) {
+                console.log('usuarios');
+                console.log(response.data.data);
+                setUsersCount(response.data.data); // Asegura que users sea un arreglo
             } else {
-                // Manejar errores donde no hay respuesta del servidor
-                Swal.fire({
-                    icon: "error",
-                    title: "Error de Conexión",
-                    text: "No se recibió respuesta del servidor. Por favor, verifica tu conexión a internet.",
-                });
+                setUsersCount([]); // Si no es un arreglo, inicializa vacío
             }
-            
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setUsersCount([]);
         } finally {
             setLoading(false);
+            setIsInitialcount(true);
         }
     };
-
-    // Obtener un rol por ID
-    const getRols = async (id) => {
+    // Obtener cantidad de personal activos
+    const fetchPersonalCount = async () => {
         setLoading(true);
         try {
-            const response = await homeService.getRolsById(id);
-            setUser(response.data);
-            return response.data;
+            const response = await homeService.countpersonal();
+            if (response.data) {
+                console.log('personal');
+                console.log(response.data.total);
+                setPersonasCount(response.data.total); // Asegura que users sea un arreglo
+            } else {
+                setPersonasCount([]); // Si no es un arreglo, inicializa vacío
+            }
         } catch (error) {
-            // showNotification('error', 'Error fetching role details. Please try again.');
-            return null;
+            console.error("Error fetching roles:", error);
+            setPersonasCount([]);
         } finally {
             setLoading(false);
+            setIsInitialPersonal(true);
         }
     };
-
-
+    // Obtener cantidad de personal activos
+    const fetchNovedadesCount = async () => {
+        setLoading(true);
+        try {
+            const response = await homeService.countnovedades();
+            if (response.data) {
+                console.log('novedades');
+                console.log(response.data.total);
+                setNovedadesCount(response.data.total); // Asegura que users sea un arreglo
+            } else {
+                setNovedadesCount([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setNovedadesCount([]);
+        } finally {
+            setLoading(false);
+            setIsInitialNovedades(true);
+        }
+    };
 
     return (
-        <HomeContext.Provider value={{ users, user, createRols, getRols, fetchUsuarios, loading, isInitialized }}>
+        <HomeContext.Provider value={{ users, 
+                                        userscount, 
+                                        fetchUsuarios, 
+                                        loading, 
+                                        isInitialized,
+                                        fetchUsuariosCount, 
+                                        isInitialcount,
+                                        fetchPersonalCount,
+                                        isInitialPersonal,
+                                        personascount,
+                                        fetchNovedadesCount,
+                                        isInitialNovedades,
+                                        novedadescount}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
