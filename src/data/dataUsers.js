@@ -7,6 +7,7 @@
     { name: "LOGIN", uid: "lastlogin", sortable: true },
     { name: "ESTADO", uid: "estado", sortable: true },
     { name: "CARGO", uid: "puesto", sortable: true },
+    { name: "SITUACIÓN", uid: "situacion" },
     { name: "UNIDAD ORG.", uid: "organizacion", sortable: true },
     { name: "SIGLA", uid: "sigla", sortable: true },
     { name: "CREADO", uid: "fcreate", sortable: true },

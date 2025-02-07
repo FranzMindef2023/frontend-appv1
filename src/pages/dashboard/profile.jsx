@@ -1,4 +1,5 @@
 import React,{useState, useEffect } from "react";
+import Swal from 'sweetalert2';
 import {
   Table,
   TableHeader,
@@ -15,7 +16,8 @@ import {
   Chip,
   User,
   Pagination,
-  Tooltip
+  Tooltip,
+  Switch,
 } from "@nextui-org/react";
 
 import {
@@ -48,10 +50,15 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "celular","puesto", "sigla","lastlogin","estado", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","puesto", "sigla","lastlogin", "situacion","estado", "actions"];
 
 export function Profile() {
-  const { users,user, isInitialized, fetchUsers, loading, asignaciones } = useUsers();
+  const { users,user, 
+    isInitialized, 
+    fetchUsers, 
+    loading, 
+    asignaciones, 
+    updateUserStatus} = useUsers();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -85,7 +92,45 @@ export function Profile() {
           console.error("Error fetching roles:", error);
       }
   };
-  
+  const handlestatus = async(e,user) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Estás a punto de cambiar el estado a Activo/Inactivo. Si no estás seguro, puedes cancelar esta acción.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+
+          // Llamar a la función createUser del contexto
+          updateUserStatus(!e.target.checked,user);
+          // resetForm();
+          // onClose();
+        } catch (error) {
+          console.error('Error al registrar usuario:', error);
+          // alert('Error al registrar usuario');
+        }
+        // Swal.fire({
+        //   title: "¡Actualizado!",
+        //   text: "El estado se ha actualizado correctamente.",
+        //   icon: "success"
+        // });
+      } else {
+        // // Opcional: Mensaje cuando el usuario cancela
+        // Swal.fire({
+        //   title: "Cancelado",
+        //   text: "La acción ha sido cancelada.",
+        //   icon: "info"
+        // });
+      }
+    });
+    
+    
+  };
   const closeModalP = () => {
     setModalOpenP(false);
   };
@@ -186,6 +231,20 @@ export function Profile() {
           >
             {cellValue}
           </Chip>
+        );
+        case "situacion":
+        return (
+          <Tooltip color="danger" content={user.status === true ? "Inactivar" : "Activar"}>
+              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <Switch
+                size="sm"
+                color="success"
+                isSelected={user.status === true} // Encender si el status es Activo
+                onChange={(e) => handlestatus(e, user)} // Pasar el evento y el usuario
+              ></Switch>
+              </span>
+            </Tooltip>
+          
         );
       case "actions":
         return (

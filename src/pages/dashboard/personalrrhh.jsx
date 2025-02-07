@@ -32,12 +32,13 @@ import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
-import CustomModal from '@/pages/componentes/modals/modalsPersonal';
+// import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 // import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 // import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
-import CustomModalDest from '@/pages/componentes/modals/modalDestino';
+// import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomIcon} from "@/pages/componentes/modals/acctions/CustomIcon";
+import CustomModal from '@/pages/componentes/modals/modalsDesvincular';
 
 
 
@@ -52,7 +53,7 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
 
 export function Personalrrhh() {
-  const { users, isInitializedPer, fetchPersonas, loadingPer, getshowAssignments,getPerActivas, usersAct,isInitializeActivos } = usePersonas();
+  const { showPersonalById, getshowAssignments,getPerActivas, usersAct,isInitializeActivos } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -62,9 +63,9 @@ export function Personalrrhh() {
       getPerActivas();
     }
 }, [isInitializeActivos]);
-  const openModal = (accion, user = null) => {
-    
-    setSelectedUser(user); // Establecer los datos del usuario seleccionado
+  const openModal = async (accion, user = null) => {
+    const persona=await showPersonalById(user.ci);
+    setSelectedUser(persona); // Establecer los datos del usuario seleccionado
     setModalOpen(true); // Abrir el modal
   };
   
@@ -198,7 +199,7 @@ export function Personalrrhh() {
                 <EditIcon />
               </span>
             </Button> */}
-            <Tooltip content="Editar Datos" color="warning" size="lg">
+            <Tooltip content="Desvincular" color="warning" size="lg">
               <span
                 onClick={() => openModal("edit", user)}
                 className="text-lg text-warning cursor-pointer active:opacity-50"
@@ -206,14 +207,7 @@ export function Personalrrhh() {
                 <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
               </span>
             </Tooltip>
-            <Tooltip content="Repartición" color="primary" size="lg">
-              <span
-                onClick={() => openModalP("edit", user)}
-                className="text-lg text-blue cursor-pointer active:opacity-50"
-              >
-                <CustomIcon className="h-6 w-6 text-green-500" /> {/* Ajusta el tamaño y el color */}
-              </span>
-            </Tooltip>
+            
           </div>
         );
       default:
@@ -435,12 +429,12 @@ export function Personalrrhh() {
           <CustomModal
             isOpen={isModalOpen}
             onClose={closeModal}
-            title={selectedUser ? "EDITAR DATOS PERSONALES" : "REGISTRO DE NUEVO PERSONAL MILITAR"} // Cambiar el título dinámicamente
-            actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
+            title={selectedUser ? "REGISTRO DE DESVINCULACIÓN" : "REGISTRO DE NUEVO PERSONAL MILITAR"} // Cambiar el título dinámicamente
+            actionLabel= "REGISTRAR"
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
           />
-          <CustomModalDest
+          {/* <CustomModalDest
             isOpen={isModalOpenP}
             onClose={closeModalP}
             title="REGISTRO DE NUEVO ROL"
@@ -454,7 +448,7 @@ export function Personalrrhh() {
             initialAssing={assing} // Pasar los datos iniciales 
             actionLabel="REGISTRAR"
             closeLabel="CANCELAR"
-          />
+          /> */}
         </CardBody>
       </Card>
     </div>

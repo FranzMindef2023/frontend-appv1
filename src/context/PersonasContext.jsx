@@ -488,7 +488,7 @@ export const PersonasProvider = ({ children }) => {
             const response = await personasService.updateEndDate(userData.idassig, userData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
-                await getDesvinculados();
+                await getPerActivas();
                 await fetchListPersonas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;

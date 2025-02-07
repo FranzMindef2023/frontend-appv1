@@ -252,6 +252,67 @@ export const UsersProvider = ({ children }) => {
             setLoading(false);
         }
     };
+    // Actualizar un rol
+    const updateUserStatus = async (status,userData) => {
+        const newData={status:status}
+        setLoading(true);
+        try {
+            const response = await userService.updateStatusUser(userData.id, newData);
+            if (response.status === 200) {
+                Swal.fire("¡Éxito!", response.data.message, "success");
+                await fetchUsers();
+                // showNotification('success', response.data.message || 'Role created successfully');
+                return response.data;
+            }
+        } catch (error) {
+            if (error.response) {
+                const { status, data } = error.response;
+                switch (status) {
+                    case 422: {
+                        // Manejar errores de validación
+                        const errorMessages = Object.entries(data.errors || {})
+                            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+                            .join("\n");
+            
+                        Swal.fire({
+                            icon: "error",
+                            title: "Errores de Validación",
+                            text: errorMessages,
+                        });
+                        break;
+                    }
+                    case 500: {
+                        // Manejar errores internos del servidor
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error del Servidor",
+                            text: data.message || "Ocurrió un error interno. Inténtalo nuevamente.",
+                        });
+                        break;
+                    }
+                    default: {
+                        // Manejar otros errores no esperados
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error Desconocido",
+                            text: data.message || "Algo salió mal. Inténtalo más tarde.",
+                        });
+                        break;
+                    }
+                }
+            } else {
+                // Manejar errores donde no hay respuesta del servidor
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de Conexión",
+                    text: "No se recibió respuesta del servidor. Por favor, verifica tu conexión a internet.",
+                });
+            }
+            
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Eliminar un rol
     const deleteUser = async (id) => {
@@ -359,7 +420,17 @@ export const UsersProvider = ({ children }) => {
         }
     };
     return (
-        <UserContext.Provider value={{ users, user, createUser, getUserbyId, updateUser, deleteUser,asignaciones, fetchUsers, loading, isInitialized, createUserRols, usersAccess, fetchUsersAccess,isInitialUser,createAcceso,deleteAcceso}}>
+        <UserContext.Provider value={{ 
+            users, user, 
+            createUser, getUserbyId, 
+            updateUser, deleteUser,
+            asignaciones, fetchUsers, 
+            loading, isInitialized, 
+            createUserRols, usersAccess, 
+            fetchUsersAccess,isInitialUser,
+            createAcceso,deleteAcceso,
+            updateUserStatus
+        }}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

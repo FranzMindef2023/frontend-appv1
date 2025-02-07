@@ -15,8 +15,9 @@ export const getUserindex = () => api.get('/userindex');
 // Obtener un usuario por su ID
 export const getUserById = (id) => api.get(`/usuarios/${id}`);
 
-// Actualizar un usuario por su ID
+// Actualizar un usuario por su ID 
 export const updateUser = (id, userData) => api.put(`/usuarios/${id}`, userData);
+export const updateStatusUser = (id, userData) => api.put(`/updatestatususer/${id}`, userData);
 
 // Eliminar un usuario por su ID
 export const deleteUser = (id) => api.delete(`/usuarios/${id}`);
@@ -34,4 +35,5 @@ export default { createUser,
                 createUserRols,
                 getUserindex,
                 createAcceso,
-                deleteAcceso};
+                deleteAcceso,
+                updateStatusUser};

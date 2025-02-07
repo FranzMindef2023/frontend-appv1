@@ -12,26 +12,26 @@ import { Modal,
   Alert
 } from "@nextui-org/react";
 import { useFormik } from "formik";
-import { useUsers } from "@/context/UserContext";
-import { useselects } from "@/context/SelectsContext";
+// import { useUsers } from "@/context/UserContext";
+// import { useselects } from "@/context/SelectsContext";
 import { usePersonas } from "@/context/PersonasContext";
 
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
-  const { createUser,loading , updateUser } = useUsers();
-  const {getPerActivas, users, isInitializeActivos,showPersonalById,selectPer,updateEndDate} = usePersonas();
+  // const { createUser,loading , updateUser } = useUsers();
+  const {updateEndDate} = usePersonas();
 
-  const [ItemFuerzas, setfuerza] = useState([]);
-  const [ItemGrados, setGrados] = useState([]);
-  const [ItemArmas, setArmas] = useState([]);
-  const [ItemEsp, setEsp] = useState([]);
-  const [ItemSexo, setSexo] = useState([]);
-  const [ItemSituad, setSituad] = useState([]);
-  const [ItemExped, setExped] = useState([]);
-  const [ItemStatuscv, setStatuscv] = useState([]);
+  // const [ItemFuerzas, setfuerza] = useState([]);
+  // const [ItemGrados, setGrados] = useState([]);
+  // const [ItemArmas, setArmas] = useState([]);
+  // const [ItemEsp, setEsp] = useState([]);
+  // const [ItemSexo, setSexo] = useState([]);
+  // const [ItemSituad, setSituad] = useState([]);
+  // const [ItemExped, setExped] = useState([]);
+  // const [ItemStatuscv, setStatuscv] = useState([]);
 
-  const { selects,fetchSelects, isInitializedSelect} = useselects();
-   const [alertVisible, setAlertVisible] = useState(false);
+  // const { selects,fetchSelects, isInitializedSelect} = useselects();
+  //  const [alertVisible, setAlertVisible] = useState(false);
 
 
   const handleDateInput = (e, setFieldValue) => {
@@ -45,11 +45,11 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     setFieldValue("enddate", value);
   };
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    if (!isInitializedSelect) fetchSelects();
-    if (!isInitializeActivos) getPerActivas();
-  },[fetchSelects, getPerActivas]);
+  //   if (!isInitializedSelect) fetchSelects();
+  //   if (!isInitializeActivos) getPerActivas();
+  // },[fetchSelects, getPerActivas]);
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue,setValues }= useFormik({
     initialValues: {
@@ -126,84 +126,84 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
       .required("La fecha de nacimiento es obligatoria"),
     })
   });
-  useEffect(() => {
-    if (initialData?.idfuerza) {
-      const slectedFuerza = selects.fuerzas.data.find((item) => item.idfuerza === Number(initialData.idfuerza)); // Forzar a tipo número
-      setfuerza(slectedFuerza);
-      setFieldValue('idfuerza', slectedFuerza?.idfuerza || ''); // Actualiza Formik
-    }
-    if (initialData?.idgrado) {
-      const selectedGrados = selects.grados.data.find((item) => item.idgrado === Number(initialData.idgrado)); // Forzar a tipo número
-      setGrados(selectedGrados);
-      setFieldValue('idgrado', selectedGrados?.idgrado || ''); // Actualiza Formik
-    }
-    if (initialData?.idarma) {
-      const selectedArmas = selects.armas.data.find((item) => item.idarma === Number(initialData.idarma)); // Forzar a tipo número
-      setArmas(selectedArmas);
-      setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
-    }
+  // useEffect(() => {
+  //   if (initialData?.idfuerza) {
+  //     const slectedFuerza = selects.fuerzas.data.find((item) => item.idfuerza === Number(initialData.idfuerza)); // Forzar a tipo número
+  //     setfuerza(slectedFuerza);
+  //     setFieldValue('idfuerza', slectedFuerza?.idfuerza || ''); // Actualiza Formik
+  //   }
+  //   if (initialData?.idgrado) {
+  //     const selectedGrados = selects.grados.data.find((item) => item.idgrado === Number(initialData.idgrado)); // Forzar a tipo número
+  //     setGrados(selectedGrados);
+  //     setFieldValue('idgrado', selectedGrados?.idgrado || ''); // Actualiza Formik
+  //   }
+  //   if (initialData?.idarma) {
+  //     const selectedArmas = selects.armas.data.find((item) => item.idarma === Number(initialData.idarma)); // Forzar a tipo número
+  //     setArmas(selectedArmas);
+  //     setFieldValue('idarma', selectedArmas?.idarma || ''); // Actualiza Formik
+  //   }
 
-    if (initialData?.idespecialidad) {
-      const selectedEspecial = selects.especialidades.data.find((item) => item.idespecialidad === Number(initialData.idespecialidad)); // Forzar a tipo número
-      setEsp(selectedEspecial);
-      setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
-    }
+  //   if (initialData?.idespecialidad) {
+  //     const selectedEspecial = selects.especialidades.data.find((item) => item.idespecialidad === Number(initialData.idespecialidad)); // Forzar a tipo número
+  //     setEsp(selectedEspecial);
+  //     setFieldValue('idespecialidad', selectedEspecial?.idespecialidad || ''); // Actualiza Formik
+  //   }
 
-    if (initialData?.idcv) {
-      const selectedStatus = selects.estadocv.data.find((item) => item.idcv === Number(initialData.idcv)); // Forzar a tipo número
-      setStatuscv(selectedStatus);
-      setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
-    }
-    if (initialData?.idsexo) {
-      const selectedsetSexo = selects.sexos.data.find((item) => item.idsexo === Number(initialData.idsexo)); // Forzar a tipo número
-      setSexo(selectedsetSexo);
-      setFieldValue('idsexo', selectedsetSexo?.idsexo || ''); // Actualiza Formik
-    }
-    if (initialData?.idsituacion) {
-      const selectedSitua = selects.situaciones.data.find((item) => item.idsituacion === Number(initialData.idsituacion)); // Forzar a tipo número
-      setSituad(selectedSitua);
-      setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
-    }
-    if (initialData?.idexpedicion) {
-      const selectedExped = selects.expediciones.data.find((item) => item.idexpedicion === Number(initialData.idexpedicion)); // Forzar a tipo número
-      setExped(selectedExped);
-      setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
-    }
-  }, [initialData,selects,  setFieldValue]);
+  //   if (initialData?.idcv) {
+  //     const selectedStatus = selects.estadocv.data.find((item) => item.idcv === Number(initialData.idcv)); // Forzar a tipo número
+  //     setStatuscv(selectedStatus);
+  //     setFieldValue('idcv', selectedStatus?.idcv || ''); // Actualiza Formik
+  //   }
+  //   if (initialData?.idsexo) {
+  //     const selectedsetSexo = selects.sexos.data.find((item) => item.idsexo === Number(initialData.idsexo)); // Forzar a tipo número
+  //     setSexo(selectedsetSexo);
+  //     setFieldValue('idsexo', selectedsetSexo?.idsexo || ''); // Actualiza Formik
+  //   }
+  //   if (initialData?.idsituacion) {
+  //     const selectedSitua = selects.situaciones.data.find((item) => item.idsituacion === Number(initialData.idsituacion)); // Forzar a tipo número
+  //     setSituad(selectedSitua);
+  //     setFieldValue('idsituacion', selectedSitua?.idsituacion || ''); // Actualiza Formik
+  //   }
+  //   if (initialData?.idexpedicion) {
+  //     const selectedExped = selects.expediciones.data.find((item) => item.idexpedicion === Number(initialData.idexpedicion)); // Forzar a tipo número
+  //     setExped(selectedExped);
+  //     setFieldValue('idexpedicion', selectedExped?.idexpedicion || ''); // Actualiza Formik
+  //   }
+  // }, [initialData,selects,  setFieldValue]);
  
-  const handleSearchByCI = async () => {
-    if (!values.ci) {
-      // Mostrar alerta si el usuario no está seleccionado
-      setAlertVisible(true);
-      setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
-      return;
-    }
-    try {
-      const persona=await showPersonalById(values.ci);
-      // Actualiza los campos del formulario si se encuentra la persona
-    setValues({
-      ...values,
-      idpersona:persona.idpersona || "",
-      namepersona: persona.namepersona || "",
-      appaterno: persona.appaterno || "",
-      apmaterno: persona.apmaterno || "",
-      email: persona.email || "",
-      celular: persona.celular || "",
-      carnetmil: persona.carnetmil || "",
-      fechnacimeinto: persona.fechnacimeinto || "",
-      gestion_ingreso: persona.gestion_ingreso || "",
-      fechaingreso: persona.fechaingreso || "",
-      fuerza:persona.fuerza || "",
-      situacion:persona.situacion || "",
-      organizacion:persona.organizacion || "",
-      puesto:persona.puesto || "",
-      idassig:persona.idassig || "",
-    });
-    } catch (error) {
-      console.error('Error al registrar usuario:', error);
-      // alert('Error al registrar usuario');
-    }
-  };
+  // const handleSearchByCI = async () => {
+  //   if (!values.ci) {
+  //     // Mostrar alerta si el usuario no está seleccionado
+  //     setAlertVisible(true);
+  //     setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
+  //     return;
+  //   }
+  //   try {
+  //     const persona=await showPersonalById(values.ci);
+  //     // Actualiza los campos del formulario si se encuentra la persona
+  //   setValues({
+  //     ...values,
+  //     idpersona:persona.idpersona || "",
+  //     namepersona: persona.namepersona || "",
+  //     appaterno: persona.appaterno || "",
+  //     apmaterno: persona.apmaterno || "",
+  //     email: persona.email || "",
+  //     celular: persona.celular || "",
+  //     carnetmil: persona.carnetmil || "",
+  //     fechnacimeinto: persona.fechnacimeinto || "",
+  //     gestion_ingreso: persona.gestion_ingreso || "",
+  //     fechaingreso: persona.fechaingreso || "",
+  //     fuerza:persona.fuerza || "",
+  //     situacion:persona.situacion || "",
+  //     organizacion:persona.organizacion || "",
+  //     puesto:persona.puesto || "",
+  //     idassig:persona.idassig || "",
+  //   });
+  //   } catch (error) {
+  //     console.error('Error al registrar usuario:', error);
+  //     // alert('Error al registrar usuario');
+  //   }
+  // };
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} isDismissable={false} size="lg">
       <ModalContent>
@@ -212,10 +212,10 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
             <ModalHeader>{title}</ModalHeader>
             <form noValidate onSubmit={handleSubmit}>
               <ModalBody>
-                {alertVisible && (
+                {/* {alertVisible && (
                   <Alert color="danger" title="Por favor Ingres el Numero de la cedula de identidad" />
-                )}
-              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+                )} */}
+              {/* <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
                 <div className="flex w-full gap-4 items-center">
                   <InputOtp
                     variant="bordered"
@@ -227,12 +227,12 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                     onValueChange={(value) => setFieldValue("ci", value)} // Actualiza el campo en Formik
                   />
                 </div>
-              </div>
-              <div className="flex w-full flex-wrap md:flex-nowrap gap-6 justify-end">
+              </div> */}
+              {/* <div className="flex w-full flex-wrap md:flex-nowrap gap-6 justify-end">
                 <Button color="primary" onClick={handleSearchByCI}>
                   BUSCAR
                 </Button>
-              </div>
+              </div> */}
               <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
                 <Input 
                 size="sm" 
@@ -426,7 +426,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 }}>
                 {closeLabel}
               </Button>
-              <Button color="primary" type="submit"  disabled={loading}>
+              <Button color="primary" type="submit"  >
                 {actionLabel}
               </Button>
               </ModalFooter>
