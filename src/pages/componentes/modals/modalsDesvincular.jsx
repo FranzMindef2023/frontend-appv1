@@ -9,17 +9,19 @@ import { Modal,
   Input,
   InputOtp ,
   Textarea,
-  Alert
+  Alert,
+  Autocomplete, 
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { useFormik } from "formik";
-// import { useUsers } from "@/context/UserContext";
-// import { useselects } from "@/context/SelectsContext";
 import { usePersonas } from "@/context/PersonasContext";
+import { useHomes } from "@/context/HomeContext";
 
 
 const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialData}) => {
   // const { createUser,loading , updateUser } = useUsers();
   const {updateEndDate} = usePersonas();
+  const { fetchReparticion,isInitialRepart,reparticion} = useHomes();
 
   // const [ItemFuerzas, setfuerza] = useState([]);
   // const [ItemGrados, setGrados] = useState([]);
@@ -45,16 +47,16 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     setFieldValue("enddate", value);
   };
 
-  // useEffect(() => {
+  useEffect(() => {
     
-  //   if (!isInitializedSelect) fetchSelects();
-  //   if (!isInitializeActivos) getPerActivas();
-  // },[fetchSelects, getPerActivas]);
+    if (!isInitialRepart) fetchReparticion();
+  },[isInitialRepart]);
 
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue,setValues }= useFormik({
     initialValues: {
       idpersona:[],
       idassig:[],
+      code:[],
       ci: '',
       complemento: '',
       codper: '',
@@ -95,6 +97,9 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
     },
     validationSchema:Yup.object({
       motivofin: Yup.string().max(250,'Debe tener maximo de 250 caracteres').required('Campo requerido'),
+      code: Yup.number()
+            .required('Debes seleccionar destino anterior') 
+            .typeError('Debes seleccionar destino anterior'),
       fechaingreso:Yup.string().required('No exite la fecha de Ingreso'),
       gestion_ingreso:Yup.number().required('No exite gestion de Ingreso'),
       ci: Yup.string()
@@ -418,6 +423,32 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   errorMessage={errors.motivofin}  // Mostrar el mensaje de error desde Formik
                 />
                 </div>
+                <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+                <Autocomplete
+                  size="sm"
+                  isRequired
+                  label="DESTINO DE REPLIEGUE"
+                  variant="bordered"
+                  className="block w-full"
+                  isInvalid={!!errors.code && touched.code}
+                  color={errors.code ? "danger" : "success"}
+                  errorMessage={errors.code}
+                  selectedKey={values.code ? String(values.code) : undefined} // Asegúrate de que es una cadena
+                  onSelectionChange={(key) => {
+                    if (!key) {
+                      setFieldValue('code', ''); // Limpia el valor en Formik
+                      setfuerza(null); // Limpia el estado local
+                      return;
+                    }
+                    const selectedExped = reparticion.find((item) => item.code === Number(key)); // Convertir clave a número
+                    setFieldValue('code', selectedExped?.code || ''); // Actualiza Formik
+                    setfuerza(selectedExped); // Actualiza el estado local
+                  }}
+                  defaultItems={reparticion}
+                >
+                  {(item) => <AutocompleteItem key={String(item.code)}>{item.reparticion}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
               </ModalBody>
               <ModalFooter>
               <Button color="danger" variant="light" onClick={() => {

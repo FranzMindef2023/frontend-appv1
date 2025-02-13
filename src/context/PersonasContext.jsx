@@ -85,6 +85,8 @@ export const PersonasProvider = ({ children }) => {
         try {
             const response = await personasService.getDesvinculados();
             if (response.data && Array.isArray(response.data.data)) {
+                console.log('personas para vacaciones');
+                console.log(response.data.data);
                 setDesvincu(response.data.data); // Asegura que personas sea un arreglo
             } else {
                 setDesvincu([]); // Si no es un arreglo, inicializa vacío
@@ -182,8 +184,12 @@ export const PersonasProvider = ({ children }) => {
             // Reorganiza la fecha en formato 'YYYY-MM-DD'
             userData.startdate = `${year}-${month}-${day}`;
         }
+        const newData={
+            ...userData,
+            estado:'A'
+        }
         try {
-            const response = await personasService.createAsignacion(userData);
+            const response = await personasService.createAsignacion(newData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
@@ -250,8 +256,12 @@ export const PersonasProvider = ({ children }) => {
             // Reorganiza la fecha en formato 'YYYY-MM-DD'
             userData.startdate = `${year}-${month}-${day}`;
         }
+        const newData={
+            ...userData,
+            estado:'A'
+        }
         try {
-            const response = await personasService.changeAssignment(userData);
+            const response = await personasService.changeAssignment(newData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
@@ -484,8 +494,12 @@ export const PersonasProvider = ({ children }) => {
             // Reorganiza la fecha en formato 'YYYY-MM-DD'
             userData.enddate = `${year}-${month}-${day}`;
         }
+        const newData={
+            ...userData,
+            estado:'D'
+        }
         try {
-            const response = await personasService.updateEndDate(userData.idassig, userData);
+            const response = await personasService.updateEndDate(userData.idassig, newData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await getPerActivas();
@@ -552,8 +566,12 @@ export const PersonasProvider = ({ children }) => {
             // Reorganiza la fecha en formato 'YYYY-MM-DD'
             userData.startdate = `${year}-${month}-${day}`;
         }
+        const newData={
+            ...userData,
+            estado:'A'
+        }
         try {
-            const response = await personasService.updateAsignacion(userData.idassig, userData);
+            const response = await personasService.updateAsignacion(userData.idassig, newData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();

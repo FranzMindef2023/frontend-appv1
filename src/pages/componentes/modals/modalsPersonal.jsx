@@ -183,8 +183,10 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
         .matches(/^[a-zA-Z0-9]*$/, "El carnet de seguro debe contener solo letras y números")
         .notRequired(), // No es obligatorio
       codper: Yup.string()
-        .matches(/^\d{8}$/, "El código personal debe tener el formato 00002323 (8 dígitos exactos)")
-        .required("El código personal es obligatorio"), // Es obligatorio
+      .matches(/^\d+$/, "El código personal solo puede contener números") // Permite solo números
+      .min(3, "El código personal debe tener al menos 3 caracteres")
+      .max(20, "El código personal no debe superar los 20 caracteres")
+      .required("El código personal es obligatorio"), // Es obligatorio
       gsanguineo: Yup.string()
       .matches(
         /^(A|B|AB|O)RH[+-]$/,
@@ -398,7 +400,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               <Input 
               size="sm" 
               type="text" 
-              label="Carnet Mil." 
+              label="CARNET MILITAR" 
               name="carnetmil"
               placeholder="Ingrese el n° de Carnet Mil." 
               variant="bordered"
@@ -420,7 +422,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
               <Input 
                 size="sm" 
                 type="text" 
-                label="Cod. Persona" 
+                label="CODIGO PERSONA" 
                 name="codper"
                 placeholder="Ingrese el Cod. Persona" 
                 variant="bordered"
@@ -437,8 +439,8 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 size="sm" 
                 value={values.carnetseg}
                 name="carnetseg"
-                label="Carnet de Seguro" 
-                placeholder="Enter your Carnet de Seguro" 
+                label="MATRICULA DE SEGURO" 
+                placeholder="Ingrese la matricula" 
                 variant="bordered"
                 onChange={(e) => {
                   // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
@@ -457,7 +459,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 value={values.nuacua}
                 name="nuacua"
                 label="NUA/CUA" 
-                placeholder="Enter your Carnet de Seguro" 
+                placeholder="Ingrese nua/cua" 
                 variant="bordered"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -470,7 +472,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                 <Input 
                   size="sm" 
                   type="text" 
-                  label="Celular" 
+                  label="CELULAR" 
                   name="celular"
                   placeholder="Ingrese el n° de celular" 
                   variant="bordered"
@@ -488,8 +490,8 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   value={values.email}
                   name="email"
                   type="email" 
-                  label="Email" 
-                  placeholder="Enter your email" 
+                  label="EMAIL" 
+                  placeholder="Inrese el email" 
                   variant="bordered"
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -513,7 +515,7 @@ const CustomModal = ({ isOpen, onClose, title, actionLabel, closeLabel, initialD
                   onBlur={handleBlur}  // Manejar cuando el input pierde el foco
                   name="gsanguineo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
                   value={values.gsanguineo}  // El valor actual del campo en el formulario
-                  placeholder="Ingrese el gsanguineo de forma Abreviada"
+                  placeholder="Ingrese el grupo sanguineo"
                   color={errors.gsanguineo ? "danger" : "success"}  // Cambiar color según el error
                   errorMessage={errors.gsanguineo}  // Mostrar el mensaje de error desde Formik
                   className="block w-full"

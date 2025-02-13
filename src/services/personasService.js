@@ -12,7 +12,7 @@ const getPersonas = () => api.get('/persona');
 // Obtener todos los Persona activas
 const getPerActivas = () => api.get('/indexpersonal');
 // Obtener todos los Persona desvinculadas en la gestion actual
-const getDesvinculados = () => api.get('/getdesvinculados');
+const getDesvinculados = () => api.get('/indexpersonalgeneral');
 // Obtener todos los Asignaciones
 const getshowAssignments = (id) => api.get(`/showAssignments/${id}`);
 // Obtener un Persona por ID

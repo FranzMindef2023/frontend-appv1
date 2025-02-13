@@ -22,8 +22,8 @@ export function SignIn() {
   const [isLoading, setIsLoading] = useState(false); // Controla el estado del loader
   const { handleSubmit, handleBlur, values, handleChange, errors, touched, resetForm } = useFormik({
     initialValues: {
-      email: 'juan1.perez@example.com',
-      password: '123456789',
+      email: 'juan.perez@example.com',
+      password: 'hashed_password',
     },
     onSubmit: async (values) => {
       setIsLoading(true); // Activa el loader

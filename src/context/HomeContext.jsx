@@ -12,11 +12,13 @@ export const HomesProvider = ({ children }) => {
     const [isInitialcount, setIsInitialcount] = useState(false);
     const [isInitialPersonal, setIsInitialPersonal] = useState(false);
     const [isInitialNovedades, setIsInitialNovedades] = useState(false);
+    const [isInitialRepart, setIsInitialRepart] = useState(false);
 
     const [users, setUsers] = useState([]);
     const [userscount, setUsersCount] = useState([]);
     const [personascount, setPersonasCount] = useState([]);
     const [novedadescount, setNovedadesCount] = useState([]);
+    const [reparticion, setReparticion] = useState([]);
 
     const [loading, setLoading] = useState(false);
 
@@ -101,7 +103,24 @@ export const HomesProvider = ({ children }) => {
             setIsInitialNovedades(true);
         }
     };
-
+    const fetchReparticion = async () => {
+        setLoading(true);
+        try {
+            const response = await homeService.reparticiones();
+            if (response.data && Array.isArray(response.data.data)) {
+                console.log(response.data.data);
+                setReparticion(response.data.data); // Asegura que users sea un arreglo
+            } else {
+                setReparticion([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setReparticion([]);
+        } finally {
+            setLoading(false);
+            setIsInitialRepart(true);
+        }
+    };
     return (
         <HomeContext.Provider value={{ users, 
                                         userscount, 
@@ -115,7 +134,10 @@ export const HomesProvider = ({ children }) => {
                                         personascount,
                                         fetchNovedadesCount,
                                         isInitialNovedades,
-                                        novedadescount}}>
+                                        novedadescount,
+                                        fetchReparticion,
+                                        isInitialRepart,
+                                        reparticion}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

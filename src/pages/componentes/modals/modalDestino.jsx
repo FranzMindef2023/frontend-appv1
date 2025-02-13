@@ -13,6 +13,7 @@ import {
   Textarea
 } from "@nextui-org/react";
 import { usePersonas } from "@/context/PersonasContext";
+import { useHomes } from "@/context/HomeContext";
 import { useOrganigrama } from "@/context/OrganigramaContext";
 import { useCargo } from "@/context/GargosContext";
 import { useFormik } from "formik";
@@ -24,12 +25,14 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
   const { fetchOrgPhat,getOrgByIdPhat,organPhat,orgChil,isInitialized,loading,orgChilphat,getOrganigramaByHijo} = useOrganigrama();
   const { cargos,fetchCargos, isInitializedCar } = useCargo();
   const { createAsignacion,updateAsignacion,changeAssignment} = usePersonas();
+  const { fetchReparticion,isInitialRepart,reparticion} = useHomes();
 
   useEffect(() => {
     
     if (!isInitialized) fetchOrgPhat();
     if (!isInitializedCar) fetchCargos();
-  },[isInitialized,isInitializedCar]);
+    if (!isInitialRepart) fetchReparticion();
+  },[isInitialized,isInitializedCar,isInitialRepart]);
   const {handleSubmit,handleBlur,values,handleChange,errors,touched,resetForm,setFieldValue }= useFormik({
     initialValues:{
       gestion:new Date().getFullYear().toString(),
@@ -37,6 +40,7 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
       status:true,
       idorg:[],
       idorgani:[],
+      code:[],
       idhijastro:[],
       idpuesto:[],
       motivo:'',
@@ -90,6 +94,9 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
       idorgani: Yup.number()
             .required('Debes seleccionar la reparticion') 
             .typeError('Debes seleccionar la reparticion'),
+      code: Yup.number()
+            .required('Debes seleccionar destino anterior') 
+            .typeError('Debes seleccionar destino anterior'),
       idorg: Yup.number()
       .required('Debes seleccionar la unidad dependiente') 
       .typeError('Debes seleccionar la reparticion'),
@@ -362,28 +369,56 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
               />
             </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
-            <Textarea
-              key="bordered"
-              className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-              label="DESCRIPCION DE MOTIVO"
-              placeholder="Ingrese la descripcion"
-              variant="bordered"
-              isRequired={true}
-              type="text"
-              isInvalid={!!errors.motivo && touched.motivo}  // Mostrar error si hay error y el campo ha sido tocado
-              onChange={(e) => {
-                // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
-                handleChange({
-                  target: { name: e.target.name, value: e.target.value.toUpperCase() },
-                });
-              }}
-              onBlur={handleBlur}  // Manejar cuando el input pierde el foco
-              name="motivo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
-              value={values.motivo}  // El valor actual del campo en el formulario
-              color={errors.motivo ? "danger" : "success"}  // Cambiar color según el error
-              errorMessage={errors.motivo}  // Mostrar el mensaje de error desde Formik
-            />
+              <Textarea
+                key="bordered"
+                className="col-span-12 md:col-span-6 mb-6 md:mb-0"
+                label="DESCRIPCION DE MOTIVO"
+                placeholder="Ingrese la descripcion"
+                variant="bordered"
+                isRequired={true}
+                type="text"
+                isInvalid={!!errors.motivo && touched.motivo}  // Mostrar error si hay error y el campo ha sido tocado
+                onChange={(e) => {
+                  // Convierte el valor ingresado a mayúsculas antes de actualizar Formik
+                  handleChange({
+                    target: { name: e.target.name, value: e.target.value.toUpperCase() },
+                  });
+                }}
+                onBlur={handleBlur}  // Manejar cuando el input pierde el foco
+                name="motivo"  // Nombre del campo en el formulario (debe coincidir con el campo en initialValues y validationSchema)
+                value={values.motivo}  // El valor actual del campo en el formulario
+                color={errors.motivo ? "danger" : "success"}  // Cambiar color según el error
+                errorMessage={errors.motivo}  // Mostrar el mensaje de error desde Formik
+              />
             </div>
+            {initialAssing === null && (
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
+              <Autocomplete
+                size="sm"
+                isRequired
+                label="DESTINO ANTERIOR"
+                variant="bordered"
+                className="block w-full"
+                isInvalid={!!errors.code && touched.code}
+                color={errors.code ? "danger" : "success"}
+                errorMessage={errors.code}
+                selectedKey={values.code ? String(values.code) : undefined} // Asegúrate de que es una cadena
+                onSelectionChange={(key) => {
+                  if (!key) {
+                    setFieldValue('code', ''); // Limpia el valor en Formik
+                    setfuerza(null); // Limpia el estado local
+                    return;
+                  }
+                  const selectedExped = reparticion.find((item) => item.code === Number(key)); // Convertir clave a número
+                  setFieldValue('code', selectedExped?.code || ''); // Actualiza Formik
+                  setfuerza(selectedExped); // Actualiza el estado local
+                }}
+                defaultItems={reparticion}
+              >
+                {(item) => <AutocompleteItem key={String(item.code)}>{item.reparticion}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            )}
           </ModalBody>
           <ModalFooter>
             {/* Botón para cerrar el modal */}

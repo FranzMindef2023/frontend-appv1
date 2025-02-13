@@ -16,7 +16,8 @@ import {
   Chip,
   User,
   Pagination,
-  Tooltip
+  Tooltip,
+  Alert
 } from "@nextui-org/react";
 
 import {
@@ -26,16 +27,14 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
+import Loader from "../../component/Loader/Loader";
 import { usePersonas } from "@/context/PersonasContext";
-import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, statusOptions} from "@/data/dataPersonal";
+import {columns, statusOptions} from "@/data/dataVacaciones";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsDesvincular';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 
@@ -44,12 +43,12 @@ import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 
 
 const statusColorMap = {
-  Activo: "success",
-  Inactivo: "danger",
-  vacation: "warning",
+  EJERCITO: "success",
+  FUERZA: "danger",
+  ARMADA: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["id","name", "celular","ci", "gsanguineo","sexo","fuerza", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "fechaegreso", "anios", "dias","dias_vacaciones","gestion_actual","fuerza"];
 
 export function Desvinculacion() {
   const {  isInitDesvincu, getshowAssignments,getDesvinculados,users10 } = usePersonas();
@@ -57,11 +56,42 @@ export function Desvinculacion() {
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [assing, setAssing] = useState(null);
+  const [isLoa, setIsLoa] = useState(false); 
+  const [alertVisible, setAlertVisible] = useState(false);
   useEffect(() => {
     if (!isInitDesvincu) {
       getDesvinculados();
     }
   }, [isInitDesvincu]);
+  const enviarParte = async (event) => {
+    setIsLoa(true);
+    // Evita el comportamiento predeterminado del botón o formulario
+    event.preventDefault();
+  
+    // console.log("Botón clickeado, función enviarParte ejecutada",selectedKeys);
+  
+    const isAllSelected = selectedKeys === "all";
+    // console.log("isAllSelected:", isAllSelected);
+  
+    const selectedKeysArray = isAllSelected
+      ? users10.map((user) => String(user.id))
+      : Array.from(selectedKeys);
+  
+    if (selectedKeysArray.length === 0) {
+      setAlertVisible(true);
+      setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
+      setIsLoa(false);
+      return;
+    }
+  
+    const selectedData = users10.filter((user) =>
+      selectedKeysArray.includes(String(user.id))
+    );
+
+    // await storeMassive(selectedData);
+    console.log("Usuarios seleccionados para enviar:", selectedData);
+    setIsLoa(false);
+  };
   const openModal = (accion, user = null) => {
     
     setSelectedUser(user); // Establecer los datos del usuario seleccionado
@@ -175,11 +205,11 @@ export function Desvinculacion() {
             <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
           </div>
         );
-      case "estado":
+      case "fuerza":
         return (
           <Chip
             className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.estado]}
+            color={statusColorMap[user.fuerza]}
             size="sm"
             variant="dot"
           >
@@ -291,14 +321,6 @@ export function Desvinculacion() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              className="bg-foreground text-background"
-              endContent={<PlusIcon />}
-              size="sm"
-              onPress={() => openModal("create")}
-            >
-              Usuario
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -375,10 +397,28 @@ export function Desvinculacion() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Desvinculación Personal
+            Gestor de Vacaciones
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
+          {alertVisible && (
+            <Alert 
+              color="danger" 
+              title="Seleccione todo el personal militar, para generar la planilla de Vacaciones" 
+            />
+          )}
+        <div className="mb-12 flex justify-end gap-4">
+          {isLoa && <Loader aria-live="polite" />}
+            <Button 
+            type="button" 
+            onClick={enviarParte} 
+            className={`bg-foreground text-background ${isLoa ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isLoa}
+            aria-busy={isLoa}
+            >
+              Generar vacaciones
+            </Button>
+          </div>
           <Table
             isCompact
             removeWrapper

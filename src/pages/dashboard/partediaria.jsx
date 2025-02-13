@@ -433,7 +433,7 @@ export function Partediaria() {
                 })}
               />
             ))}
-          </div>
+        </div>
           <div className="mb-12 flex justify-end gap-4">
           {isLoading && <Loader aria-live="polite" />}
           <Button 

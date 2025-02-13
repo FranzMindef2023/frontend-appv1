@@ -78,6 +78,7 @@ export function Personal() {
     try {
       // console.log(datauser);
         const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
+    
         setAssing(assing);
         setSelectedUser(datauser);
         // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
