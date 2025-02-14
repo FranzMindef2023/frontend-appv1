@@ -20,6 +20,10 @@ const updateNovedad = (id, userData) => api.put(`/novedades/${id}`, userData);
 
 // Eliminar un rol
 const deleteNovedad = (id) => api.delete(`/novedades/${id}`);
+// verificadores
+const getVerificadorvacaciones = (idper,idvac) => api.get(`/verificadorvacaciones/${idper}/${idvac}`);
+const getVerificadorVacacionesHoras = (idper,idvac,fecha) => api.get(`/verificadorVacacionesHoras/${idper}/${idvac}/${fecha}`);
+const getVerificadorVacacionesDiasVigentes = (idper,idvac,fechaini,fechafin) => api.get(`/verificadorVacacionesDiasVigentes/${idper}/${idvac}/${fechaini}/${fechafin}`);
 
 export default { createNovedad, 
                 getNovedades, 
@@ -28,4 +32,9 @@ export default { createNovedad,
                 deleteNovedad ,
                 listPersonalPermisos,
                 listPeopleParteDiaria,
-                storeMassive};
+                storeMassive,
+
+                getVerificadorvacaciones,
+                getVerificadorVacacionesHoras,
+                getVerificadorVacacionesDiasVigentes
+            };

@@ -10,7 +10,7 @@ import {
   Autocomplete, 
   AutocompleteItem,
   Textarea,
-  DatePicker
+  Alert
 } from "@nextui-org/react";
 import { usePersonas } from "@/context/PersonasContext";
 import { useTipNov } from "@/context/TipoNovedadContext"; 
@@ -22,7 +22,12 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
   const [selectedItem, setSelectedItem] = useState([]);
   const { isInitPersonal,fetchListPersonas,personal} = usePersonas();
   const { isInitializedNov,fetchTipNovs,novedad} = useTipNov();
-  const {createNovedad,updateNovedad}=useNovedades();
+  const {createNovedad,updateNovedad,getVerificadorId,getVerificadorIdFecha,getVerificadorIdCantidad}=useNovedades();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [color, setColor] = useState('');
+  const [menssage, setMenssage] = useState('');
+  const today = new Date();
+today.setHours(0, 0, 0, 0); // Elimina la hora para evitar problemas de validación
   useEffect(() => {
 
     if (!isInitPersonal) fetchListPersonas();
@@ -64,8 +69,9 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
           .required('Debes seleccionar el tipo de permiso') 
           .typeError('Debes seleccionar el tipo de permiso'),
       startdate: Yup.date()
-          .required('La fecha desde es obligatoria.')
-          .typeError('Debe ser una fecha válida.'),
+      .required('La fecha desde es obligatoria.')
+      .typeError('Debe ser una fecha válida.')
+      .min(today, 'No puedes seleccionar una fecha pasada.') ,
       enddate: Yup.date()
           .required('La fecha hasta es obligatoria.')
           .typeError('Debe ser una fecha válida.')
@@ -81,13 +87,147 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
     }
   }, [initialData]);
 
-
+  const handleFilter = async (key) => {
+    try {
+      const idAssig = values.idassig; // ID de asignación que se busca en el array
+      if(idAssig.length===0){
+        setColor('danger');
+        setMenssage('Seleccione la persona');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      
+  
+      // Buscar en el array `personal` el elemento que tenga el mismo `idassig`
+      const selectedData = personal.find((item) => item.idassig === idAssig);
+  
+      // console.log(selectedData);
+      // return;
+      const response=await getVerificadorId(selectedData.idpersona,key);
+      if(response.message!='ok'){
+        setColor('warning');
+        setMenssage(response.message);
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      
+  
+      // await getOrganigramaByHijo(key); // Descomentar si es necesario
+  
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario");
+    }
+  };
+  const handleDateSelection = async (date) => {
+    try {
+      const idAssig = values.idassig;
+      const idnov = values.idnov; // ID de asignación que se busca en el array
+      if(idAssig.length===0){
+        setColor('danger');
+        setMenssage('Seleccione la persona');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      if(idnov.length===0){
+        setColor('danger');
+        setMenssage('Seleccione el tipo de permiso');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      
+  
+      // Buscar en el array `personal` el elemento que tenga el mismo `idassig`
+      const selectedData = personal.find((item) => item.idassig === idAssig);
+  
+      // console.log(selectedData);
+      // return;
+      const response=await getVerificadorIdFecha(selectedData.idpersona,idnov,date);
+      if(response.message!='ok'){
+        setColor('warning');
+        setMenssage(response.message);
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      
+  
+      // await getOrganigramaByHijo(key); // Descomentar si es necesario
+  
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario");
+    }
+  };
+  
+  const handleVerifiVacaciones = async (date) => {
+    try {
+      const idAssig = values.idassig;
+      const idnov = values.idnov; // ID de asignación que se busca en el array
+      const startdate = values.startdate;
+      if(idAssig.length===0){
+        setColor('danger');
+        setMenssage('Seleccione la persona');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      if(idnov.length===0){
+        setColor('danger');
+        setMenssage('Seleccione el tipo de permiso');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      if(startdate===''){
+        setColor('danger');
+        setMenssage('Seleccione la fecha desde');
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 3000);
+        return;
+      }
+      
+  
+      // Buscar en el array `personal` el elemento que tenga el mismo `idassig`
+      const selectedData = personal.find((item) => item.idassig === idAssig);
+  
+      // console.log(selectedData);
+      // return;
+      const response=await getVerificadorIdCantidad(selectedData.idpersona,idnov,startdate,date);
+      // console.log(response);
+      if(response.message!='ok'){
+        setColor('warning');
+        setMenssage(response.message);
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 5000);
+        return;
+      }
+      
+  
+      // await getOrganigramaByHijo(key); // Descomentar si es necesario
+  
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+      alert("Error al registrar usuario");
+    }
+  };
+  
   return (
     <Modal isOpen={isOpen} onOpenChange={onClose} isDismissable={false} size="lg">
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
         <form noValidate onSubmit={handleSubmit}>
           <ModalBody>
+            {alertVisible && (
+              <Alert 
+                color={color} 
+                title={menssage} 
+              />
+            )}
             <div className="flex w-full flex-wrap md:flex-nowrap gap-6">
             <Autocomplete
               size="sm"
@@ -135,6 +275,7 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
                   setSelectedItem(null); // Limpia el estado local
                   return;
                 }
+                handleFilter(key);
                 const selectedOrg = novedad.find((item) => item.idnov === Number(key));
                 setFieldValue('idnov', selectedOrg?.idnov || ''); // Actualiza Formik
                 setSelectedItem(selectedOrg); // Actualiza el estado local
@@ -151,7 +292,10 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               label="FECHA DESDE" 
               type="date" 
               onBlur={handleBlur}  
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleDateSelection(e.target.value); // Nueva función para manejar la fecha seleccionada
+              }}
               isInvalid={!!errors.startdate && touched.startdate}
               color={errors.startdate ? "danger" : "success"}
               errorMessage={errors.startdate} 
@@ -167,7 +311,10 @@ const CustomModals = ({ isOpen, onClose, title, actionLabel, closeLabel, initial
               label="FECHA HASTA"
               type="date" 
               onBlur={handleBlur}  
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                handleVerifiVacaciones(e.target.value); // Nueva función para manejar la fecha seleccionada
+              }}
               isInvalid={!!errors.enddate && touched.enddate}
               color={errors.enddate ? "danger" : "success"}
               errorMessage={errors.enddate} 

@@ -29,6 +29,7 @@ import {
 } from "@material-tailwind/react";
 import Loader from "../../component/Loader/Loader";
 import { usePersonas } from "@/context/PersonasContext";
+import { useNovedades } from "@/context/NovedadesContext";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataVacaciones";
@@ -52,6 +53,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "fechaegreso", "anios",
 
 export function Desvinculacion() {
   const {  isInitDesvincu, getshowAssignments,getDesvinculados,users10 } = usePersonas();
+  const { storeVacaciones} = useNovedades();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -88,7 +90,7 @@ export function Desvinculacion() {
       selectedKeysArray.includes(String(user.id))
     );
 
-    // await storeMassive(selectedData);
+    await storeVacaciones(selectedData);
     console.log("Usuarios seleccionados para enviar:", selectedData);
     setIsLoa(false);
   };

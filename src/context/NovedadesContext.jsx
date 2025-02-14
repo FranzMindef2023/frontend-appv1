@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Spinner } from '@nextui-org/react';
 import novedadesService from '@/services/novedadesService';
+import vacacionesService from '@/services/vacacionesService';
 import Swal from 'sweetalert2';
 import Cookies from "js-cookie";
 
@@ -40,8 +41,14 @@ export const NovedadesProvider = ({ children }) => {
     // Crear nuevo permiso
     const createNovedad = async (userData) => {
         setLoading(true);
+        const usuario = Cookies.get("user"); // Obtiene la cookie "user"
+        const usuarioJSON = usuario ? JSON.parse(usuario) : null;
+        const newData={
+            ...userData,
+            iduserreg:usuarioJSON.iduser
+        }
         try {
-            const response = await novedadesService.createNovedad(userData);
+            const response = await novedadesService.createNovedad(newData);
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPermisos();
@@ -111,6 +118,69 @@ export const NovedadesProvider = ({ children }) => {
             if (response.status === 200) {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchNovedades();
+                // showNotification('success', response.data.message || 'Role created successfully');
+                return response.data;
+            }
+        } catch (error) {
+            if (error.response) {
+                const { status, data } = error.response;
+                switch (status) {
+                    case 422: {
+                        // Manejar errores de validación
+                        const errorMessages = Object.entries(data.errors || {})
+                            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+                            .join("\n");
+            
+                        Swal.fire({
+                            icon: "error",
+                            title: "Errores de Validación",
+                            text: errorMessages,
+                        });
+                        break;
+                    }
+                    case 500: {
+                        // Manejar errores internos del servidor
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error del Servidor",
+                            text: data.message || "Ocurrió un error interno. Inténtalo nuevamente.",
+                        });
+                        break;
+                    }
+                    default: {
+                        // Manejar otros errores no esperados
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error Desconocido",
+                            text: data.message || "Algo salió mal. Inténtalo más tarde.",
+                        });
+                        break;
+                    }
+                }
+            } else {
+                // Manejar errores donde no hay respuesta del servidor
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de Conexión",
+                    text: "No se recibió respuesta del servidor. Por favor, verifica tu conexión a internet.",
+                });
+            }
+            
+        } finally {
+            setLoading(false);
+        }
+    };
+    // Crear vacaciones para gestion actual
+    const storeVacaciones = async (userData) => {
+        setLoading(true);
+        const datos = {
+                    vacacion: userData
+                    };
+        try {
+            const response = await vacacionesService.vacaciones(datos);
+            if (response.status === 200) {
+                Swal.fire("¡Éxito!", response.data.message, "success");
+                // await fetchNovedades();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }
@@ -294,7 +364,43 @@ export const NovedadesProvider = ({ children }) => {
             setLoading(false);
         }
     };
-
+    // Obtener un rol por ID
+    const getVerificadorId = async (idper,idvac) => {
+        setLoading(true);
+        try {
+            const response = await novedadesService.getVerificadorvacaciones(idper,idvac);
+            return response.data;
+        } catch (error) {
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+    const getVerificadorIdFecha = async (idper,idvac,fecha) => {
+        setLoading(true);
+        try {
+            const response = await novedadesService.getVerificadorVacacionesHoras(idper,idvac,fecha);
+            return response.data;
+        } catch (error) {
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
+    const getVerificadorIdCantidad = async (idper,idvac,fecha,fechafin) => {
+        setLoading(true);
+        try {
+            const response = await novedadesService.getVerificadorVacacionesDiasVigentes(idper,idvac,fecha, fechafin);
+            return response.data;
+        } catch (error) {
+            // showNotification('error', 'Error fetching role details. Please try again.');
+            return null;
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <NovedadesContext.Provider value={{ users, user, 
                                             createNovedad, 
@@ -310,7 +416,12 @@ export const NovedadesProvider = ({ children }) => {
                                             fetchPerNovedades,
                                             novedades,
                                             isInitNovedades,
-                                            storeMassive}}>
+                                            storeMassive,
+                                            storeVacaciones,
+                                            
+                                            getVerificadorId,
+                                            getVerificadorIdFecha,
+                                            getVerificadorIdCantidad}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
