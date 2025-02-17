@@ -24,8 +24,6 @@ import {
 import { usePartes } from "@/context/PartesContext";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {columns, statusOptions} from "@/data/dataInformes";
-import CustomModals from '@/pages/componentes/modals/modalsNovedad';
-import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
 
 
@@ -42,10 +40,6 @@ const INITIAL_VISIBLE_COLUMNS = ["id", "fechaparte","name","estado","total","tot
 
 export function Informes() {
   const {  isInitialPartes,users, fetchPartes,downloadPDFUser,downloadPDF} = usePartes();
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isModalOpenP, setModalOpenP] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [assing, setAssing] = useState(null);
   useEffect(() => {
     if (!isInitialPartes) {
       fetchPartes();
@@ -78,40 +72,14 @@ export function Informes() {
       alert('Error al descargar el reporte.');
     }
   };
-  const openModal = (accion, user = null) => {
-    
-    setSelectedUser(user); // Establecer los datos del usuario seleccionado
-    setModalOpen(true); // Abrir el modal
-  };
+
   
-  const closeModal = () => {
-    setModalOpen(false);
-  };
 
-  const openModalP = async (accion, datauser = null) => {
-    try {
-      // console.log(datauser);
-        // const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
-        setAssing(assing);
-        setSelectedUser(datauser);
-        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
-        setModalOpenP(true); // Abrir el modal después de obtener los datos
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-    }
-  };
+  
 
-  const closeModalP = () => {
-    setModalOpenP(false);
-  };
-  const handleActionP = () => {
-    alert("Action executed!");
-    closeModalP(); // Cierra el modal después de la acción
-  };
-  const handleAction = () => {
-    alert("Action executed!");
-    closeModal(); // Cierra el modal después de la acción
-  };
+
+
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -438,29 +406,6 @@ export function Informes() {
               )}
             </TableBody>
           </Table>
-          <CustomModals
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            title={selectedUser ? "EDITAR SOLICITUD DE PERMISO" : "SOLICITUD DE PERMISO"} // Cambiar el título dinámicamente
-            actionLabel={selectedUser ? "ACTUALIZAR" : "REGISTRAR"}
-            closeLabel="CANCELAR"
-            initialData={selectedUser} // Pasar los datos iniciales
-          />
-          <CustomModalDest
-            isOpen={isModalOpenP}
-            onClose={closeModalP}
-            title="REGISTRO DE NUEVO ROL"
-            bodyContent={[
-              "This is the first paragraph.",
-              "This is the second paragraph.",
-              "This is the third paragraph."
-            ]}
-            onAction={handleActionP}
-            initialData={selectedUser} // Pasar los datos iniciales 
-            initialAssing={assing} // Pasar los datos iniciales 
-            actionLabel="REGISTRAR"
-            closeLabel="CANCELAR"
-          />
         </CardBody>
       </Card>
     </div>

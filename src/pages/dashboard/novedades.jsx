@@ -35,8 +35,6 @@ import {columns, statusOptions} from "@/data/dataPermisos";
 import {capitalize} from "@/data/utils";
 import CustomModals from '@/pages/componentes/modals/modalsNovedad';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
-import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomDemIcon} from "@/pages/componentes/modals/acctions/PdfDowDemIcon";
 
 
@@ -55,9 +53,7 @@ export function Novedades() {
   const {  isInitPermisos,permisos, fetchPermisos} = useNovedades();
   const {  downloadPDFPermiso} = usePartes();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [assing, setAssing] = useState(null);
   useEffect(() => {
     if (!isInitPermisos) {
       fetchPermisos();
@@ -75,30 +71,6 @@ export function Novedades() {
     setModalOpen(false);
   };
 
-  const openModalP = async (accion, datauser = null) => {
-    try {
-      // console.log(datauser);
-        // const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
-        setAssing(assing);
-        setSelectedUser(datauser);
-        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
-        setModalOpenP(true); // Abrir el modal después de obtener los datos
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-    }
-  };
-
-  const closeModalP = () => {
-    setModalOpenP(false);
-  };
-  const handleActionP = () => {
-    alert("Action executed!");
-    closeModalP(); // Cierra el modal después de la acción
-  };
-  const handleAction = () => {
-    alert("Action executed!");
-    closeModal(); // Cierra el modal después de la acción
-  };
   const handleDownload = async (user = null) => {
     //  console.log(user);
     //  return;
@@ -206,19 +178,16 @@ export function Novedades() {
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
-            {/* <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
-              <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Button> */}
-            <Tooltip content="Editar Permiso" color="warning" size="lg">
-              <span
-                onClick={() => openModal("edit", user)}
-                className="text-lg text-warning cursor-pointer active:opacity-50"
-              >
-                <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
-              </span>
-            </Tooltip>
+            {user.estatus !== "E" && (
+              <Tooltip content="Editar Permiso" color="warning" size="lg">
+                <span
+                  onClick={() => openModal("edit", user)}
+                  className="text-lg text-warning cursor-pointer active:opacity-50"
+                >
+                  <EditIcon className="h-6 w-6 text-orange-500" /> {/* Ajusta el tamaño y el color */}
+                </span>
+              </Tooltip>
+            )}
             <Tooltip content="Imprimir" color="danger" size="lg">
               <span onClick={() => handleDownload( user)} className="text-lg  cursor-pointer active:opacity-50">
                 <CustomDemIcon className="h-6 w-6 text-red-500" />
@@ -456,21 +425,7 @@ export function Novedades() {
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
           />
-          <CustomModalDest
-            isOpen={isModalOpenP}
-            onClose={closeModalP}
-            title="REGISTRO DE NUEVO ROL"
-            bodyContent={[
-              "This is the first paragraph.",
-              "This is the second paragraph.",
-              "This is the third paragraph."
-            ]}
-            onAction={handleActionP}
-            initialData={selectedUser} // Pasar los datos iniciales 
-            initialAssing={assing} // Pasar los datos iniciales 
-            actionLabel="REGISTRAR"
-            closeLabel="CANCELAR"
-          />
+          
         </CardBody>
       </Card>
     </div>

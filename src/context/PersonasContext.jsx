@@ -194,6 +194,7 @@ export const PersonasProvider = ({ children }) => {
                 Swal.fire("¡Éxito!", response.data.message, "success");
                 await fetchPersonas();
                 await fetchListPersonas();
+                await getPerActivas();
                 // showNotification('success', response.data.message || 'Role created successfully');
                 return response.data;
             }

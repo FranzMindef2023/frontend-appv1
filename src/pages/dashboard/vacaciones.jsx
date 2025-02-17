@@ -1,4 +1,4 @@
-import React,{useState } from "react";
+import React,{useState, useEffect } from "react";
 
 import {
   Table,
@@ -16,6 +16,7 @@ import {
   Chip,
   User,
   Pagination,
+  Alert
 } from "@nextui-org/react";
 
 import {
@@ -25,42 +26,72 @@ import {
   Typography,
 
 } from "@material-tailwind/react";
-
-import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
+import Loader from "../../component/Loader/Loader";
+import { usePersonas } from "@/context/PersonasContext";
+import { useNovedades } from "@/context/NovedadesContext";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, users, statusOptions} from "@/data/data";
+import {columns, statusOptions} from "@/data/dataVacaciones";
 import {capitalize} from "@/data/utils";
-import CustomModal from '@/pages/componentes/modals/modalsDeparts';
-
 
 
 
 
 const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
+  EJERCITO: "success",
+  FUERZA: "danger",
+  ARMADA: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "fechaegreso", "anios", "dias","dias_vacaciones","gestion_actual","fuerza"];
 
-export function Departamentos() {
-  const [isModalOpen, setModalOpen] = useState(false);
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
+export function Vacaciones() {
+  const {  isInitDesvincu,getDesvinculados,users10 } = usePersonas();
+  const { storeVacaciones} = useNovedades();
+  const [isLoa, setIsLoa] = useState(false); 
+  const [alertVisible, setAlertVisible] = useState(false);
+  useEffect(() => {
+    if (!isInitDesvincu) {
+      getDesvinculados();
+    }
+  }, [isInitDesvincu]);
+  const enviarParte = async (event) => {
+    setIsLoa(true);
+    // Evita el comportamiento predeterminado del botón o formulario
+    event.preventDefault();
   
-  const closeModal = () => {
-    setModalOpen(false);
+    // console.log("Botón clickeado, función enviarParte ejecutada",selectedKeys);
+  
+    const isAllSelected = selectedKeys === "all";
+    // console.log("isAllSelected:", isAllSelected);
+  
+    const selectedKeysArray = isAllSelected
+      ? users10.map((user) => String(user.id))
+      : Array.from(selectedKeys);
+  
+    if (selectedKeysArray.length === 0) {
+      setAlertVisible(true);
+      setTimeout(() => setAlertVisible(false), 3000); // Ocultar después de 3 segundos
+      setIsLoa(false);
+      return;
+    }
+  
+    const selectedData = users10.filter((user) =>
+      selectedKeysArray.includes(String(user.id))
+    );
+
+    await storeVacaciones(selectedData);
+    // console.log("Usuarios seleccionados para enviar:", selectedData);
+    setIsLoa(false);
   };
 
-  const handleAction = () => {
-    alert("Action executed!");
-    closeModal(); // Cierra el modal después de la acción
-  };
+
+
+
+
+
+
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -72,7 +103,7 @@ export function Departamentos() {
   });
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const pages = Math.ceil(users10.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -83,7 +114,7 @@ export function Departamentos() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...users10];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
@@ -97,7 +128,7 @@ export function Departamentos() {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [users10, filterValue, statusFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -140,33 +171,16 @@ export function Departamentos() {
             <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
           </div>
         );
-      case "status":
+      case "fuerza":
         return (
           <Chip
             className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
+            color={statusColorMap[user.fuerza]}
             size="sm"
             variant="dot"
           >
             {cellValue}
           </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown className="bg-background border-1 border-default-200">
-              <DropdownTrigger>
-                <Button isIconOnly radius="full" size="sm" variant="light">
-                  <VerticalDotsIcon className="text-default-400" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
         );
       default:
         return cellValue;
@@ -257,18 +271,10 @@ export function Departamentos() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              className="bg-foreground text-background"
-              endContent={<PlusIcon />}
-              size="sm"
-              onPress={openModal}
-            >
-              Departamento
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {users10.length} Usuarios</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -290,7 +296,7 @@ export function Departamentos() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    users10.length,
     hasSearchFilter,
   ]);
 
@@ -341,10 +347,28 @@ export function Departamentos() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Departamentos
+            Gestor de Vacaciones
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}
+          {alertVisible && (
+            <Alert 
+              color="danger" 
+              title="Seleccione todo el personal militar, para generar la planilla de Vacaciones" 
+            />
+          )}
+        <div className="mb-12 flex justify-end gap-4">
+          {isLoa && <Loader aria-live="polite" />}
+            <Button 
+            type="button" 
+            onClick={enviarParte} 
+            className={`bg-foreground text-background ${isLoa ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isLoa}
+            aria-busy={isLoa}
+            >
+              Generar vacaciones
+            </Button>
+          </div>
           <Table
             isCompact
             removeWrapper
@@ -385,23 +409,11 @@ export function Departamentos() {
               )}
             </TableBody>
           </Table>
-          <CustomModal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              title="REGISTRO DE NUEVO DEPARTAMENTO"
-              bodyContent={[
-                "This is the first paragraph.",
-                "This is the second paragraph.",
-                "This is the third paragraph."
-              ]}
-              onAction={handleAction}
-              actionLabel="REGISTRAR"
-              closeLabel="CANCELAR"
-            />
+          
         </CardBody>
       </Card>
     </div>
   );
 }
 
-export default Departamentos;
+export default Vacaciones;

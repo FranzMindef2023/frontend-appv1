@@ -12,23 +12,21 @@ import {
   Tables,
   Notifications,
   Roles,
-  Departamentos,
-  Divisiones,
-  Ueducativas,
-  Umilitares,
+  Accesos,
+  Personal,
+  Personalrrhh,
+  Vacaciones,
+  Novedades,
+  Partediaria,
+  Informes,
+  Permisos,
+  Parterrhh
 } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import ProtectedRoute from "@/component/ProtectedRoute";
 import AuthRoute from "@/component/AuthRoute";
-import Personal from "./pages/dashboard/personal";
-import Accesos from "./pages/dashboard/accesos";
-import Desvinculacion from "./pages/dashboard/desvinculacion";
-import Novedades from "./pages/dashboard/novedades";
-import Partediaria from "./pages/dashboard/partediaria";
-import Informes from "./pages/dashboard/informes";
-import Permisos from "./pages/dashboard/permisos";
-import Parterrhh from "./pages/dashboard/parterrhh";
-import Personalrrhh from "./pages/dashboard/personalrrhh";
+
+
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -82,10 +80,10 @@ export const routes = [
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "DESVINCULACIÓN",
-        path: "/desvinculacion",
+        name: "VACACIONES",
+        path: "/vacaciones",
         allowedRoles: [1,2],
-        element: <ProtectedRoute element={<Desvinculacion />} />,
+        element: <ProtectedRoute element={<Vacaciones />} />,
       },
       {
         icon: <UserCircleIcon {...icon} />,

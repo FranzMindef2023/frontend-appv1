@@ -51,7 +51,9 @@ export function SignIn() {
           <Typography variant="h2" className="font-bold mb-4" >¡Bienvenido/a!<span aria-label="emoji" className="ml-2" role="img" >
             👋
           </span></Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to Sign In.</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Sistema de Control del Personal Militar del <br /> Ministerio de Defensa</Typography>
+          <Typography variant="h2" className="font-bold mb-4" >SICPM25<span aria-label="emoji" className="ml-2" role="img" >
+          </span></Typography>
         </div>
         <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
           <div className="mb-1 flex flex-col gap-6">

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Spinner } from '@nextui-org/react';
 import homeService from '@/services/homeService';
-import Swal from 'sweetalert2';
+
 
 
 
@@ -13,16 +13,20 @@ export const HomesProvider = ({ children }) => {
     const [isInitialPersonal, setIsInitialPersonal] = useState(false);
     const [isInitialNovedades, setIsInitialNovedades] = useState(false);
     const [isInitialRepart, setIsInitialRepart] = useState(false);
+    const [isInitialParte, setIsInitialParte] = useState(false);
 
     const [users, setUsers] = useState([]);
     const [userscount, setUsersCount] = useState([]);
     const [personascount, setPersonasCount] = useState([]);
     const [novedadescount, setNovedadesCount] = useState([]);
+    const [partescount, setPartesCount] = useState([]);
     const [reparticion, setReparticion] = useState([]);
+
+    
 
     const [loading, setLoading] = useState(false);
 
-
+    
     // Obtener todos los roles
     const fetchUsuarios = async () => {
         setLoading(true);
@@ -40,6 +44,26 @@ export const HomesProvider = ({ children }) => {
         } finally {
             setLoading(false);
             setIsInitialized(true);
+        }
+    };
+    // Obtener todos Prtes diarios
+    const countpartepersona = async () => {
+        setLoading(true);
+        try {
+            const response = await homeService.countpartepersona();
+            if (response.data) {
+                console.log('parte');
+                console.log(response.data.total);
+                setPartesCount(response.data.total); // Asegura que users sea un arreglo
+            } else {
+                setPartesCount([]); // Si no es un arreglo, inicializa vacío
+            }
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+            setPartesCount([]);
+        } finally {
+            setLoading(false);
+            setIsInitialParte(true);
         }
     };
 
@@ -137,7 +161,10 @@ export const HomesProvider = ({ children }) => {
                                         novedadescount,
                                         fetchReparticion,
                                         isInitialRepart,
-                                        reparticion}}>
+                                        reparticion,
+                                        countpartepersona,
+                                        isInitialParte,
+                                        partescount}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

@@ -34,8 +34,6 @@ import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-// import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
-// import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 import CustomModalDest from '@/pages/componentes/modals/modalDestino';
 import {CustomIcon} from "@/pages/componentes/modals/acctions/CustomIcon";
 
@@ -314,12 +312,12 @@ export function Personal() {
               size="sm"
               onPress={() => openModal("create")}
             >
-              Usuario
+              Nuevo Persona
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {users.length} Personas</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -446,7 +444,7 @@ export function Personal() {
           <CustomModalDest
             isOpen={isModalOpenP}
             onClose={closeModalP}
-            title="REGISTRO DE NUEVO ROL"
+            title="ASIGNACIÓN DE REPARTATICIÓN"
             bodyContent={[
               "This is the first paragraph.",
               "This is the second paragraph.",

@@ -44,10 +44,10 @@ Footer.defaultProps = {
   brandName: "Unidad de Sistemas e Informatica",
   brandLink: "https://sistemas.mindef.gob.bo/",
   routes: [
-    { name: "Creative Tim", path: "https://www.creative-tim.com" },
-    { name: "About Us", path: "https://www.creative-tim.com/presentation" },
-    { name: "Blog", path: "https://www.creative-tim.com/blog" },
-    { name: "License", path: "https://www.creative-tim.com/license" },
+    // { name: "Creative Tim", path: "https://www.creative-tim.com" },
+    // { name: "About Us", path: "https://www.creative-tim.com/presentation" },
+    // { name: "Blog", path: "https://www.creative-tim.com/blog" },
+    // { name: "License", path: "https://www.creative-tim.com/license" },
   ],
 };
 

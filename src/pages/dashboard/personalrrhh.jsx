@@ -32,12 +32,7 @@ import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataPersonal";
 import {capitalize} from "@/data/utils";
-// import CustomModal from '@/pages/componentes/modals/modalsPersonal';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-// import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
-// import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
-// import CustomModalDest from '@/pages/componentes/modals/modalDestino';
-import {CustomIcon} from "@/pages/componentes/modals/acctions/CustomIcon";
 import CustomModal from '@/pages/componentes/modals/modalsDesvincular';
 
 
@@ -55,9 +50,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "gsanguineo","sexo","fu
 export function Personalrrhh() {
   const { showPersonalById, getshowAssignments,getPerActivas, usersAct,isInitializeActivos } = usePersonas();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isModalOpenP, setModalOpenP] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [assing, setAssing] = useState(null);
   useEffect(() => {
     if (!isInitializeActivos) {
       getPerActivas();
@@ -73,30 +66,8 @@ export function Personalrrhh() {
     setModalOpen(false);
   };
 
-  const openModalP = async (accion, datauser = null) => {
-    try {
-      // console.log(datauser);
-        const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
-        setAssing(assing);
-        setSelectedUser(datauser);
-        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
-        setModalOpenP(true); // Abrir el modal después de obtener los datos
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-    }
-  };
 
-  const closeModalP = () => {
-    setModalOpenP(false);
-  };
-  const handleActionP = () => {
-    alert("Action executed!");
-    closeModalP(); // Cierra el modal después de la acción
-  };
-  const handleAction = () => {
-    alert("Action executed!");
-    closeModal(); // Cierra el modal después de la acción
-  };
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -310,7 +281,7 @@ export function Personalrrhh() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {usersAct.length} Usuarios</span>
+          <span className="text-default-400 text-small">Total {usersAct.length} Personas</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -434,21 +405,6 @@ export function Personalrrhh() {
             closeLabel="CANCELAR"
             initialData={selectedUser} // Pasar los datos iniciales
           />
-          {/* <CustomModalDest
-            isOpen={isModalOpenP}
-            onClose={closeModalP}
-            title="REGISTRO DE NUEVO ROL"
-            bodyContent={[
-              "This is the first paragraph.",
-              "This is the second paragraph.",
-              "This is the third paragraph."
-            ]}
-            onAction={handleActionP}
-            initialData={selectedUser} // Pasar los datos iniciales 
-            initialAssing={assing} // Pasar los datos iniciales 
-            actionLabel="REGISTRAR"
-            closeLabel="CANCELAR"
-          /> */}
         </CardBody>
       </Card>
     </div>

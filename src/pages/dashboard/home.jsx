@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React,{useEffect, useState} from "react";
 import {
   Typography,
   Card,
@@ -9,18 +9,15 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
-  Avatar,
-  Tooltip,
   Progress,
 } from "@material-tailwind/react";
+import { BanknotesIcon, UserPlusIcon, UsersIcon, ChartBarIcon } from "@heroicons/react/24/solid";
 import {
   EllipsisVerticalIcon,
   ArrowUpIcon,
 } from "@heroicons/react/24/outline";
 import { StatisticsCard } from "@/widgets/cards";
 import {
-  statisticsCardsData,
-  projectsTableData,
   ordersOverviewData,
 } from "@/data";
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
@@ -38,7 +35,77 @@ export function Home() {
     personascount,
     fetchNovedadesCount,
     isInitialNovedades,
-    novedadescount} = useHomes();
+    novedadescount,
+    countpartepersona,
+    isInitialParte,
+    partescount
+    } = useHomes();
+    const [statisticsCardsData, setArrayCajas] = useState([]);
+    //cargar los datos 
+    useEffect(() => {
+    if (!isInitialized) {
+        fetchUsuarios();
+    }
+    if (!isInitialcount) {
+        fetchUsuariosCount();
+    }
+    if (!isInitialPersonal) {
+        fetchPersonalCount();
+    }
+    if (!isInitialNovedades) {
+        fetchNovedadesCount();
+    }
+    if (!isInitialParte) {
+        countpartepersona();
+    }
+    const statisticsCardsData = [
+        {
+          color: "gray",
+          icon: BanknotesIcon,
+          title: "USUARIOS DEL SISTEMA",
+          value: userscount,
+          footer: {
+            color: "text-green-500",
+            label: "Total de Usuariod Activos",
+          },
+        },
+        {
+          color: "gray",
+          icon: UsersIcon,
+          title: "PERSONAL MILITAR",
+          value: personascount,
+          footer: {
+            color: "text-green-500",
+            label: "Total de Personas Mindef",
+          },
+        },
+        {
+          color: "gray",
+          icon: UserPlusIcon,
+          title: "PERMISOS SOLICITADOS",
+          value: novedadescount,
+          footer: {
+            color: "text-red-500",
+            label: "Total de Permisos Solicitados",
+          },
+        },
+        {
+          color: "gray",
+          icon: ChartBarIcon,
+          title: "EFECTIVO TOTAL",
+          value: partescount,
+          footer: {
+            color: "text-green-500",
+            label: "Efectivo Total del Parte",
+          },
+        },
+      ];
+      setArrayCajas(statisticsCardsData);
+    }, [isInitialized,
+    isInitialcount,
+    isInitialPersonal,
+    isInitialNovedades,
+    isInitialParte]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -74,23 +141,6 @@ export function Home() {
           />
         ))}
       </div>
-      {/* <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {statisticsChartsData.map((props) => (
-          <StatisticsChart
-            key={props.title}
-            {...props}
-            footer={
-              <Typography
-                variant="small"
-                className="flex items-center font-normal text-blue-gray-600"
-              >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-blue-gray-400" />
-                &nbsp;{props.footer}
-              </Typography>
-            }
-          />
-        ))}
-      </div> */}
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
           <CardHeader

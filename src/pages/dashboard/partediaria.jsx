@@ -109,28 +109,7 @@ export function Partediaria() {
   };
   
   
-  const openModal = (accion, user = null) => {
-    
-    setSelectedUser(user); // Establecer los datos del usuario seleccionado
-    setModalOpen(true); // Abrir el modal
-  };
   
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-
-  const openModalP = async (accion, datauser = null) => {
-    try {
-      // console.log(datauser);
-        // const assing = await getshowAssignments(datauser); // Espera los datos de asignaciones
-        setAssing(assing);
-        setSelectedUser(datauser);
-        // console.log(roles); // Aquí tendrás la lista de roles asignados y no asignados
-        setModalOpenP(true); // Abrir el modal después de obtener los datos
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-    }
-  };
   useEffect(() => {
     console.log("selectedKeys actualizado:", Array.from(selectedKeys));
      // Crear un intervalo que actualice la hora cada segundo
@@ -222,22 +201,6 @@ export function Partediaria() {
           >
             {cellValue}
           </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Button isIconOnly color="warning" content="Editar" size="sm" aria-label="Like">
-              <span onClick={() => openModal("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Button>
-            <Button isIconOnly color="primary" size="sm" aria-label="Like">
-              <span onClick={() => openModalP("edit", user)} className="text-lg  cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-              
-            </Button>
-          </div>
         );
       default:
         return cellValue;

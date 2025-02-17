@@ -29,7 +29,6 @@ import {
 } from "@material-tailwind/react";
 import { useUsers } from "@/context/UserContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataUsers";
@@ -37,7 +36,6 @@ import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsUsuario';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import {KeyIcon} from "@/pages/componentes/modals/acctions/KeyIcon";
-import {EyeIcon} from "@/pages/componentes/modals/acctions/EyeIcon";
 
 import CustomModalPrivilegios from '@/pages/componentes/modals/modalPrivilegios';
 
@@ -53,10 +51,9 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "celular","puesto", "sigla","lastlogin", "situacion","estado", "actions"];
 
 export function Profile() {
-  const { users,user, 
+  const { users, 
     isInitialized, 
     fetchUsers, 
-    loading, 
     asignaciones, 
     updateUserStatus} = useUsers();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -387,7 +384,7 @@ export function Profile() {
               size="sm"
               onPress={() => openModal("create")}
             >
-              Usuario
+              Nuevo usuario
             </Button>
           </div>
         </div>
@@ -519,7 +516,7 @@ export function Profile() {
           <CustomModalPrivilegios
               isOpen={isModalOpenP}
               onClose={closeModalP}
-              title="REGISTRO DE NUEVO ROL"
+              title="ROL DE USUARIO"
               bodyContent={[
                 "This is the first paragraph.",
                 "This is the second paragraph.",

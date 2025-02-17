@@ -30,14 +30,12 @@ import {
 } from "@material-tailwind/react";
 import { useRols } from "@/context/RolesContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
-import {VerticalDotsIcon} from "@/pages/componentes/VerticalDotsIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataRols";
 import {capitalize} from "@/data/utils";
 import CustomModal from '@/pages/componentes/modals/modalsRol';
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
-import {DeleteIcon} from "@/pages/componentes/modals/acctions/DeleteIcon";
 
 
 
@@ -323,7 +321,7 @@ export function Roles() {
               size="sm"
               onPress={() => openModal("create")}
             >
-              Usuario
+              Nuevo rol
             </Button>
           </div>
         </div>
@@ -404,7 +402,7 @@ export function Roles() {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Perfil de Usuarios
+            Rol de Usuarios
           </Typography>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 p-4 overflow-x-scroll"> {/* Quité overflow-x-auto */}

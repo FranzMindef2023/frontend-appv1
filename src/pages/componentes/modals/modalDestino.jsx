@@ -454,7 +454,7 @@ const CustomModalDest = ({ isOpen, onClose, title, actionLabel, closeLabel, init
                   color="secondary" 
                   onClick={() => (setFieldValue('action', 'change'))}
                 >
-                  CAMBIAR DE REPARTICION
+                  CAMBIAR DE REPARTICIÓN
                 </Button>
               </>
             )}
