@@ -18,7 +18,9 @@ import {
   Pagination,
   Alert
 } from "@nextui-org/react";
-
+import {
+  ClipboardDocumentIcon
+} from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -27,12 +29,14 @@ import {
 
 } from "@material-tailwind/react";
 import Loader from "../../component/Loader/Loader";
+import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import { usePersonas } from "@/context/PersonasContext";
 import { useNovedades } from "@/context/NovedadesContext";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
 import {columns, statusOptions} from "@/data/dataVacaciones";
 import {capitalize} from "@/data/utils";
+import { usePartes } from "@/context/PartesContext";
 
 
 
@@ -47,6 +51,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "celular","ci", "fechaegreso", "anios",
 
 export function Vacaciones() {
   const {  isInitDesvincu,getDesvinculados,users10 } = usePersonas();
+  const {  downloadPDFPlanilla} = usePartes();
   const { storeVacaciones} = useNovedades();
   const [isLoa, setIsLoa] = useState(false); 
   const [alertVisible, setAlertVisible] = useState(false);
@@ -84,7 +89,15 @@ export function Vacaciones() {
     // console.log("Usuarios seleccionados para enviar:", selectedData);
     setIsLoa(false);
   };
-
+  const downloadsPlanilla = async () => {
+    
+    const result = await downloadPDFPlanilla();
+    if (result.success) {
+      // alert('El reporte se descargó con éxito.');
+    } else {
+      alert('Error al descargar el reporte.');
+    }
+  };
 
 
 
@@ -221,7 +234,7 @@ export function Vacaciones() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
+            {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
@@ -245,7 +258,7 @@ export function Vacaciones() {
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown> */}
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -271,6 +284,14 @@ export function Vacaciones() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button
+              className="bg-foreground text-background"
+              endContent={<PlusIcon />}
+              size="sm"
+              onPress={() => downloadsPlanilla()}
+            >
+              Planilla Vacaciones
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">

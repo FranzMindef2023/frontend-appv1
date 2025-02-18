@@ -67,6 +67,8 @@ export const PersonasProvider = ({ children }) => {
         try {
             const response = await personasService.getPerActivas();
             if (response.data && Array.isArray(response.data.data)) {
+                console.log('personal activo');
+                console.log(response.data.data);
                 setPersonasAct(response.data.data); // Asegura que personas sea un arreglo
             } else {
                 setPersonasAct([]); // Si no es un arreglo, inicializa vacío

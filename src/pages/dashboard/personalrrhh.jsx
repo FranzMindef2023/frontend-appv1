@@ -30,7 +30,7 @@ import { usePersonas } from "@/context/PersonasContext";
 import {PlusIcon} from "@/pages/componentes/PlusIcon";
 import {SearchIcon} from "@/pages/componentes/SearchIcon";
 import {ChevronDownIcon} from "@/pages/componentes/ChevronDownIcon";
-import {columns, statusOptions} from "@/data/dataPersonal";
+import {columns, statusOptions} from "@/data/dataPersonalActivo";
 import {capitalize} from "@/data/utils";
 import {EditIcon} from "@/pages/componentes/modals/acctions/EditIcon";
 import CustomModal from '@/pages/componentes/modals/modalsDesvincular';

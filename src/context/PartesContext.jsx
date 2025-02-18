@@ -198,6 +198,29 @@ export const PartesProvider = ({ children }) => {
           return { success: false, error };
         }
     };
+    //descargar en formato pdf demostracion general
+    const downloadPDFPlanilla = async (fecha) => {
+        setLoading(true);
+        try {
+          const response = await partesService.downloadPlanillaVacacion();
+    
+          // Crear un enlace para descargar el archivo
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `reporte-planillaVacaciones.pdf`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+    
+          setLoading(false);
+          return { success: true };
+        } catch (error) {
+          console.error('Error al descargar el PDF:', error);
+          setLoading(false);
+          return { success: false, error };
+        }
+    };
 
     return (
         <PartesContext.Provider value={{ users, 
@@ -215,7 +238,8 @@ export const PartesProvider = ({ children }) => {
                                             downloadPDFGeneral,
                                             downloadPDFUser,
                                             downloadPDFDemoGeneral,
-                                            downloadPDFPermiso}}>
+                                            downloadPDFPermiso,
+                                            downloadPDFPlanilla}}>
             {children}
             {loading && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

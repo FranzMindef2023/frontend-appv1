@@ -5,7 +5,17 @@ import {
   InformationCircleIcon,
   ServerStackIcon,
   RectangleStackIcon,
+  UsersIcon,
+  BanknotesIcon,
+  UserPlusIcon,
+  CogIcon,
+  ClipboardDocumentIcon,
+  KeyIcon,
+  UserGroupIcon,
+  ServerIcon,
+  FolderIcon
 } from "@heroicons/react/24/solid";
+
 import {
   Home,
   Profile,
@@ -25,8 +35,7 @@ import {
 import { SignIn, SignUp } from "@/pages/auth";
 import ProtectedRoute from "@/component/ProtectedRoute";
 import AuthRoute from "@/component/AuthRoute";
-
-
+// import { BanknotesIcon, UserPlusIcon, , ChartBarIcon } from "@heroicons/react/24/solid";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -44,77 +53,77 @@ export const routes = [
         element: <ProtectedRoute element={<Home />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <BanknotesIcon {...icon} />,
         name: "ROLES",
         path: "/roles",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Roles />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <UsersIcon {...icon} />,
         name: "PERFILES",
         path: "/profile",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Profile />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <KeyIcon {...icon} />,
         name: "ACCESOS",
         path: "/accesos",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Accesos />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <UserPlusIcon {...icon} />,
         name: "PERSONAL MINDEF",
         path: "/personal",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Personal />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <UserGroupIcon {...icon} />,
         name: "RELACIÓN NOMINAL",
         path: "/Personalrrhh",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Personalrrhh />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <ClipboardDocumentIcon {...icon} />,
         name: "VACACIONES",
         path: "/vacaciones",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Vacaciones />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <FolderIcon {...icon} />,
         name: "NOVEDADES",
         path: "/novedades",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Novedades />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <ServerIcon {...icon} />,
         name: "PARTE DIARIA",
         path: "/Partediaria",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Partediaria />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <ClipboardDocumentIcon {...icon} />,
         name: "INFORMES",
         path: "/Informes",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Informes />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <FolderIcon {...icon} />,
         name: "PERMISOS SOLICITADOS",
         path: "/Permisos",
         allowedRoles: [1,2],
         element: <ProtectedRoute element={<Permisos />} />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
+        icon: <ClipboardDocumentIcon {...icon} />,
         name: "PARTE RRHH",
         path: "/Parterrhh",
         allowedRoles: [1,2],
